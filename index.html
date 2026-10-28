@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -68,18 +67,25 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
   <span class="pill">ИНФОРМАТИКА · ОБУЧЕНИЕ</span>
   <h1>Твой путь в программировании</h1>
   <p>Изучай теорию, решай задачи, создавай проекты и отслеживай прогресс.</p>
-  <label>Тип кабинета</label>
-  <select id="role">
-    <option value="student">Ученик</option>
-    <option value="teacher">Учитель</option>
-  </select>
-  <label>Имя ученика</label>
-  <select id="student"></select>
-  <label>Демонстрационный код</label>
-  <input id="pin" type="password" value="1234">
-  <p class="small">Для тестирования используется общий код 1234. Настоящую авторизацию подключим отдельно.</p>
+  <label for="username">Логин</label>
+  <input id="username" autocomplete="username" placeholder="Например, student01">
+  <label for="password">Пароль</label>
+  <input id="password" type="password" autocomplete="current-password" placeholder="Введи пароль">
+  <p class="small">Логины учеников: student01–student17. Для учителя: teacher.</p>
   <button id="loginButton">Войти</button>
-  <p id="loginError" class="small"></p>
+  <p id="loginError" class="small" role="status"></p>
+</section>
+
+<section id="forcePassword" class="card login hidden">
+  <span class="pill">ПЕРВЫЙ ВХОД</span>
+  <h2>Создай личный пароль</h2>
+  <p>Для безопасности замени временный пароль. Новый пароль должен содержать не менее 8 символов.</p>
+  <label for="newPassword">Новый пароль</label>
+  <input id="newPassword" type="password" autocomplete="new-password">
+  <label for="confirmPassword">Повтори новый пароль</label>
+  <input id="confirmPassword" type="password" autocomplete="new-password">
+  <button id="changePasswordButton">Сохранить пароль</button>
+  <p id="passwordMessage" class="small" role="status"></p>
 </section>
 
 <section id="app" class="hidden">
@@ -121,15 +127,14 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
       <div class="row between">
         <div>
           <h2>Кабинет учителя</h2>
-          <p>Прогресс и ответы учеников, сохранённые в этом браузере.</p>
+          <p>Облачный прогресс и ответы учеников.</p>
         </div>
         <button id="export">Экспорт CSV</button>
       </div>
       <div class="grid" id="teacherStats"></div>
       <div id="teacherStudents"></div>
       <div class="notice">
-        Внимание: локальные результаты хранятся в этом браузере.
-        Ответы из Google Таблицы нужно просматривать в самой таблице.
+        Прогресс и ответы хранятся в Supabase. Отправка в Google Таблицу также сохраняется как дополнительная функция.
       </div>
     </div>
   </div>
@@ -138,6 +143,7 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
 
 <footer>Моя траектория · Учись, практикуйся, развивайся</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 "use strict";
 
@@ -276,8 +282,7 @@ print("Итоговый счёт:", score)`,
       }
     ]
   },
-
-  ege: {
+    ege: {
     title: "Подготовка к ЕГЭ по информатике",
     lessons: [
       {
@@ -384,72 +389,37 @@ print(answer)`,
 };
 
 const $ = id => document.getElementById(id);
-const KEY = "myTrajectory_class_v1";
 
-let db = loadDB();
-let user = null;
-let track = "game";
-let lessonId = "g1";
-
-/*
- * GOOGLE SHEETS
- * Данные отправляются в Apps Script при сохранении ответа
- * и при отметке модуля как выполненного.
- */
 const SHEETS_WEB_APP_URL =
   "https://script.google.com/macros/s/AKfycbzE0K6-UafbL8ZpFWpTM2HH3Hs81aNUAWUhaNcjyIR64O57TXdkvWr7QeOETVJBArDvDw/exec";
-
 const SHEETS_ACCESS_KEY =
   "JKHjhsdfhU66324kjJ88992DSj897sdfsd8f9";
 
-function loadDB() {
-  try {
-    return JSON.parse(localStorage.getItem(KEY)) || {users:{}};
-  } catch (e) {
-    return {users:{}};
-  }
-}
+const SUPABASE_URL = "https://xvehptmfyjzzwavrdevs.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ancUJbXRBuSIyq4cgYjPnQ_BcyOg0pG";
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
 
-function saveDB() {
-  localStorage.setItem(KEY, JSON.stringify(db));
-}
+let user = null;
+let activeProfile = null;
+let track = "game";
+let lessonId = "g1";
+let cloudClassData = [];
 
 function esc(s) {
   return String(s ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
   }[c]));
-}
-
-function getUser(name, role) {
-  const key = role === "teacher" ? "__teacher__" : name;
-
-  if (!db.users[key]) {
-    db.users[key] = {
-      name: role === "teacher" ? "Учитель" : name,
-      role,
-      progress: {game:{}, ege:{}},
-      answers: {},
-      points: 0
-    };
-  }
-
-  // Обеспечиваем совместимость с ранее сохранёнными данными.
-  const u = db.users[key];
-  u.progress = u.progress || {game:{}, ege:{}};
-  u.progress.game = u.progress.game || {};
-  u.progress.ege = u.progress.ege || {};
-  u.answers = u.answers || {};
-  u.points = u.points || 0;
-
-  return u;
 }
 
 function allLessons() {
   return [...COURSES.game.lessons, ...COURSES.ege.lessons];
+}
+
+function usernameToEmail(username) {
+  return username.trim().toLowerCase() + "@my-traectory.test";
 }
 
 async function sendAnswerToSheet(data) {
@@ -457,80 +427,203 @@ async function sendAnswerToSheet(data) {
     await fetch(SHEETS_WEB_APP_URL, {
       method: "POST",
       mode: "no-cors",
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-      },
-      body: JSON.stringify({
-        ...data,
-        key: SHEETS_ACCESS_KEY
-      })
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ ...data, key: SHEETS_ACCESS_KEY })
     });
-
-    /*
-     * При no-cors браузер не позволяет прочитать ответ сервера.
-     * Запрос отправлен, но это не является подтверждением записи
-     * в таблицу. Проверяйте наличие строки в Google Sheets.
-     */
     return true;
   } catch (error) {
     console.error("Ошибка отправки в Google Таблицу:", error);
     return false;
   }
 }
-
-function init() {
-  $("student").innerHTML = STUDENTS
-    .map(s => `<option>${esc(s)}</option>`)
-    .join("");
-
-  $("role").addEventListener("change", () => {
-    $("student").disabled = $("role").value === "teacher";
-  });
-
+  function init() {
   $("loginButton").addEventListener("click", login);
+  $("password").addEventListener("keydown", e => {
+    if (e.key === "Enter") login();
+  });
+  $("username").addEventListener("keydown", e => {
+    if (e.key === "Enter") $("password").focus();
+  });
+  $("changePasswordButton").addEventListener("click", changePassword);
   $("exit").addEventListener("click", logout);
 
   document.querySelectorAll("[data-track]").forEach(b => {
     b.addEventListener("click", () => switchTrack(b.dataset.track));
   });
-
   $("export").addEventListener("click", exportCSV);
 }
 
-function login() {
-  if ($("pin").value !== "1234") {
-    $("loginError").textContent =
-      "Для демонстрационного входа введи код 1234.";
+async function login() {
+  const username = $("username").value.trim().toLowerCase();
+  const password = $("password").value;
+  const errorBox = $("loginError");
+  const button = $("loginButton");
+  errorBox.textContent = "";
+
+  if (!/^(student(0[1-9]|1[0-7])|teacher)$/.test(username)) {
+    errorBox.textContent = "Проверь логин. Для ученика используй student01–student17, для учителя — teacher.";
+    return;
+  }
+  if (!password) {
+    errorBox.textContent = "Введи пароль.";
     return;
   }
 
-  const role = $("role").value;
-  user = getUser($("student").value, role);
+  button.disabled = true;
+  button.textContent = "Входим…";
+  try {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: usernameToEmail(username),
+      password
+    });
+
+    if (error || !data.user) {
+      errorBox.textContent = "Не удалось войти. Проверь логин и пароль.";
+      return;
+    }
+
+    const { data: profile, error: profileError } = await supabaseClient
+      .from("profiles")
+      .select("id, full_name, role, must_change_password")
+      .eq("id", data.user.id)
+      .single();
+
+    if (profileError || !profile) {
+      await supabaseClient.auth.signOut();
+      errorBox.textContent = "Профиль не найден. Обратись к учителю.";
+      return;
+    }
+
+    activeProfile = profile;
+    if (profile.must_change_password) {
+      $("login").classList.add("hidden");
+      $("forcePassword").classList.remove("hidden");
+      $("passwordMessage").textContent = "";
+      $("newPassword").value = "";
+      $("confirmPassword").value = "";
+      $("newPassword").focus();
+      return;
+    }
+
+    await enterApp(profile, username);
+  } catch (error) {
+    console.error(error);
+    errorBox.textContent = "Не удалось подключиться. Проверь интернет и настройки Supabase.";
+  } finally {
+    button.disabled = false;
+    button.textContent = "Войти";
+  }
+}
+
+async function changePassword() {
+  const first = $("newPassword").value;
+  const second = $("confirmPassword").value;
+  const message = $("passwordMessage");
+  const button = $("changePasswordButton");
+  message.textContent = "";
+
+  if (first.length < 8) {
+    message.textContent = "Пароль должен содержать не менее 8 символов.";
+    return;
+  }
+  if (first.length > 128) {
+    message.textContent = "Пароль слишком длинный. Максимум — 128 символов.";
+    return;
+  }
+  if (first !== second) {
+    message.textContent = "Пароли не совпадают.";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Сохраняем…";
+  try {
+    const { data: sessionData, error: sessionError } =
+      await supabaseClient.auth.getSession();
+    const token = sessionData?.session?.access_token;
+
+    if (sessionError || !token) {
+      message.textContent = "Сеанс завершён. Войди снова.";
+      return;
+    }
+
+    const response = await fetch(
+      SUPABASE_URL + "/functions/v1/change-password",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_PUBLISHABLE_KEY,
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ newPassword: first })
+      }
+    );
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || !result.success) {
+      message.textContent = result.error || "Не удалось изменить пароль.";
+      return;
+    }
+
+    if (activeProfile) activeProfile.must_change_password = false;
+    $("forcePassword").classList.add("hidden");
+
+    const { data: userData } = await supabaseClient.auth.getUser();
+    const username = userData?.user?.user_metadata?.username ||
+      (userData?.user?.email || "").split("@")[0];
+
+    await enterApp(activeProfile, username);
+  } catch (error) {
+    console.error(error);
+    message.textContent = "Ошибка подключения при смене пароля. Попробуй ещё раз.";
+  } finally {
+    button.disabled = false;
+    button.textContent = "Сохранить пароль";
+  }
+}
+
+async function enterApp(profile, username) {
+  user = {
+    id: profile.id,
+    username,
+    name: profile.full_name,
+    role: profile.role,
+    progress: { game: {}, ege: {} },
+    answers: {},
+    points: 0
+  };
 
   $("login").classList.add("hidden");
+  $("forcePassword").classList.add("hidden");
   $("app").classList.remove("hidden");
   $("exit").classList.remove("hidden");
-
   $("headerName").textContent = user.name;
+
   $("roleLabel").textContent =
-    role === "teacher" ? "Кабинет учителя" : "Личный кабинет ученика";
-
+    user.role === "teacher" ? "Кабинет учителя" : "Личный кабинет ученика";
   $("welcome").textContent =
-    role === "teacher" ? "Результаты класса" : `Привет, ${user.name}!`;
-
-  $("intro").textContent = role === "teacher"
-    ? "Смотри прогресс и ответы, сохранённые в этом браузере."
+    user.role === "teacher" ? "Результаты класса" : `Привет, ${user.name}!`;
+  $("intro").textContent = user.role === "teacher"
+    ? "Облачный прогресс и ответы учеников."
     : "Выбирай траекторию, изучай материал и сохраняй свои решения.";
 
-  $("trackTabs").classList.toggle("hidden", role === "teacher");
-  $("teacherPanel").classList.toggle("hidden", role !== "teacher");
+  $("trackTabs").classList.toggle("hidden", user.role === "teacher");
+  $("teacherPanel").classList.toggle("hidden", user.role !== "teacher");
 
-  if (role === "teacher") {
+  if (user.role === "teacher") {
     $("lessonList").innerHTML = "";
     $("lessonContent").innerHTML =
       '<div class="empty">Работы учеников и ведомость находятся ниже.</div>';
-    renderTeacher();
+    await renderTeacher();
   } else {
+    try {
+      await loadOwnProgress();
+    } catch (error) {
+      console.error(error);
+      alert("Не удалось загрузить облачный прогресс. Проверь соединение и попробуй обновить страницу.");
+    }
+
     track = "game";
     lessonId = "g1";
     setTrackButtons();
@@ -539,13 +632,69 @@ function login() {
   }
 }
 
-function logout() {
+async function loadOwnProgress() {
+  const { data, error } = await supabaseClient
+    .from("student_progress")
+    .select("course_id, lesson_id, completed, answer, updated_at")
+    .eq("user_id", user.id);
+
+  if (error) throw error;
+
+  user.progress = { game: {}, ege: {} };
+  user.answers = {};
+  user.points = 0;
+
+  (data || []).forEach(row => {
+    const course = row.course_id;
+    if (!user.progress[course]) return;
+
+    user.progress[course][row.lesson_id] = {
+      done: !!row.completed,
+      date: row.updated_at || null
+    };
+
+    if (row.answer !== null && row.answer !== undefined) {
+      user.answers[row.lesson_id] = row.answer;
+    }
+    if (row.completed) user.points += 10;
+  });
+}
+
+async function saveProgressToCloud(courseId, lesson, answer, completed) {
+  const row = {
+    user_id: user.id,
+    course_id: courseId,
+    lesson_id: lesson.id,
+    completed: !!completed,
+    answer: answer ?? "",
+    updated_at: new Date().toISOString()
+  };
+
+  const { error } = await supabaseClient
+    .from("student_progress")
+    .upsert(row, { onConflict: "user_id,course_id,lesson_id" });
+
+  if (error) throw error;
+}
+
+async function logout() {
+  try {
+    await supabaseClient.auth.signOut();
+  } catch (error) {
+    console.error("Ошибка выхода:", error);
+  }
+
   user = null;
+  activeProfile = null;
+  cloudClassData = [];
+
   $("app").classList.add("hidden");
+  $("forcePassword").classList.add("hidden");
   $("login").classList.remove("hidden");
   $("exit").classList.add("hidden");
   $("headerName").textContent = "Учебная платформа";
   $("loginError").textContent = "";
+  $("password").value = "";
 }
 
 function switchTrack(t) {
@@ -561,9 +710,8 @@ function setTrackButtons() {
     const active = b.dataset.track === track;
     b.classList.toggle("secondary", !active);
   });
-}
-
-function renderTrack() {
+      }
+  function renderTrack() {
   const lessons = COURSES[track].lessons;
   const p = user.progress[track] || {};
   const done = lessons.filter(l => p[l.id]?.done).length;
@@ -575,12 +723,8 @@ function renderTrack() {
   $("points").textContent = (user.points || 0) + " баллов";
 
   $("lessonList").innerHTML = lessons.map(l => `
-    <button class="lesson-btn ${p[l.id]?.done ? "done" : ""}"
-            data-lesson="${l.id}">
-      <span>
-        ${esc(l.title)}<br>
-        <span class="small">${esc(l.level)} · ${l.minutes} мин.</span>
-      </span>
+    <button class="lesson-btn ${p[l.id]?.done ? "done" : ""}" data-lesson="${l.id}">
+      <span>${esc(l.title)}<br><span class="small">${esc(l.level)} · ${l.minutes} мин.</span></span>
       <b>${p[l.id]?.done ? "✓" : ""}</b>
     </button>
   `).join("");
@@ -597,9 +741,7 @@ function renderTrack() {
 function lessonPayload(l, answer, done) {
   return {
     student: user.name,
-    track: track === "game"
-      ? "Практическое программирование"
-      : "Подготовка к ЕГЭ",
+    track: track === "game" ? "Практическое программирование" : "Подготовка к ЕГЭ",
     lessonId: l.id,
     lessonTitle: l.title,
     answer,
@@ -618,162 +760,200 @@ function renderLesson() {
   $("lessonContent").innerHTML = `
     <span class="pill">${esc(l.level)} · ${l.minutes} минут</span>
     <h2 style="margin-top:12px">${esc(l.title)}</h2>
-
-    <h3>Теория</h3>
-    <div>${l.theory}</div>
-
-    <h3>Разобранный пример</h3>
-    <pre><code>${esc(l.code)}</code></pre>
-
-    <h3>Практическое задание</h3>
-    <p>${esc(l.task)}</p>
-
+    <h3>Теория</h3><div>${l.theory}</div>
+    <h3>Разобранный пример</h3><pre><code>${esc(l.code)}</code></pre>
+    <h3>Практическое задание</h3><p>${esc(l.task)}</p>
     <label for="answer">Твоё решение</label>
-    <textarea id="answer"
-      placeholder="Вставь код или напиши ход решения...">${esc(answer)}</textarea>
-
+    <textarea id="answer" placeholder="Вставь код или напиши ход решения...">${esc(answer)}</textarea>
     <div class="row" style="margin-top:12px">
       <button id="saveAnswer">Сохранить ответ</button>
-      <button id="toggleDone" class="secondary">
-        ${p.done ? "Отменить выполнение" : "Отметить выполненным"}
-      </button>
+      <button id="toggleDone" class="secondary">${p.done ? "Отменить выполнение" : "Отметить выполненным"}</button>
     </div>
-
     <p id="message" class="small"></p>
-
-    ${p.done
-      ? '<p class="good">✓ Модуль выполнен и засчитан в прогресс.</p>'
-      : ""}
+    ${p.done ? '<p class="good">✓ Модуль выполнен и засчитан в прогресс.</p>' : ""}
   `;
 
-  // Сохраняем ответ локально и отправляем запрос в Google Таблицу.
   $("saveAnswer").addEventListener("click", async () => {
     const button = $("saveAnswer");
     const message = $("message");
     const currentAnswer = $("answer").value;
 
-    user.answers[l.id] = currentAnswer;
-    saveDB();
-
     button.disabled = true;
-    message.textContent = "Ответ сохранён на устройстве. Отправляем в таблицу…";
+    message.textContent = "Сохраняем ответ в облако…";
 
-    const sent = await sendAnswerToSheet(
-      lessonPayload(l, currentAnswer, !!user.progress[track][l.id]?.done)
-    );
+    try {
+      await saveProgressToCloud(
+        track,
+        l,
+        currentAnswer,
+        !!user.progress[track][l.id]?.done
+      );
 
-    button.disabled = false;
-    message.textContent = sent
-      ? "Запрос отправлен. Проверь, появилась ли запись в Google Таблице."
-      : "Ответ сохранён на устройстве, но отправка не удалась. Проверь интернет и настройки Apps Script.";
+      user.answers[l.id] = currentAnswer;
+
+      const sent = await sendAnswerToSheet(
+        lessonPayload(l, currentAnswer, !!user.progress[track][l.id]?.done)
+      );
+
+      message.textContent = sent
+        ? "Ответ сохранён в облаке. Запрос также отправлен в Google Таблицу."
+        : "Ответ сохранён в облаке, но отправка в Google Таблицу не удалась.";
+    } catch (error) {
+      console.error(error);
+      message.textContent = "Не удалось сохранить ответ в облако. Проверь интернет и попробуй снова.";
+    } finally {
+      button.disabled = false;
+    }
   });
 
-  // Отмечаем модуль выполненным или отменяем отметку.
   $("toggleDone").addEventListener("click", async () => {
     const button = $("toggleDone");
     const wasDone = !!user.progress[track][l.id]?.done;
     const currentAnswer = $("answer").value;
     const newDone = !wasDone;
 
-    user.progress[track][l.id] = {
-      done: newDone,
-      date: newDone ? new Date().toISOString() : null
-    };
-
-    user.answers[l.id] = currentAnswer;
-    user.points = Math.max(
-      0,
-      (user.points || 0) + (wasDone ? -10 : 10)
-    );
-
-    saveDB();
     button.disabled = true;
-
-    const sent = await sendAnswerToSheet(
-      lessonPayload(l, currentAnswer, newDone)
-    );
-
-    renderTrack();
-    renderLesson();
-
     const message = $("message");
-    if (message) {
-      message.textContent = sent
-        ? "Прогресс сохранён. Запрос отправлен в Google Таблицу."
-        : "Прогресс сохранён на устройстве, но отправка не удалась.";
+    message.textContent = "Сохраняем прогресс в облако…";
+
+    try {
+      await saveProgressToCloud(track, l, currentAnswer, newDone);
+
+      user.progress[track][l.id] = {
+        done: newDone,
+        date: newDone ? new Date().toISOString() : null
+      };
+      user.answers[l.id] = currentAnswer;
+      user.points = Math.max(
+        0,
+        (user.points || 0) + (wasDone ? -10 : 10)
+      );
+
+      await sendAnswerToSheet(lessonPayload(l, currentAnswer, newDone));
+
+      renderTrack();
+      renderLesson();
+    } catch (error) {
+      console.error(error);
+      button.disabled = false;
+      message.textContent = "Не удалось сохранить прогресс в облако. Попробуй ещё раз.";
     }
   });
-}
+                                                    }
+  async function renderTeacher() {
+  $("teacherStats").innerHTML =
+    '<p class="small">Загружаем облачные результаты…</p>';
+  $("teacherStudents").innerHTML = "";
 
-function renderTeacher() {
-  const students = STUDENTS.map(name => ({
-    name,
-    u: db.users[name]
-  }));
+  const [
+    { data: profiles, error: profilesError },
+    { data: progress, error: progressError }
+  ] = await Promise.all([
+    supabaseClient
+      .from("profiles")
+      .select("id, full_name, role")
+      .eq("role", "student")
+      .order("full_name"),
+    supabaseClient
+      .from("student_progress")
+      .select("user_id, course_id, lesson_id, completed, answer, updated_at")
+  ]);
 
-  let workCount = 0;
-  let completed = 0;
+  if (profilesError || progressError) {
+    console.error(profilesError || progressError);
+    $("teacherStats").innerHTML =
+      '<p class="small">Не удалось загрузить данные. Проверь роль учителя в profiles и RLS-политики Supabase.</p>';
+    return;
+  }
 
-  students.forEach(({u}) => {
-    if (!u) return;
+  const progressByUser = {};
 
-    workCount += Object.values(u.answers || {})
-      .filter(v => String(v).trim()).length;
-
-    completed += allLessons().filter(l =>
-      u.progress[l.id.startsWith("g") ? "game" : "ege"]?.[l.id]?.done
-    ).length;
+  (progress || []).forEach(row => {
+    if (!progressByUser[row.user_id]) {
+      progressByUser[row.user_id] = [];
+    }
+    progressByUser[row.user_id].push(row);
   });
+
+  cloudClassData = (profiles || []).map(profile => {
+    const rows = progressByUser[profile.id] || [];
+    const courseProgress = { game: {}, ege: {} };
+    const answers = {};
+
+    rows.forEach(row => {
+      if (courseProgress[row.course_id]) {
+        courseProgress[row.course_id][row.lesson_id] = {
+          done: !!row.completed,
+          date: row.updated_at
+        };
+      }
+
+      if (row.answer !== null && row.answer !== undefined) {
+        answers[row.lesson_id] = row.answer;
+      }
+    });
+
+    return {
+      id: profile.id,
+      name: profile.full_name,
+      progress: courseProgress,
+      answers,
+      points: rows.filter(row => row.completed).length * 10
+    };
+  });
+
+  const totalAnswers = cloudClassData.reduce((sum, student) =>
+    sum + Object.values(student.answers)
+      .filter(value => String(value).trim()).length, 0
+  );
+
+  const totalCompleted = cloudClassData.reduce((sum, student) =>
+    sum + allLessons().filter(lesson =>
+      student.progress[lesson.id.startsWith("g") ? "game" : "ege"]?.[lesson.id]?.done
+    ).length, 0
+  );
 
   $("teacherStats").innerHTML = `
     <div class="card third">
-      <h2>${STUDENTS.length}</h2>
-      <p>Учеников в списке</p>
+      <h2>${cloudClassData.length}</h2>
+      <p>Учеников в базе</p>
     </div>
     <div class="card third">
-      <h2>${workCount}</h2>
-      <p>Сохранённых ответов на этом устройстве</p>
+      <h2>${totalAnswers}</h2>
+      <p>Сохранённых ответов в облаке</p>
     </div>
     <div class="card third">
-      <h2>${completed}</h2>
-      <p>Завершённых модулей на этом устройстве</p>
+      <h2>${totalCompleted}</h2>
+      <p>Завершённых модулей в облаке</p>
     </div>
   `;
 
-  $("teacherStudents").innerHTML = students.map(({name, u}) => {
-    const game = u
-      ? Object.values(u.progress.game || {}).filter(x => x.done).length
-      : 0;
-
-    const ege = u
-      ? Object.values(u.progress.ege || {}).filter(x => x.done).length
-      : 0;
-
-    const answers = u
-      ? Object.entries(u.answers || {}).filter(([id, v]) => String(v).trim())
-      : [];
+  $("teacherStudents").innerHTML = cloudClassData.map(student => {
+    const game = Object.values(student.progress.game)
+      .filter(item => item.done).length;
+    const ege = Object.values(student.progress.ege)
+      .filter(item => item.done).length;
+    const answers = Object.entries(student.answers)
+      .filter(([id, value]) => String(value).trim());
 
     return `
       <div class="student-row">
         <div class="row between">
-          <b>${esc(name)}</b>
+          <b>${esc(student.name)}</b>
           <span class="pill">${game + ege}/16 модулей</span>
         </div>
-
         <p class="small">
           Программирование: ${game}/8 · ЕГЭ: ${ege}/8 · Ответов: ${answers.length}
         </p>
-
-        ${answers.length
-          ? `<details>
-              <summary>Посмотреть ответы</summary>
-              ${answers.map(([id, v]) => {
-                const lesson = allLessons().find(x => x.id === id);
-                return `<p><b>${esc(lesson ? lesson.title : id)}</b><br>${esc(v).replace(/\n/g, "<br>")}</p>`;
-              }).join("")}
-            </details>`
-          : "<span class='small'>Работы пока не сохранены в этом браузере.</span>"
-        }
+        ${answers.length ? `
+          <details>
+            <summary>Посмотреть ответы</summary>
+            ${answers.map(([id, value]) => {
+              const lesson = allLessons().find(item => item.id === id);
+              return `<p><b>${esc(lesson ? lesson.title : id)}</b><br>${esc(value).replace(/\n/g, "<br>")}</p>`;
+            }).join("")}
+          </details>
+        ` : "<span class='small'>Ответы пока не сохранены.</span>"}
       </div>
     `;
   }).join("");
@@ -788,28 +968,27 @@ function exportCSV() {
     "Ответов"
   ]];
 
-  STUDENTS.forEach(name => {
-    const u = db.users[name];
+  cloudClassData.forEach(student => {
+    const count = course =>
+      Object.values(student.progress[course] || {})
+        .filter(item => item.done).length;
 
-    const count = t => u
-      ? Object.values(u.progress[t] || {}).filter(x => x.done).length
-      : 0;
-
-    const answers = u
-      ? Object.values(u.answers || {}).filter(v => String(v).trim()).length
-      : 0;
+    const answers = Object.values(student.answers || {})
+      .filter(value => String(value).trim()).length;
 
     rows.push([
-      name,
+      student.name,
       count("game"),
       count("ege"),
-      u?.points || 0,
+      student.points || 0,
       answers
     ]);
   });
 
   const csv = "\ufeff" + rows.map(row =>
-    row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(";")
+    row.map(value =>
+      `"${String(value).replace(/"/g, '""')}"`
+    ).join(";")
   ).join("\r\n");
 
   const blob = new Blob([csv], {
