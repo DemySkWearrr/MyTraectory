@@ -279,7 +279,6 @@ function renderLesson(){
     <p id="message" class="small"></p>
     ${p.done?'<p class="good">✓ Модуль выполнен и засчитан в прогресс.</p>':""}
   `;
-  $("saveAnswer").addEventListener("click",()=>{
     user.answers[l.id]=$("answer").value;saveDB();
     $("message").textContent="Ответ сохранён в этом браузере.";
   });
