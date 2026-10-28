@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -7,319 +6,323 @@
 <title>Моя траектория</title>
 <style>
 :root {
-  --bg: #10130f;
-  --panel: #191e18;
-  --line: #303a2c;
-  --text: #f0f4eb;
-  --muted: #a5b09e;
-  --lime: #c9f36a;
+  --bg:#101522; --panel:#191f30; --panel2:#242d42;
+  --text:#f1f4fb; --muted:#aab4c8; --accent:#9aa9ff;
+  --green:#70e0bb; --border:#343e54;
 }
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font: 16px/1.5 system-ui, sans-serif;
-}
-main { max-width: 900px; margin: auto; padding: 20px; }
-.card {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 20px;
-  margin-bottom: 16px;
-}
-h1, h2, h3 { line-height: 1.2; }
-h1 { color: var(--lime); }
-button, input, textarea {
-  font: inherit;
-  border-radius: 10px;
-  padding: 11px;
-}
-button {
-  background: var(--lime);
-  color: #17200d;
-  border: 0;
-  font-weight: 700;
-  cursor: pointer;
-  margin: 4px;
-}
-input, textarea {
-  width: 100%;
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--line);
-  margin: 5px 0 12px;
-}
-textarea { min-height: 100px; }
-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0; }
-nav button { flex: 1; }
-.muted { color: var(--muted); }
-.hidden { display: none !important; }
-.lesson {
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 15px;
-  margin: 10px 0;
-}
-pre {
-  overflow: auto;
-  white-space: pre-wrap;
-  background: var(--bg);
-  padding: 12px;
-  border-radius: 10px;
-}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,Arial,sans-serif}
+header{padding:16px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--panel);border-bottom:1px solid var(--border)}
+.brand{font-size:22px;font-weight:800}.brand span{color:var(--accent)}
+main{max-width:1200px;margin:auto;padding:24px 16px 50px}
+h1{font-size:clamp(28px,4vw,40px);line-height:1.2}
+h2{font-size:22px;margin-top:0}h3{font-size:18px}
+p{color:var(--muted)}
+button,input,select,textarea{font:inherit}
+button{border:0;border-radius:10px;padding:10px 14px;background:var(--accent);color:#101522;font-weight:700;cursor:pointer}
+button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border)}
+button:disabled{opacity:.5}
+input,select,textarea{width:100%;padding:11px;background:#101522;color:var(--text);border:1px solid var(--border);border-radius:9px}
+textarea{min-height:130px;resize:vertical}
+label{display:block;margin:12px 0 5px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.card{grid-column:span 12;background:var(--panel);border:1px solid var(--border);border-radius:15px;padding:18px;min-width:0}
+.half{grid-column:span 6}.third{grid-column:span 4}.wide{grid-column:span 8}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.small{font-size:13px;color:var(--muted)}
+.pill{display:inline-block;background:var(--panel2);border:1px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;color:var(--muted)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.lesson-list{display:grid;gap:8px}
+.lesson-btn{width:100%;text-align:left;background:var(--panel2);border:1px solid var(--border);color:var(--text);display:flex;justify-content:space-between;gap:10px}
+.lesson-btn.done{border-color:var(--green)}
+.progress{height:8px;border-radius:20px;background:var(--panel2);overflow:hidden;margin:8px 0}
+.progress span{display:block;height:100%;background:var(--green);width:0}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0c111d;padding:15px;border:1px solid var(--border);border-radius:10px;color:#d6e0ff;overflow-x:auto}
+.hidden{display:none!important}
+.notice{padding:12px;border:1px solid #665a2d;background:#2a2516;border-radius:10px;color:#f2d98b}
+.good{color:var(--green)}
+.student-row{padding:14px 0;border-bottom:1px solid var(--border)}
+.empty{padding:24px;text-align:center;color:var(--muted)}
+.login{max-width:480px;margin:5vh auto}
+footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
+@media(max-width:700px){.half,.third,.wide{grid-column:span 12}header{align-items:flex-start;flex-direction:column}main{padding:16px 10px 35px}}
 </style>
 </head>
 <body>
+<header>
+  <div class="brand">Моя <span>траектория</span></div>
+  <div class="row"><span id="headerName" class="small">Учебная платформа</span><button id="exit" class="secondary hidden">Выйти</button></div>
+</header>
+
 <main>
-  <section class="card" id="login">
-    <h1>Моя траектория</h1>
-    <p class="muted">Вход в учебную платформу</p>
+<section id="login" class="card login">
+  <span class="pill">ИНФОРМАТИКА · ОБУЧЕНИЕ</span>
+  <h1>Твой путь в программировании</h1>
+  <p>Изучай теорию, решай задачи, создавай проекты и отслеживай прогресс.</p>
+  <label>Тип кабинета</label>
+  <select id="role">
+    <option value="student">Ученик</option>
+    <option value="teacher">Учитель</option>
+  </select>
+  <label>Имя ученика</label>
+  <select id="student"></select>
+  <label>Демонстрационный код</label>
+  <input id="pin" type="password" value="1234">
+  <p class="small">Для тестирования используется общий код 1234. Настоящую авторизацию подключим отдельно.</p>
+  <button id="loginButton">Войти</button>
+  <p id="loginError" class="small"></p>
+</section>
 
-    <label>Тип кабинета</label>
-    <select id="role">
-      <option value="student">Ученик</option>
-      <option value="teacher">Учитель</option>
-    </select>
-
-    <label>Логин</label>
-    <input id="username" value="student">
-
-    <label>Пароль</label>
-    <input id="password" type="password" value="1234">
-
-    <button onclick="login()">Войти</button>
-    <p id="error" class="muted"></p>
-    <p class="muted">
-      Демо: student / 1234 или teacher / 1234.
-      Не используй реальные пароли.
-    </p>
-  </section>
-
-  <section id="app" class="hidden">
-    <header class="card">
-      <h1>Моя траектория</h1>
-      <p id="welcome"></p>
-      <button onclick="logout()">Выйти</button>
-    </header>
-
-    <nav id="studentNav">
-      <button onclick="showTrack('game')">Игровое программирование</button>
-      <button onclick="showTrack('ege')">Подготовка к ЕГЭ</button>
-      <button onclick="showDiagnostic()">Диагностика</button>
-    </nav>
-
-    <section id="content" class="card"></section>
-  </section>
+<section id="app" class="hidden">
+  <div class="grid">
+    <div class="card wide">
+      <span class="pill" id="roleLabel">Личный кабинет</span>
+      <h1 id="welcome">Привет!</h1>
+      <p id="intro">Выбирай тему, изучай материал и выполняй задания.</p>
+      <div class="tabs" id="trackTabs">
+        <button data-track="game">Практическое программирование</button>
+        <button data-track="ege" class="secondary">Подготовка к ЕГЭ</button>
+      </div>
+      <div class="row between"><span class="small">Прогресс выбранной траектории</span><b id="percent">0%</b></div>
+      <div class="progress"><span id="bar"></span></div>
+    </div>
+    <div class="card third">
+      <h2>Мои результаты</h2>
+      <h1 id="doneCount">0 / 8</h1>
+      <p>модулей завершено</p>
+      <span id="points" class="pill">0 баллов</span>
+    </div>
+    <div class="card third">
+      <h2>Учебные модули</h2>
+      <div id="lessonList" class="lesson-list"></div>
+    </div>
+    <div class="card wide">
+      <div id="lessonContent"><div class="empty">Выбери учебный модуль.</div></div>
+    </div>
+    <div class="card hidden" id="teacherPanel">
+      <div class="row between">
+        <div><h2>Кабинет учителя</h2><p>Прогресс и ответы учеников, сохранённые в этом браузере.</p></div>
+        <button id="export">Экспорт CSV</button>
+      </div>
+      <div class="grid" id="teacherStats"></div>
+      <div id="teacherStudents"></div>
+      <div class="notice">Внимание: это локальный прототип. Работы с других устройств не появятся здесь автоматически. Для полноценной работы класса нужна общая база данных.</div>
+    </div>
+  </div>
+</section>
 </main>
+<footer>Моя траектория · Учись, практикуйся, развивайся</footer>
 
 <script>
-const lessons = {
-  game: [
-    {
-      title: "1. Переменные и игровые параметры",
-      theory: "Переменная хранит значение. В игре это могут быть здоровье, скорость, очки или количество монет.",
-      code: 'health = 100\\nspeed = 5\\nhealth -= 20\\nprint(health)',
-      task: "Измени здоровье и скорость. Добавь переменную с количеством монет."
-    },
-    {
-      title: "2. Условия и правила игры",
-      theory: "if выполняет команды, если условие истинно. else задаёт альтернативное действие.",
-      code: 'has_key = True\\nif has_key:\\n    print("Дверь открыта")\\nelse:\\n    print("Найди ключ")',
-      task: "Создай условие: если очков не меньше 100, игрок получает награду."
-    },
-    {
-      title: "3. Циклы",
-      theory: "Циклы повторяют команды. while работает, пока условие истинно. for перебирает последовательность.",
-      code: 'coins = 0\\nwhile coins < 5:\\n    coins += 1\\nprint(coins)',
-      task: "Напиши цикл, который увеличивает энергию на 3, пока она меньше 15."
-    },
-    {
-      title: "4. Функции",
-      theory: "Функция объединяет команды. Параметры передают данные, return возвращает результат.",
-      code: 'def train(speed):\\n    return speed + 2\\nprint(train(4))',
-      task: "Создай функцию, которая получает число монет и возвращает число после награды +10."
-    }
-  ],
-  ege: [
-    {
-      title: "1. Трассировка алгоритмов",
-      theory: "При трассировке записывай значения переменных после каждого шага. В range правая граница не включается.",
-      code: 's = 0\\nfor i in range(1, 4):\\n    s += i\\nprint(s)',
-      task: "Составь таблицу значений i и s на каждой итерации."
-    },
-    {
-      title: "2. Остаток от деления",
-      theory: "Оператор % возвращает остаток. Если n % 3 == 0, число делится на 3 без остатка.",
-      code: 'count = 0\\nfor n in range(1, 11):\\n    if n % 3 == 0:\\n        count += 1\\nprint(count)',
-      task: "Напиши программу, считающую числа от 1 до 100, которые делятся на 4."
-    },
-    {
-      title: "3. Списки",
-      theory: "Список хранит несколько значений. Цикл for позволяет обработать каждый элемент.",
-      code: 'a = [4, 7, 2]\\ns = 0\\nfor x in a:\\n    s += x\\nprint(s)',
-      task: "Найди сумму только чётных элементов списка."
-    },
-    {
-      title: "4. Строки",
-      theory: "Строка — последовательность символов. Её можно перебирать циклом и считать нужные буквы.",
-      code: 'text = "информатика"\\ncount = 0\\nfor ch in text:\\n    if ch == "и":\\n        count += 1\\nprint(count)',
-      task: "Напиши программу, считающую количество заданных символов."
-    }
-  ]
+"use strict";
+
+const STUDENTS = [
+"Абраменко Павел","Аракелян Левон","Витолин Андрей",
+"Завьялова Арина","Князев Герард","Кондрашов Георгий",
+"Лелюк Арсений","Маюн Дарья","Мирошникова Марианн",
+"Пономарев Михаил","Саблина Яна","Степанян Сабина",
+"Тарадыменко Степан","Тоцкая Мария","Хачикин Артак",
+"Чезанов Владислав","Яренчук Виктория"
+];
+
+const COURSES = {
+game:{
+title:"Практическое программирование",
+lessons:[
+{id:"g1",title:"1. Переменные и первые команды",level:"Начальный",minutes:20,
+theory:`<p><b>Переменная</b> — именованное место для хранения значения. В Python оператор = присваивает значение имени.</p><p>Основные типы: int — целое число, float — дробное число, str — текст, bool — логическое значение.</p><p>Команда print() выводит данные на экран, input() получает текст от пользователя. Для преобразования текста в целое число используется int().</p><p>Программу полезно читать последовательно: сначала выполняется первая команда, затем следующая.</p>`,
+code:`name = input("Имя игрока: ")\nscore = 0\nlives = 3\nprint("Привет,", name)\nprint("Очки:", score)\nprint("Жизни:", lives)`,
+task:"Создай переменные имени игрока, количества жизней и очков. Выведи все значения. Добавь ввод имени с клавиатуры."},
+{id:"g2",title:"2. Типы данных и вычисления",level:"Начальный",minutes:25,
+theory:`<p>Python умеет выполнять арифметические операции: +, -, *, /, //, %, **.</p><p>// — целочисленное деление, % — остаток от деления, ** — возведение в степень. Например, 17 // 5 равно 3, а 17 % 5 равно 2.</p><p>Остаток от деления помогает проверять чётность и делимость чисел. Не забывай: input() возвращает строку, даже если введены цифры.</p>`,
+code:`coins = 17\nbonus = 5\ntotal = coins + bonus\nprint("Всего:", total)\nprint("Полных пар:", total // 2)\nprint("Остаток:", total % 2)`,
+task:"У игрока 23 монеты, а за задание он получает ещё 9. Вычисли общий запас, число полных наборов по 5 монет и остаток."},
+{id:"g3",title:"3. Условия и выбор",level:"Начальный",minutes:25,
+theory:`<p>Условные конструкции позволяют выбирать действия. if проверяет условие, elif проверяет следующий вариант, else выполняется, если остальные условия ложны.</p><p>Операторы сравнения: ==, !=, &gt;, &lt;, &gt;=, &lt;=. Для объединения условий используются and, or и not.</p><p>Знак = присваивает значение, а == сравнивает два значения. После условия ставится двоеточие, а команды блока записываются с отступом.</p>`,
+code:`health = int(input("Здоровье: "))\nif health <= 0:\n    print("Игра окончена")\nelif health < 30:\n    print("Нужно найти аптечку")\nelse:\n    print("Можно продолжать")`,
+task:"Запроси число очков. Если их 100 или больше, выведи «Уровень пройден», если от 50 до 99 — «Почти получилось», иначе — «Попробуй ещё»."},
+{id:"g4",title:"4. Циклы",level:"Начальный",minutes:30,
+theory:`<p>Цикл повторяет набор команд. for удобен, если количество повторений известно; while повторяет команды, пока условие истинно.</p><p>range(5) создаёт последовательность 0, 1, 2, 3, 4. Правая граница не включается. Это частая причина ошибок на единицу.</p><p>В цикле while обязательно следи, чтобы условие могло стать ложным. Иначе получится бесконечный цикл.</p>`,
+code:`score = 0\nfor level in range(1, 6):\n    print("Уровень", level)\n    score += 10\nprint("Итоговые очки:", score)`,
+task:"Выведи числа от 1 до 10 и вычисли их сумму с помощью цикла. Затем измени программу так, чтобы она считала сумму только чётных чисел."},
+{id:"g5",title:"5. Строки и команды игрока",level:"Базовый",minutes:25,
+theory:`<p>Строка хранит текст. Функция len() возвращает количество символов. Индексы начинаются с нуля, поэтому text[0] — первый символ.</p><p>Срез text[1:4] берёт символы с индексами 1, 2 и 3. Методы lower() и upper() меняют регистр, strip() удаляет пробелы по краям.</p><p>Нормализация текста помогает обрабатывать команды игрока, введённые в разном регистре.</p>`,
+code:`command = input("Команда: ").strip().lower()\nif command == "вперёд":\n    print("Персонаж движется вперёд")\nelif command == "назад":\n    print("Персонаж движется назад")\nelse:\n    print("Неизвестная команда")`,
+task:"Запроси у пользователя фразу. Выведи её длину, текст в верхнем регистре и первые три символа."},
+{id:"g6",title:"6. Списки и инвентарь",level:"Средний",minutes:30,
+theory:`<p>Список хранит несколько элементов: items = ["ключ", "зелье"]. Индексация начинается с нуля.</p><p>Метод append() добавляет элемент в конец списка, len() считает элементы, оператор in проверяет наличие значения.</p><p>Списки удобны для инвентаря, списка врагов, рекордов и других коллекций игровых объектов.</p>`,
+code:`inventory = ["ключ", "зелье"]\ninventory.append("меч")\nprint(inventory)\nif "ключ" in inventory:\n    print("Дверь можно открыть")\nprint("Предметов:", len(inventory))`,
+task:"Создай список из трёх предметов. Добавь четвёртый, проверь наличие выбранного предмета и выведи количество предметов."},
+{id:"g7",title:"7. Функции",level:"Средний",minutes:30,
+theory:`<p>Функция — именованный блок программы, который можно вызывать повторно. Она объявляется с помощью def.</p><p>Параметры передают в функцию входные данные. return возвращает результат. print() лишь выводит значение и не заменяет return.</p><p>Функции помогают разделить игру на части: расчёт урона, начисление очков, проверка столкновений.</p>`,
+code:`def add_score(current, bonus):\n    return current + bonus\n\nscore = 40\nscore = add_score(score, 15)\nprint("Очки:", score)`,
+task:"Напиши функцию, которая принимает количество монет и бонус, а возвращает сумму. Вызови её с разными значениями."},
+{id:"g8",title:"8. Итоговый проект: мини-игра",level:"Проект",minutes:45,
+theory:`<p>Объедини переменные, ввод, условия и циклы в одну игру. Придумай цель, правила, способы заработать очки и условие окончания.</p><p>Перед кодированием опиши алгоритм обычными словами. После реализации проверь несколько вариантов ввода, включая ошибочный.</p><p>Хороший проект имеет понятные сообщения игроку, считает результат и не заканчивается неожиданно.</p>`,
+code:`score = 0\nfor round_number in range(1, 4):\n    choice = input(f"Раунд {round_number}. Выбери A или B: ").strip().upper()\n    if choice == "A":\n        score += 10\n        print("Ты нашёл сокровище!")\n    elif choice == "B":\n        score += 5\n        print("Ты нашёл бонус")\n    else:\n        print("Ход пропущен")\nprint("Итоговый счёт:", score)`,
+task:"Создай собственную текстовую мини-игру минимум с тремя ходами, двумя вариантами выбора, начислением очков и финальным сообщением. Опиши правила."}
+]},
+ege:{
+title:"Подготовка к ЕГЭ по информатике",
+lessons:[
+{id:"e1",title:"1. Системы счисления",level:"Начальный",minutes:25,
+theory:`<p>В позиционной системе значение цифры зависит от позиции. Основание двоичной системы — 2, восьмеричной — 8, десятичной — 10.</p><p>Например, 1011₂ = 1·2³ + 0·2² + 1·2¹ + 1·2⁰ = 11₁₀.</p><p>Чтобы перевести десятичное целое число в двоичное, последовательно дели его на 2 и записывай остатки снизу вверх. Проверяй ответ обратным переводом.</p>`,
+code:`n = 13\nprint(bin(n)[2:])  # 1101`,
+task:"Переведи 13, 25 и 42 в двоичную систему. Для одного числа распиши вычисление через степени двойки."},
+{id:"e2",title:"2. Логические выражения",level:"Начальный",minutes:25,
+theory:`<p>Логическое выражение принимает значение истина или ложь. AND (and) истинно, если истинны оба выражения. OR (or) истинно, если истинно хотя бы одно. NOT (not) меняет значение на противоположное.</p><p>Таблица истинности показывает результат для всех комбинаций переменных. Для двух переменных существует четыре набора значений.</p><p>При решении заданий аккуратно соблюдай скобки и порядок операций.</p>`,
+code:`for a in [False, True]:\n    for b in [False, True]:\n        print(a, b, a and not b)`,
+task:"Составь таблицу истинности для выражения (A И НЕ B) ИЛИ B. Перечисли все четыре сочетания A и B."},
+{id:"e3",title:"3. Кодирование информации",level:"Начальный",minutes:30,
+theory:`<p>Один бит хранит один из двух вариантов: 0 или 1. Один байт равен 8 битам.</p><p>Если алфавит содержит N символов, минимальная фиксированная длина кода i удовлетворяет условию 2ⁱ ≥ N. Иначе говоря, число различных кодов должно быть не меньше размера алфавита.</p><p>Если каждый символ кодируется i битами, сообщение из K символов занимает K·i бит. Внимательно читай, включаются ли пробелы и знаки препинания.</p>`,
+code:`import math\nN = 32\nbits_per_symbol = math.ceil(math.log2(N))\nprint(bits_per_symbol)`,
+task:"Алфавит содержит 32 символа. Найди минимальное количество бит на символ и размер сообщения из 120 символов в битах и байтах."},
+{id:"e4",title:"4. Алгоритмы и исполнители",level:"Базовый",minutes:30,
+theory:`<p>Алгоритм — точное описание действий для решения задачи. Основные конструкции: следование, ветвление и цикл.</p><p>При трассировке алгоритма записывай значение переменных после каждой команды. Это помогает найти ошибку и получить точный результат.</p><p>Исполнитель умеет выполнять определённый набор команд. Важно не менять порядок команд и учитывать начальное состояние.</p>`,
+code:`x = 3\ny = 0\nfor i in range(1, 4):\n    y += x\n    x += 1\nprint(y)`,
+task:"Проследи выполнение кода по шагам. Запиши x и y после каждой итерации и объясни итоговый ответ."},
+{id:"e5",title:"5. Электронные таблицы",level:"Средний",minutes:30,
+theory:`<p>Адрес ячейки состоит из буквы столбца и номера строки, например B3. Формулы начинаются со знака =.</p><p>Относительная ссылка меняется при копировании формулы. Абсолютная ссылка, например $A$1, фиксирует столбец и строку.</p><p>В задачах часто используются сумма, среднее арифметическое, минимум и максимум. Внимательно проверяй диапазон ячеек.</p>`,
+code:`values = [8, 14, 17, 21, 30]\nprint("Сумма:", sum(values))\nprint("Среднее:", sum(values) / len(values))\nprint("Минимум:", min(values))\nprint("Максимум:", max(values))`,
+task:"Для чисел 8, 14, 17, 21, 30 вычисли сумму, среднее, минимум и максимум. Запиши подходящие формулы электронной таблицы."},
+{id:"e6",title:"6. Графы и пути",level:"Средний",minutes:35,
+theory:`<p>Граф состоит из вершин и рёбер. Он может описывать дороги, связи или переходы между состояниями.</p><p>Список смежности перечисляет соседей каждой вершины. Путь — последовательность рёбер между начальной и конечной вершинами.</p><p>Длина пути в невзвешенном графе обычно равна количеству рёбер. Не путай число рёбер и число вершин на маршруте.</p>`,
+code:`graph = {\n    "A": ["B", "C"],\n    "B": ["A", "D"],\n    "C": ["A", "D"],\n    "D": ["B", "C"]\n}\nprint(graph["A"])`,
+task:"Построй граф с вершинами A, B, C, D и рёбрами AB, AC, BD, CD. Запиши список смежности и перечисли пути из A в D длины 2."},
+{id:"e7",title:"7. Перебор и программирование",level:"Средний",minutes:40,
+theory:`<p>Перебор проверяет варианты по очереди. Цикл задаёт диапазон, условие отбирает подходящие варианты, а счётчик накапливает результат.</p><p>В Python range(a, b) включает a, но не включает b. Поэтому для перебора от 1 до 100 включительно нужно использовать range(1, 101).</p><p>После решения проверь границы диапазона и критерий отбора.</p>`,
+code:`count = 0\nfor n in range(1, 101):\n    if n % 7 == 0:\n        count += 1\nprint(count)`,
+task:"Посчитай количество чисел от 1 до 500 включительно, которые делятся на 6 и не делятся на 4. Напиши код и объясни условие."},
+{id:"e8",title:"8. Итоговый тренажёр",level:"Практика",minutes:45,
+theory:`<p>В экзаменационной задаче сначала выдели входные данные, требуемый результат и ограничения. Затем выбери метод решения и проверь его на небольшом примере.</p><p>После получения ответа проверь граничные случаи: ноль, минимальные и максимальные значения, повторяющиеся элементы и пустые данные, если они допустимы.</p><p>Ошибки полезно классифицировать: невнимательное чтение условия, неправильная формула, ошибка алгоритма или ошибка в коде.</p>`,
+code:`numbers = [12, 7, 18, 5, 24, 11, 30]\nanswer = sum(1 for x in numbers if x > 10 and x % 2 == 0)\nprint(answer)`,
+task:"Напиши программу, которая считает в списке числа больше 10, делящиеся на 2. Приведи два теста и результаты: один с положительным ответом, второй с нулевым."}
+]}
 };
 
-let currentRole = "student";
-let progress = JSON.parse(
-  localStorage.getItem("mt-progress") || "{}"
-);
-let currentTrack = "game";
+const $ = id => document.getElementById(id);
+const KEY = "myTrajectory_class_v1";
+let db = loadDB(), user = null, track = "game", lessonId = "g1";
 
-function login() {
-  const role = document.getElementById("role").value;
-  const name = document.getElementById("username").value.trim();
-  const pass = document.getElementById("password").value;
-
-  const valid =
-    (role === "student" && name === "student" && pass === "1234") ||
-    (role === "teacher" && name === "teacher" && pass === "1234");
-
-  if (!valid) {
-    document.getElementById("error").textContent =
-      "Проверь тип кабинета, логин и пароль.";
-    return;
+function loadDB(){
+  try{return JSON.parse(localStorage.getItem(KEY)) || {users:{}}}
+  catch(e){return {users:{}}}
+}
+function saveDB(){localStorage.setItem(KEY,JSON.stringify(db))}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function getUser(name,role){
+  const key = role==="teacher" ? "__teacher__" : name;
+  if(!db.users[key]) db.users[key]={name:role==="teacher"?"Учитель":name,role,progress:{game:{},ege:{}},answers:{},points:0};
+  return db.users[key];
+}
+function allLessons(){return [...COURSES.game.lessons,...COURSES.ege.lessons]}
+function init(){
+  $("student").innerHTML=STUDENTS.map(s=>`<option>${esc(s)}</option>`).join("");
+  $("role").addEventListener("change",()=>$("student").disabled=$("role").value==="teacher");
+  $("loginButton").addEventListener("click",login);
+  $("exit").addEventListener("click",logout);
+  document.querySelectorAll("[data-track]").forEach(b=>b.addEventListener("click",()=>switchTrack(b.dataset.track)));
+  $("export").addEventListener("click",exportCSV);
+}
+function login(){
+  if($("pin").value!=="1234"){$("loginError").textContent="Для демонстрационного входа введи код 1234.";return}
+  const role=$("role").value;
+  user=getUser($("student").value,role);
+  $("login").classList.add("hidden");$("app").classList.remove("hidden");$("exit").classList.remove("hidden");
+  $("headerName").textContent=user.name;
+  $("roleLabel").textContent=role==="teacher"?"Кабинет учителя":"Личный кабинет ученика";
+  $("welcome").textContent=role==="teacher"?"Результаты класса":`Привет, ${user.name}!`;
+  $("intro").textContent=role==="teacher"?"Смотри прогресс и ответы, сохранённые в этом браузере.":"Выбирай траекторию, изучай материал и сохраняй свои решения.";
+  $("trackTabs").classList.toggle("hidden",role==="teacher");
+  $("teacherPanel").classList.toggle("hidden",role!=="teacher");
+  if(role==="teacher"){
+    $("lessonList").innerHTML="";
+    $("lessonContent").innerHTML='<div class="empty">Работы учеников и общая ведомость находятся ниже.</div>';
+    renderTeacher();
+  }else{
+    track="game";lessonId="g1";
+    setTrackButtons();renderTrack();renderLesson();
   }
-
-  currentRole = role;
-  document.getElementById("login").classList.add("hidden");
-  document.getElementById("app").classList.remove("hidden");
-  document.getElementById("welcome").textContent =
-    role === "teacher" ? "Кабинет учителя" : "Кабинет ученика";
-
-  document.getElementById("studentNav").classList.toggle(
-    "hidden", role === "teacher"
-  );
-
-  if (role === "teacher") showTeacher();
-  else showTrack("game");
 }
-
-function logout() {
-  document.getElementById("app").classList.add("hidden");
-  document.getElementById("login").classList.remove("hidden");
+function logout(){
+  user=null;$("app").classList.add("hidden");$("login").classList.remove("hidden");$("exit").classList.add("hidden");$("headerName").textContent="Учебная платформа";
 }
-
-function showTrack(track) {
-  currentTrack = track;
-  const items = lessons[track];
-
-  document.getElementById("content").innerHTML =
-    `<h2>${track === "game" ?
-      "Игровое программирование" :
-      "Подготовка к ЕГЭ"}</h2>` +
-    items.map((lesson, i) => `
-      <article class="lesson">
-        <h3>${lesson.title}</h3>
-        <p>${lesson.theory}</p>
-        <pre>${lesson.code.replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")}</pre>
-        <p><b>Задание:</b> ${lesson.task}</p>
-        <textarea id="work-${track}-${i}"
-          placeholder="Запиши решение..."></textarea>
-        <button onclick="saveWork('${track}', ${i})">
-          Сохранить работу
-        </button>
-        <span id="status-${track}-${i}"></span>
-      </article>
-    `).join("");
+function switchTrack(t){track=t;lessonId=COURSES[t].lessons[0].id;setTrackButtons();renderTrack();renderLesson()}
+function setTrackButtons(){
+  document.querySelectorAll("[data-track]").forEach(b=>{
+    const active=b.dataset.track===track;b.classList.toggle("secondary",!active);
+  });
 }
-
-function saveWork(track, i) {
-  const key = track + "-" + i;
-  const value = document.getElementById(
-    `work-${track}-${i}`
-  ).value.trim();
-
-  if (!value) {
-    alert("Сначала напиши решение.");
-    return;
-  }
-
-  progress[key] = {
-    work: value,
-    date: new Date().toISOString()
-  };
-
-  localStorage.setItem("mt-progress", JSON.stringify(progress));
-  document.getElementById(`status-${track}-${i}`).textContent =
-    " Сохранено в этом браузере";
+function renderTrack(){
+  const lessons=COURSES[track].lessons,p=user.progress[track]||{};
+  const done=lessons.filter(l=>p[l.id]?.done).length;
+  const pct=Math.round(done/lessons.length*100);
+  $("percent").textContent=pct+"%";$("bar").style.width=pct+"%";
+  $("doneCount").textContent=`${done} / ${lessons.length}`;
+  $("points").textContent=(user.points||0)+" баллов";
+  $("lessonList").innerHTML=lessons.map(l=>`<button class="lesson-btn ${p[l.id]?.done?"done":""}" data-lesson="${l.id}"><span>${esc(l.title)}<br><span class="small">${esc(l.level)} · ${l.minutes} мин.</span></span><b>${p[l.id]?.done?"✓":""}</b></button>`).join("");
+  document.querySelectorAll("[data-lesson]").forEach(b=>b.addEventListener("click",()=>{lessonId=b.dataset.lesson;renderTrack();renderLesson()}));
 }
-
-function showTeacher() {
-  const rows = Object.entries(progress);
-
-  document.getElementById("content").innerHTML = `
-    <h2>Кабинет учителя</h2>
-    <p class="muted">
-      Здесь отображаются работы, сохранённые в этом браузере.
-    </p>
-    <p>Сохранённых работ: ${rows.length}</p>
-    <button onclick="exportCSV()">Экспорт CSV</button>
-    <div id="workList"></div>
+function renderLesson(){
+  const l=COURSES[track].lessons.find(x=>x.id===lessonId);if(!l)return;
+  const p=user.progress[track][l.id]||{},answer=user.answers[l.id]||"";
+  $("lessonContent").innerHTML=`
+    <span class="pill">${esc(l.level)} · ${l.minutes} минут</span>
+    <h2 style="margin-top:12px">${esc(l.title)}</h2>
+    <h3>Теория</h3><div>${l.theory}</div>
+    <h3>Разобранный пример</h3><pre><code>${esc(l.code)}</code></pre>
+    <h3>Практическое задание</h3><p>${esc(l.task)}</p>
+    <label for="answer">Твоё решение</label>
+    <textarea id="answer" placeholder="Вставь код или напиши ход решения...">${esc(answer)}</textarea>
+    <div class="row" style="margin-top:12px"><button id="saveAnswer">Сохранить ответ</button><button id="toggleDone" class="secondary">${p.done?"Отменить выполнение":"Отметить выполненным"}</button></div>
+    <p id="message" class="small"></p>
+    ${p.done?'<p class="good">✓ Модуль выполнен и засчитан в прогресс.</p>':""}
   `;
-
-  document.getElementById("workList").innerHTML = rows.map(
-    ([key, item]) => `
-      <article class="lesson">
-        <b>${key}</b>
-        <p>${escapeText(item.work)}</p>
-        <small class="muted">${item.date}</small>
-      </article>
-    `
-  ).join("") || "<p>Работ пока нет.</p>";
+  $("saveAnswer").addEventListener("click",()=>{
+    user.answers[l.id]=$("answer").value;saveDB();
+    $("message").textContent="Ответ сохранён в этом браузере.";
+  });
+  $("toggleDone").addEventListener("click",()=>{
+    const wasDone=!!user.progress[track][l.id]?.done;
+    user.progress[track][l.id]={done:!wasDone,date:!wasDone?new Date().toISOString():null};
+    user.answers[l.id]=$("answer").value;
+    user.points=Math.max(0,(user.points||0)+(wasDone?-10:10));
+    saveDB();renderTrack();renderLesson();
+  });
 }
-
-function escapeText(value) {
-  return String(value).replace(/[&<>"]/g, ch => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"
-  })[ch]);
+function renderTeacher(){
+  const students=STUDENTS.map(name=>({name,u:db.users[name]}));
+  let workCount=0,completed=0;
+  students.forEach(({u})=>{if(!u)return;workCount+=Object.values(u.answers||{}).filter(v=>String(v).trim()).length;completed+=allLessons().filter(l=>u.progress[l.id.startsWith("g")?"game":"ege"]?.[l.id]?.done).length});
+  $("teacherStats").innerHTML=`
+    <div class="card third"><h2>${STUDENTS.length}</h2><p>Учеников в списке</p></div>
+    <div class="card third"><h2>${workCount}</h2><p>Сохранённых ответов</p></div>
+    <div class="card third"><h2>${completed}</h2><p>Завершённых модулей</p></div>`;
+  $("teacherStudents").innerHTML=students.map(({name,u})=>{
+    const game=u?Object.values(u.progress.game||{}).filter(x=>x.done).length:0;
+    const ege=u?Object.values(u.progress.ege||{}).filter(x=>x.done).length:0;
+    const answers=u?Object.entries(u.answers||{}).filter(([id,v])=>String(v).trim()):[];
+    return `<div class="student-row"><div class="row between"><b>${esc(name)}</b><span class="pill">${game+ege}/16 модулей</span></div>
+      <p class="small">Программирование: ${game}/8 · ЕГЭ: ${ege}/8 · Ответов: ${answers.length}</p>
+      ${answers.length?`<details><summary>Посмотреть ответы</summary>${answers.map(([id,v])=>{const l=allLessons().find(x=>x.id===id);return `<p><b>${esc(l?l.title:id)}</b><br>${esc(v).replace(/\n/g,"<br>")}</p>`}).join("")}</details>`:"<span class='small'>Работы пока не сохранены в этом браузере.</span>"}
+    </div>`;
+  }).join("");
 }
-
-function showDiagnostic() {
-  document.getElementById("content").innerHTML = `
-    <h2>Входная диагностика</h2>
-    <p>Что делает цикл while?</p>
-    <button onclick="diagnosticAnswer(false)">Выполняется один раз</button>
-    <button onclick="diagnosticAnswer(true)">Повторяется, пока условие истинно</button>
-    <p id="diagnosticResult"></p>
-  `;
+function exportCSV(){
+  const rows=[["Ученик","Программирование","ЕГЭ","Баллы","Ответов"]];
+  STUDENTS.forEach(name=>{
+    const u=db.users[name];
+    const count=t=>u?Object.values(u.progress[t]||{}).filter(x=>x.done).length:0;
+    const answers=u?Object.values(u.answers||{}).filter(v=>String(v).trim()).length:0;
+    rows.push([name,count("game"),count("ege"),u?.points||0,answers]);
+  });
+  const csv="\ufeff"+rows.map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(";")).join("\r\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="moia-traektoriya-results.csv";a.click();URL.revokeObjectURL(url);
 }
-
-function diagnosticAnswer(correct) {
-  document.getElementById("diagnosticResult").textContent =
-    correct ? "Верно! Можно переходить к практике." :
-    "Повтори тему циклов и попробуй ещё раз.";
-}
-
-function exportCSV() {
-  const rows = [["Модуль", "Работа", "Дата"]];
-  Object.entries(progress).forEach(([key, item]) =>
-    rows.push([key, item.work, item.date])
-  );
-
-  const csv = rows.map(row =>
-    row.map(v => '"' + String(v).replaceAll('"', '""') + '"').join(";")
-  ).join("\\r\\n");
-
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(
-    new Blob(["\\ufeff" + csv], {type:"text/csv;charset=utf-8"})
-  );
-  link.download = "moia-traektoriya.csv";
-  link.click();
-}
-
+init();
 </script>
 </body>
 </html>
