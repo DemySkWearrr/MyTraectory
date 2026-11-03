@@ -51,6 +51,30 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
   header{align-items:flex-start;flex-direction:column}
   main{padding:16px 10px 35px}
 }
+  .reset-box {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.reset-box input {
+  max-width: 320px;
+}
+
+.reset-message {
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+
+.reset-message.success {
+  color: var(--green);
+}
+
+.reset-message.error {
+  color: #ff9292;
+}
 </style>
 </head>
 <body>
@@ -150,10 +174,10 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
 const STUDENTS = [
   "Абраменко Павел","Аракелян Левон","Витолин Андрей",
   "Завьялова Арина","Князев Герард","Кондрашов Георгий",
-  "Лелюк Арсений","Маюн Дарья","Мирошникова Марианн",
+  "Лелюк Арсений","Маюн Дарья","Мирошникова Марианна",
   "Пономарев Михаил","Саблина Яна","Степанян Сабина",
-  "Тарадыменко Степан","Тоцкая Мария","Хачикин Артак",
-  "Чезанов Владислав","Яренчук Виктория"
+  "Тарадыменко Степан","Тоцкая Мария","Хачикян Артак",
+  "Чванов Владислав","Яренчук Виктория"
 ];
 
 const COURSES = {
@@ -839,7 +863,77 @@ function renderLesson() {
       message.textContent = "Не удалось сохранить прогресс в облако. Попробуй ещё раз.";
     }
   });
-                                                    }
+   async function resetStudentPassword(studentId, studentName) {
+  const input = $("reset-password-" + studentId);
+  const message = $("reset-message-" + studentId);
+  const button = $("reset-button-" + studentId);
+
+  const newPassword = input.value;
+
+  message.textContent = "";
+  message.className = "reset-message";
+
+  if (newPassword.length < 8 || newPassword.length > 128) {
+    message.textContent = "Пароль должен содержать от 8 до 128 символов.";
+    message.classList.add("error");
+    return;
+  }
+
+  if (!confirm(
+    `Сбросить пароль ученику ${studentName}?\n\nПосле этого ему нужно будет войти с новым временным паролем и создать личный пароль.`
+  )) {
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Сбрасываем…";
+
+  try {
+    const { data: sessionData, error: sessionError } =
+      await supabaseClient.auth.getSession();
+
+    const token = sessionData?.session?.access_token;
+
+    if (sessionError || !token) {
+      throw new Error("Сеанс учителя завершён. Войдите заново.");
+    }
+
+    const response = await fetch(
+      SUPABASE_URL + "/functions/v1/reset-student-password",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_PUBLISHABLE_KEY,
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+          userId: studentId,
+          newPassword: newPassword
+        })
+      }
+    );
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.error || "Не удалось сбросить пароль.");
+    }
+
+    input.value = "";
+    message.textContent =
+      "Пароль успешно изменён. При следующем входе ученик должен будет создать новый личный пароль.";
+    message.classList.add("success");
+
+  } catch (error) {
+    console.error("Ошибка сброса пароля:", error);
+    message.textContent = error.message || "Ошибка при сбросе пароля.";
+    message.classList.add("error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Сбросить пароль";
+  }
+  }                                                 }
   async function renderTeacher() {
   $("teacherStats").innerHTML =
     '<p class="small">Загружаем облачные результаты…</p>';
@@ -954,6 +1048,37 @@ function renderLesson() {
             }).join("")}
           </details>
         ` : "<span class='small'>Ответы пока не сохранены.</span>"}
+      <div class="reset-box">
+  <b>Управление паролем</b>
+  <label for="reset-password-${student.id}">
+    Новый временный пароль
+  </label>
+  <div class="row">
+    <input
+      id="reset-password-${student.id}"
+      type="password"
+      autocomplete="new-password"
+      minlength="8"
+      maxlength="128"
+      placeholder="Не менее 8 символов"
+    >
+    <button
+      id="reset-button-${student.id}"
+      class="secondary"
+      onclick="resetStudentPassword(
+        '${student.id}',
+        '${esc(student.name)}'
+      )"
+    >
+      Сбросить пароль
+    </button>
+  </div>
+  <p
+    id="reset-message-${student.id}"
+    class="reset-message"
+    role="status"
+  ></p>
+</div>
       </div>
     `;
   }).join("");
