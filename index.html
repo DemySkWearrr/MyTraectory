@@ -889,35 +889,26 @@ function renderLesson() {
   button.textContent = "Сбрасываем…";
 
   try {
-    const { data: sessionData, error: sessionError } =
-      await supabaseClient.auth.getSession();
-
-    const token = sessionData?.session?.access_token;
-
-    if (sessionError || !token) {
-      throw new Error("Сеанс учителя завершён. Войдите заново.");
+const { data, error } = await supabaseClient.functions.invoke(
+  "reset-student-password",
+  {
+    body: {
+      userId: studentId,
+      newPassword: newPassword
     }
+  }
+);
 
-    const response = await fetch(
-      SUPABASE_URL + "/functions/v1/reset-student-password",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": SUPABASE_PUBLISHABLE_KEY,
-          "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify({
-          userId: studentId,
-          newPassword: newPassword
-        })
-      }
-    );
+if (error) {
+  console.error("Supabase Function error:", error);
+  throw new Error(
+    data?.error || error.message || "Ошибка вызова функции."
+  );
+}
 
-    const result = await response.json().catch(() => ({}));
-
-    if (!response.ok || !result.success) {
-      throw new Error(result.error || "Не удалось сбросить пароль.");
+if (!data?.success) {
+  throw new Error(data?.error || "Не удалось сбросить пароль.");
+}
     }
 
     input.value = "";
