@@ -864,8 +864,6 @@ function renderLesson() {
     }
   }); 
   }  
-     async function resetStudentPassword(studentId, studentName) {
-
 async function resetStudentPassword(studentId, studentName) {
   const input = $("reset-password-" + studentId);
   const message = $("reset-message-" + studentId);
@@ -1118,10 +1116,10 @@ function exportCSV() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
 
-  a.href = url;
+    a.href = url;
   a.download = "moia-traektoriya-results.csv";
   a.click();
-}
+
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
