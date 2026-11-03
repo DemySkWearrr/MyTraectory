@@ -862,8 +862,9 @@ function renderLesson() {
       button.disabled = false;
       message.textContent = "Не удалось сохранить прогресс в облако. Попробуй ещё раз.";
     }
-  });
-   async function resetStudentPassword(studentId, studentName) {
+  }); 
+  }  
+     async function resetStudentPassword(studentId, studentName) {
   const input = $("reset-password-" + studentId);
   const message = $("reset-message-" + studentId);
   const button = $("reset-button-" + studentId);
@@ -924,7 +925,6 @@ if (!data?.success) {
     button.disabled = false;
     button.textContent = "Сбросить пароль";
   }
-  }                                                 }
   async function renderTeacher() {
   $("teacherStats").innerHTML =
     '<p class="small">Загружаем облачные результаты…</p>';
