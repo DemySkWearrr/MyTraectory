@@ -865,6 +865,8 @@ function renderLesson() {
   }); 
   }  
      async function resetStudentPassword(studentId, studentName) {
+
+async function resetStudentPassword(studentId, studentName) {
   const input = $("reset-password-" + studentId);
   const message = $("reset-message-" + studentId);
   const button = $("reset-button-" + studentId);
@@ -890,26 +892,26 @@ function renderLesson() {
   button.textContent = "Сбрасываем…";
 
   try {
-const { data, error } = await supabaseClient.functions.invoke(
-  "reset-student-password",
-  {
-    body: {
-      userId: studentId,
-      newPassword: newPassword
+    const { data, error } = await supabaseClient.functions.invoke(
+      "reset-student-password",
+      {
+        body: {
+          userId: studentId,
+          newPassword: newPassword
+        }
+      }
+    );
+
+    if (error) {
+      console.error("Supabase Function error:", error);
+      throw new Error(
+        data?.error || error.message || "Ошибка вызова функции."
+      );
     }
-  }
-);
 
-if (error) {
-  console.error("Supabase Function error:", error);
-  throw new Error(
-    data?.error || error.message || "Ошибка вызова функции."
-  );
-}
-
-if (!data?.success) {
-  throw new Error(data?.error || "Не удалось сбросить пароль.");
-}
+    if (!data?.success) {
+      throw new Error(data?.error || "Не удалось сбросить пароль.");
+    }
 
     input.value = "";
     message.textContent =
@@ -920,10 +922,13 @@ if (!data?.success) {
     console.error("Ошибка сброса пароля:", error);
     message.textContent = error.message || "Ошибка при сбросе пароля.";
     message.classList.add("error");
+
   } finally {
     button.disabled = false;
     button.textContent = "Сбросить пароль";
   }
+}
+
   async function renderTeacher() {
   $("teacherStats").innerHTML =
     '<p class="small">Загружаем облачные результаты…</p>';
