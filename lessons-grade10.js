@@ -77,5 +77,102 @@ const grade10Lessons = {
     ["Интерактивность","Раздели данные и отрисовку, чтобы интерфейс отражал текущее состояние.","Добавь задачи, изменение статуса и фильтр. Проверь, что ввод отображается как текст."],
     ["Тестирование веб-проекта","Проверяй обычный ввод, ошибки, клавиатуру и узкий экран.","Запиши пять ручных проверок списка дел и исправь одну обнаруженную проблему."],
     ["Публикация проекта","Публикуй только учебные данные. Перед публикацией проверь относительные пути.","Подготовь итоговый проект с README и результатами проверок. Приложи безопасную учебную ссылку или исходный код."]
+  ],
+  telegram: [
+    ["Идея первого бота", "Бот получает события и отвечает через Telegram Bot API. Начни с одной понятной задачи, например с меню школьного кружка на вымышленных данных.", "Спланируй бота-помощника. Напиши ожидаемые ответы на /start, /help и незнакомую команду. Проверь свою функцию в Python без Telegram."],
+    ["От BotFather до первого ответа", "В @BotFather создай учебного бота командой /newbot. В PowerShell перед запуском Python задай переменную окружения $env:TELEGRAM_BOT_TOKEN. Храни токен как пароль. getUpdates получает события, а offset подтверждает обработанные события.", "Сохрани пример в bot.py, запусти командой python bot.py и отправь своему боту /start. Сдай код без токена и напиши, что увидел. Если Telegram недоступен, сдай локальные проверки функции reply."],
+    ["Команды и понятное меню", "Раздели получение событий и формирование ответа. Тогда функцию можно проверить без доступа к Telegram.", "Замени reply из урока 2. Добавь /help, /about и понятный ответ на неизвестную команду. Сдай три проверки через assert."],
+    ["Кнопки под сообщением", "Inline-кнопки можно привязать к ссылке или к callback_data. Нажатие на кнопку с callback_data создаёт callback_query. Бот должен подтвердить событие через answerCallbackQuery.", "Добавь кнопку «Подсказка» в приватный чат. Обработай значение hint и подтверди нажатие. В отчёте опиши, чем кнопка со ссылкой отличается от callback-кнопки."],
+    ["Мини-викторина", "Для короткой викторины можно хранить вопрос и варианты в словаре, а состояние тестового сеанса — в памяти программы. После перезапуска состояние очистится.", "Сделай два вопроса на тему HTML и CSS. Дай один ответ через кнопку или команду, сообщи результат и покажи проверки правильного и неправильного ответа."],
+    ["Веб-страница и бот", "Бот может отправить HTTPS-ссылку на страницу с правилами или заданиями. Статическую страницу можно опубликовать отдельно. Код бота работает в Python, а HTML, CSS и JavaScript — в браузере.", "Сделай адаптивную страницу «Школьная викторина» и добавь к боту кнопку «Открыть правила». На странице добавь обратную ссылку на своего учебного бота."],
+    ["Мини-приложение внутри Telegram", "Mini App — веб-страница, открытая внутри Telegram. Для учебной версии можно сделать интерактивность прямо в браузере. Если позже понадобится вход, данные initData должен проверять сервер по документации Telegram.", "Добавь к учебной странице простой счётчик или один вопрос. Открой её кнопкой web_app в личном чате с ботом. Если HTTPS-публикация недоступна, сдай локальную страницу и объясни, как подключил бы кнопку."],
+    ["Итоговый проект: веб-помощник", "Простой итоговый проект связывает бота и веб-страницу одной задачей. Объясни, где запускается Python, как открывается страница и где хранится токен.", "Сдай бота с меню, одним интерактивным действием и HTTPS-ссылкой на свою страницу. Приложи код без токенов, инструкцию запуска и проверки: команда /start, кнопка и открытие страницы с телефона."]
   ]
+};
+
+const grade10Examples = {
+  web: {
+    1: { code: "Браузер → GET /index.html → сервер\nБраузер ← 200 OK + HTML ← сервер", check: "В своём примере отдельно подпиши запрос, ответ и роль каждой стороны." },
+    2: { code: '<!doctype html>\n<html lang="ru">\n<head>\n  <meta charset="utf-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <title>Школьный клуб</title>\n</head>\n<body>\n  <h1>Наш клуб</h1>\n</body>\n</html>', check: "В браузере виден один заголовок, а название вкладки берётся из title." },
+    4: { code: '<a href="rules.html">Правила клуба</a>\n<img src="images/logo.png" alt="Логотип школьного клуба">', check: "Ссылки открываются, а без картинки понятно, что было на её месте." },
+    12: { code: ".actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n}", check: "На узком экране кнопки переносятся, не выходя за границы." },
+    14: { code: ".cards { display: grid; grid-template-columns: repeat(3, 1fr); }\n@media (max-width: 640px) {\n  .cards { grid-template-columns: 1fr; }\n}", check: "Сравни страницу на ширине 360 и 1024 пикселя." }
+  },
+  telegram: {
+    1: {
+      code: 'def reply(text):\n    if text == "/start":\n        return "Привет! Напиши /help"\n    if text == "/help":\n        return "Я бот школьного кружка"\n    return "Не знаю эту команду"\n\nassert reply("/start").startswith("Привет")\nassert reply("???") == "Не знаю эту команду"',
+      check: "Все проверки проходят локально. Для этого задания токен не нужен."
+    },
+    2: {
+      code: [
+        'import json',
+        'import os',
+        'import time',
+        'from urllib.request import Request, urlopen',
+        '',
+        'def api(method, **data):',
+        '    token = os.environ["TELEGRAM_BOT_TOKEN"]',
+        '    payload = json.dumps(data).encode("utf-8")',
+        '    req = Request(f"https://api.telegram.org/bot{token}/{method}",',
+        '                  data=payload, headers={"Content-Type": "application/json"})',
+        '    try:',
+        '        with urlopen(req, timeout=25) as response:',
+        '            body = json.load(response)',
+        '    except OSError:',
+        '        raise RuntimeError("Проверь сеть, токен и другие запуски бота.") from None',
+        '    if not body.get("ok"):',
+        '        raise RuntimeError("Telegram не принял запрос.")',
+        '    return body["result"]',
+        '',
+        'def reply(text):',
+        '    if text == "/start":',
+        '        return "Привет! Я учебный бот."',
+        '    return "Напиши /start"',
+        '',
+        'def main():',
+        '    if not os.getenv("TELEGRAM_BOT_TOKEN"):',
+        '        raise SystemExit("Сначала задай TELEGRAM_BOT_TOKEN.")',
+        '    offset = 0',
+        '    print("Бот запущен. Ctrl+C остановит программу.")',
+        '    while True:',
+        '        try:',
+        '            for update in api("getUpdates", offset=offset, timeout=15, allowed_updates=["message"]):',
+        '                msg = update.get("message", {})',
+        '                if msg.get("text") and msg["chat"]["type"] == "private":',
+        '                    api("sendMessage", chat_id=msg["chat"]["id"], text=reply(msg["text"]))',
+        '                offset = update["update_id"] + 1',
+        '        except RuntimeError as error:',
+        '            print(error)',
+        '            time.sleep(3)',
+        '',
+        'if __name__ == "__main__":',
+        '    main()'
+      ].join("\n"),
+      check: "Бот отвечает в личном чате. В сдаваемом файле нет токена, а при сетевой ошибке он не попадает в вывод."
+    },
+    3: {
+      code: 'def reply(text):\n    menu = {"/start": "Привет!", "/help": "Команды: /start, /about", "/about": "Учебный проект"}\n    return menu.get(text.strip().lower(), "Напиши /help")\n\nassert reply(" /HELP ") == "Команды: /start, /about"',
+      check: "Тесты выполняются без сетевых запросов."
+    },
+    4: {
+      code: '# Отправка кнопки\napi("sendMessage", chat_id=chat_id, text="Выбери действие",\n    reply_markup={"inline_keyboard": [[{"text": "Подсказка", "callback_data": "hint"}]]})\n\n# В getUpdates укажи allowed_updates=["message", "callback_query"].\n# В цикле обработки update:\nquery = update.get("callback_query")\nif query and query.get("data") == "hint":\n    api("answerCallbackQuery", callback_query_id=query["id"], text="Начни с HTML")',
+      check: "После нажатия появляется подсказка, а индикатор ожидания исчезает."
+    },
+    5: {
+      code: 'question = {"text": "Какой тег задаёт заголовок первого уровня?", "correct": "h1"}\n\ndef check(answer):\n    return answer.strip().lower() == question["correct"]\n\nassert check(" H1 ")\nassert not check("p")',
+      check: "Ответы разного регистра обрабатываются одинаково. В отчёте только тестовые данные."
+    },
+    6: {
+      code: 'api("sendMessage", chat_id=chat_id, text="Открой правила",\n    reply_markup={"inline_keyboard": [[{\n        "text": "Открыть правила", "url": "https://example.org/rules.html"\n    }]]})',
+      check: "Подставь собственную опубликованную ссылку. Проверь переходы из бота на страницу и обратно."
+    },
+    7: {
+      code: 'api("sendMessage", chat_id=chat_id, text="Учебное мини-приложение",\n    reply_markup={"inline_keyboard": [[{\n        "text": "Открыть", "web_app": {"url": "https://example.org/quiz.html"}\n    }]]})',
+      check: "В личном чате кнопка открывает HTTPS-страницу внутри Telegram. Код бота и токен не попадают в файлы сайта."
+    },
+    8: {
+      code: "Ученик → /start → Python-бот → кнопка → веб-страница\nВеб-страница → правила и интерактивное задание",
+      check: "Другой человек может повторить запуск по твоему README. Все три проверки дают ожидаемый результат."
+    }
+  }
 };

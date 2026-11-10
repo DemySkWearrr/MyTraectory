@@ -122,26 +122,32 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
       <h1 id="welcome">Привет!</h1>
       <p id="intro">Выбирай тему, изучай материал и выполняй задания.</p>
       <div class="tabs" id="trackTabs"></div>
-      <div class="row between">
-        <span class="small">Прогресс выбранной траектории</span>
-        <b id="percent">0%</b>
+      <nav id="teacherClassTabs" class="tabs hidden" aria-label="Классы">
+        <button type="button" data-teacher-class="10" aria-controls="grade10Teacher">10 класс</button>
+        <button type="button" data-teacher-class="11" aria-controls="teacherPanel">11 класс</button>
+      </nav>
+      <div data-student-only>
+        <div class="row between">
+          <span class="small">Прогресс выбранной траектории</span>
+          <b id="percent">0%</b>
+        </div>
+        <div class="progress"><span id="bar"></span></div>
       </div>
-      <div class="progress"><span id="bar"></span></div>
     </div>
 
-    <div class="card third">
+    <div class="card third" data-student-only>
       <h2>Мои результаты</h2>
       <h1 id="doneCount">0 / 8</h1>
       <p>модулей завершено</p>
       <span id="points" class="pill">0 баллов</span>
     </div>
 
-    <div class="card third">
+    <div class="card third" data-student-only>
       <h2>Учебные модули</h2>
       <div id="lessonList" class="lesson-list"></div>
     </div>
 
-    <div class="card wide">
+    <div class="card wide" data-student-only>
       <div id="lessonContent">
         <div class="empty">Выбери учебный модуль.</div>
       </div>
@@ -453,6 +459,10 @@ function usernameToEmail(username) {
     const button = event.target.closest("[data-track]");
     if (button) switchTrack(button.dataset.track);
   });
+  $("teacherClassTabs").addEventListener("click", event => {
+    const button = event.target.closest("[data-teacher-class]");
+    if (button && user?.role === "teacher") selectTeacherClass(button.dataset.teacherClass);
+  });
   $("export").addEventListener("click", exportCSV);
 }
 
@@ -612,7 +622,10 @@ async function enterApp(profile, username) {
     ? "Облачный прогресс и ответы учеников."
     : "Выбирай траекторию, изучай материал и сохраняй свои решения.";
 
-  $("trackTabs").classList.toggle("hidden", user.role === "teacher");
+  const isTeacher = user.role === "teacher";
+  $("trackTabs").classList.toggle("hidden", isTeacher);
+  $("teacherClassTabs").classList.toggle("hidden", !isTeacher);
+  document.querySelectorAll("[data-student-only]").forEach(item => item.classList.toggle("hidden", isTeacher));
   $("trackTabs").innerHTML = "";
   $("lessonList").textContent = "";
   $("lessonContent").textContent = "";
@@ -621,13 +634,11 @@ async function enterApp(profile, username) {
   $("doneCount").textContent = "—";
   $("points").textContent = "—";
   $("grade10Teacher").replaceChildren();
-  $("teacherPanel").classList.toggle("hidden", user.role !== "teacher");
-  $("grade10Teacher").classList.toggle("hidden", user.role !== "teacher");
+  $("teacherPanel").classList.add("hidden");
+  $("grade10Teacher").classList.add("hidden");
 
-  if (user.role === "teacher") {
-    $("lessonList").innerHTML = "";
-    $("lessonContent").innerHTML =
-      '<div class="empty">Работы учеников и ведомость находятся ниже.</div>';
+  if (isTeacher) {
+    selectTeacherClass("10");
     await Promise.all([renderTeacher(), renderGrade10Teacher()]);
   } else {
     const { data, error } = await supabaseClient
@@ -656,6 +667,16 @@ async function enterApp(profile, username) {
     renderTrack();
     renderLesson();
   }
+}
+
+function selectTeacherClass(classNumber) {
+  $("grade10Teacher").classList.toggle("hidden", classNumber !== "10");
+  $("teacherPanel").classList.toggle("hidden", classNumber !== "11");
+  $("teacherClassTabs").querySelectorAll("[data-teacher-class]").forEach(button => {
+    const active = button.dataset.teacherClass === classNumber;
+    button.classList.toggle("secondary", !active);
+    button.setAttribute("aria-pressed", String(active));
+  });
 }
 
 async function loadOwnProgress() {
@@ -1122,8 +1143,8 @@ function exportCSV() {
 }
 
 </script>
-<script src="lessons-grade10.js"></script>
-<script src="grade10.js"></script>
+<script src="lessons-grade10.js?v=telegram1"></script>
+<script src="grade10.js?v=telegram1"></script>
 <script>init();</script>
 </body>
 </html>
