@@ -167,7 +167,8 @@ async function renderGrade10Teacher() {
 
   const options = groups.data.map(row =>
     '<option value="' + esc(row.code) + '">' + esc(row.title) + '</option>').join("");
-  panel.innerHTML = '<h2>10 класс</h2><details><summary>Создать ученика</summary>' +
+  panel.innerHTML = '<h2>10 класс</h2><section id="grade10Roster"></section>' +
+    '<details><summary>Создать ученика</summary>' +
     '<form id="grade10Create"><label>Логин<input name="username" required minlength="3" maxlength="64" autocomplete="off"></label>' +
     '<label>Имя и фамилия<input name="fullName" required minlength="2" maxlength="120"></label>' +
     '<label>Группа<select name="groupCode">' + options + '</select></label>' +
@@ -273,7 +274,51 @@ async function renderGrade10Teacher() {
   $("grade10Course").addEventListener("change", loadQueue);
   $("grade10Reload").addEventListener("click", loadQueue);
   setPupils();
-  await loadQueue();
+  await Promise.all([loadQueue(), renderGrade10Roster(viewer)]);
+}
+
+async function renderGrade10Roster(viewer) {
+  const section = $("grade10Roster");
+  section.innerHTML = '<h3>Список по группам</h3><p role="status">Загружаем список…</p>';
+  const { data, error } = await supabaseClient.rpc("grade10_read_roster");
+  if (user !== viewer || !section.isConnected) return;
+  const message = section.querySelector("[role=status]");
+  if (error) {
+    message.textContent = ["PGRST202", "42883"].includes(error.code)
+      ? "Чтобы показать ранее сохранённый список, подключи его в Supabase."
+      : "Не удалось загрузить список групп. Обнови страницу.";
+    return;
+  }
+
+  const groups = new Map();
+  for (const row of data || []) {
+    if (!groups.has(row.source_group_id)) {
+      groups.set(row.source_group_id, { title: row.group_name, pupils: [] });
+    }
+    if (row.full_name) groups.get(row.source_group_id).pupils.push(row.full_name);
+  }
+  if (!groups.size) {
+    message.textContent = "В сохранённом списке нет групп 10 класса.";
+    return;
+  }
+
+  message.textContent = "Список групп из Supabase. Для создания аккаунта сначала проверь, есть ли ученик в ведомости.";
+  for (const group of groups.values()) {
+    const details = document.createElement("details");
+    details.className = "student-row";
+    const summary = document.createElement("summary");
+    summary.textContent = group.title + " · " + group.pupils.length;
+    details.append(summary);
+    const list = document.createElement("ul");
+    for (const name of group.pupils) {
+      const item = document.createElement("li");
+      item.textContent = name;
+      list.append(item);
+    }
+    if (group.pupils.length) details.append(list);
+    else details.append("В списке пока нет учеников.");
+    section.append(details);
+  }
 }
 
 function reviewForm(row) {
