@@ -183,6 +183,12 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
 .algo-help code{color:#c8ceff}
 .algo-node-hint{font-size:11px;color:#bac4d7;margin:8px 0 0;line-height:1.4}
 
+
+.teacher-nav{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.teacher-nav button[aria-selected="true"]{background:var(--accent);color:#101522;border-color:var(--accent)}
+.teacher-add-panel{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:18px}
+.student-creation-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}
+@media(max-width:650px){.student-creation-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -290,6 +296,11 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
           <button id="export">Экспорт CSV</button>
         </div>
       </div>
+      <div class="teacher-nav" role="tablist" aria-label="Разделы кабинета учителя">
+        <button class="secondary" type="button" role="tab" aria-selected="true" id="teacherRosterTab" aria-controls="teacherRosterView">Ученики и группы</button>
+        <button class="secondary" type="button" role="tab" aria-selected="false" id="teacherAddTab" aria-controls="teacherAddView">＋ Добавить ученика</button>
+      </div>
+      <section id="teacherRosterView" role="tabpanel" aria-labelledby="teacherRosterTab">
       <div class="teacher-filters" aria-label="Фильтры кабинета учителя">
         <div>
           <label for="teacherClassFilter">Класс</label>
@@ -338,6 +349,25 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
       <div class="notice">
         Прогресс и ответы хранятся в Supabase. Отправка в Google Таблицу также сохраняется как дополнительная функция.
       </div>
+      </section>
+      <section id="teacherAddView" class="hidden teacher-add-panel" role="tabpanel" aria-labelledby="teacherAddTab">
+        <h3>Создать аккаунт ученика</h3>
+        <p class="small">Задай логин, временный пароль и учебный план. После первого входа ученик должен установить личный пароль. Создание доступно только учителю.</p>
+        <form id="createStudentForm" autocomplete="off">
+          <div class="student-creation-grid">
+            <div><label for="createStudentSurname">Фамилия</label><input id="createStudentSurname" name="surname" maxlength="80" required placeholder="Иванов"></div>
+            <div><label for="createStudentFirstName">Имя</label><input id="createStudentFirstName" name="firstName" maxlength="80" required placeholder="Иван"></div>
+            <div><label for="createStudentLogin">Логин</label><input id="createStudentLogin" name="username" required minlength="3" maxlength="32" autocapitalize="none" spellcheck="false" placeholder="ivanov10" pattern="[a-z][a-z0-9._-]{2,31}"></div>
+            <div><label for="createStudentPassword">Временный пароль</label><input id="createStudentPassword" name="password" type="password" autocomplete="new-password" required minlength="8" maxlength="128" placeholder="Не менее 8 символов"></div>
+            <div><label for="createStudentClass">Класс</label><select id="createStudentClass" name="classNumber" required><option value="10">10 класс</option><option value="11">11 класс</option></select></div>
+            <div><label for="createStudentGroup">Группа (необязательно)</label><select id="createStudentGroup" name="studyGroup"></select></div>
+            <div><label for="createStudentLevel">Уровень обучения</label><select id="createStudentLevel" name="studyLevel" required><option value="basic">Базовый</option><option value="advanced">Углублённый</option></select></div>
+          </div>
+          <p class="small">Логин: латинские буквы, цифры, точка, дефис и подчёркивание; начинается с буквы, 3–32 символа. В 10 классе доступны группы электива 1–7, в 11-м — 1–2.</p>
+          <div class="row"><button type="submit" id="createStudentButton">Создать ученика</button><button class="secondary" type="reset">Очистить поля</button></div>
+          <p class="reset-message" role="status" aria-live="polite" id="createStudentMessage"></p>
+        </form>
+      </section>
     </div>
   </div>
 </section>
@@ -4610,6 +4640,14 @@ async function sendAnswerToSheet(data) {
 }
   function init() {
   $("loginButton").addEventListener("click", login);
+  $("teacherRosterTab").addEventListener("click", () => selectTeacherTab("roster"));
+  $("teacherAddTab").addEventListener("click", () => selectTeacherTab("add"));
+  $("createStudentClass").addEventListener("change", updateCreationGroupOptions);
+  $("createStudentForm").addEventListener("submit", createStudentAccount);
+  $("createStudentForm").addEventListener("reset", () => {
+    setTimeout(() => {updateCreationGroupOptions(); $("createStudentMessage").textContent = "";}, 0);
+  });
+  updateCreationGroupOptions();
   $("demoTeacherButton").addEventListener("click", openStudentDemo);
   $("demoBackButton").addEventListener("click", closeStudentDemo);
   for (const id of ['demoClass','demoLevel','demoGroup','demoElective']) {
@@ -4663,6 +4701,73 @@ async function sendAnswerToSheet(data) {
   });
 }
 
+function selectTeacherTab(tab) {
+  if (!user || user.role !== "teacher" || previewMode) return;
+  const adding = tab === "add";
+  $("teacherRosterView").classList.toggle("hidden", adding);
+  $("teacherAddView").classList.toggle("hidden", !adding);
+  $("teacherRosterTab").setAttribute("aria-selected", String(!adding));
+  $("teacherAddTab").setAttribute("aria-selected", String(adding));
+}
+
+function updateCreationGroupOptions() {
+  const classNumber = Number($("createStudentClass").value);
+  const group = $("createStudentGroup");
+  const previous = group.value;
+  group.innerHTML = '<option value="">Без группы</option>' + groupNumbers(classNumber).map(n =>
+    `<option value="${n}">${esc(teacherGroupName(n, classNumber))}</option>`
+  ).join("");
+  if (groupNumbers(classNumber).includes(Number(previous)) && previous !== "") group.value = previous;
+}
+
+async function createStudentAccount(event) {
+  event.preventDefault();
+  const message = $("createStudentMessage");
+  const button = $("createStudentButton");
+  message.className = "reset-message";
+  message.textContent = "";
+  if (!user || user.role !== "teacher" || previewMode || !supabaseClient) {
+    message.textContent = "Создание аккаунтов доступно только авторизованному учителю.";
+    message.classList.add("error");
+    return;
+  }
+  const username = $("createStudentLogin").value.trim().toLowerCase();
+  const surname = $("createStudentSurname").value.trim();
+  const firstName = $("createStudentFirstName").value.trim();
+  const password = $("createStudentPassword").value;
+  const classNumber = Number($("createStudentClass").value);
+  const studyGroup = $("createStudentGroup").value ? Number($("createStudentGroup").value) : null;
+  const studyLevel = $("createStudentLevel").value;
+  if (!/^[a-z][a-z0-9._-]{2,31}$/.test(username) || username === "teacher" ||
+      !surname || !firstName || password.length < 8 || password.length > 128 ||
+      ![10,11].includes(classNumber) || !["basic","advanced"].includes(studyLevel) ||
+      (studyGroup !== null && !groupNumbers(classNumber).includes(studyGroup))) {
+    message.textContent = "Проверь поля: логин, имя, фамилию, пароль, класс, группу и уровень.";
+    message.classList.add("error");
+    return;
+  }
+  button.disabled = true;
+  button.textContent = "Создаём…";
+  try {
+    const {data, error} = await supabaseClient.functions.invoke("create-student", {
+      body: {username, password, surname, firstName, classNumber, studyGroup, studyLevel}
+    });
+    if (error) throw new Error(data?.error || error.message || "Ошибка подключения к Supabase Function.");
+    if (!data?.success) throw new Error(data?.error || "Не удалось создать ученика.");
+    $("createStudentPassword").value = "";
+    message.textContent = `${surname} ${firstName} (${username}) создан. Ученик сможет войти по временному паролю и сменить его при первом входе.`;
+    message.classList.add("success");
+    await renderTeacher();
+  } catch(error) {
+    console.error("Ошибка создания ученика:",error);
+    message.textContent = error.message || "Не удалось создать ученика. Проверь развёртывание функции create-student.";
+    message.classList.add("error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Создать ученика";
+  }
+}
+
 async function login() {
   const username = $("username").value.trim().toLowerCase();
   const password = $("password").value;
@@ -4670,8 +4775,8 @@ async function login() {
   const button = $("loginButton");
   errorBox.textContent = "";
 
-  if (!/^(student\d{2,4}|teacher)$/.test(username)) {
-    errorBox.textContent = "Проверь логин. Например: student01 или teacher.";
+  if (!/^[a-z][a-z0-9._-]{2,31}$/.test(username)) {
+    errorBox.textContent = "Проверь логин: 3–32 символа, латиница, цифры, точка, дефис или подчёркивание.";
     return;
   }
   if (!password) {
