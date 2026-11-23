@@ -119,6 +119,70 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
   .teacher-filters,.placement-controls {grid-template-columns:1fr}
   .placement-controls button {white-space:normal}
 }
+/* Мобильный визуальный конструктор алгоритмов */
+.algorithm-builder{margin:26px 0;padding:18px;border:1px solid #7183c7;border-radius:16px;background:linear-gradient(145deg,#1a253c,#171d2c)}
+.algo-header{display:flex;justify-content:space-between;gap:15px;align-items:start;flex-wrap:wrap}
+.algo-header h3{margin:9px 0 5px;font-size:20px}
+.algo-header p{max-width:680px;margin:4px 0 0}
+.algo-header>div:last-child{min-width:220px}
+.algo-header label{margin-top:0}
+.algo-tip{border-left:3px solid #8b9dff;padding:8px 12px;color:#d6dcff;background:#242d42;border-radius:6px}
+.algo-palette{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}
+.algo-palette button{font-size:13px;padding:9px 11px}
+.algo-flow{display:flex;flex-direction:column;gap:10px;max-width:930px;margin:16px auto}
+.algo-terminator{text-align:center;border:1px solid #61799c;color:#dce8fb;background:#26334b;border-radius:999px;padding:9px 18px;margin:0 auto;font-size:13px;font-weight:800;min-width:165px}
+.algo-node{position:relative;border:1px solid #577298;border-left:5px solid #779ef2;padding:11px;background:#202a3d;border-radius:10px;min-width:0}
+.algo-node::before{content:'↓';position:absolute;top:-16px;left:50%;font-size:15px;color:#9aafff}
+.algo-node[data-kind="input"]{border-left-color:#f4be78}
+.algo-node[data-kind="set"]{border-left-color:#85c6ec}
+.algo-node[data-kind="print"]{border-left-color:#77d6b3}
+.algo-node[data-kind="if"]{border-left-color:#c3a0ff}
+.algo-node[data-kind="for"],.algo-node[data-kind="while"]{border-left-color:#f2979e}
+.algo-node.algo-highlight{outline:3px solid #ffb477;outline-offset:2px;background:#392937}
+.algo-node-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.algo-node-top b{font-size:14px}
+.algo-node-actions{display:flex;gap:5px}
+.algo-node-actions button{min-width:32px;min-height:30px;padding:3px 7px;border-radius:7px}
+.algo-fields{display:flex;align-items:end;gap:9px;flex-wrap:wrap}
+.algo-field{display:flex;flex-direction:column;flex:1;min-width:135px;margin:0!important;font-size:12px;color:#bec9df}
+.algo-field span{display:block;margin-bottom:4px}
+.algo-field input,.algo-field select{padding:9px;min-height:40px;background:#101827;font-size:14px}
+.algo-branch{margin:11px 0 3px 12px;padding:10px 0 7px 14px;border-left:2px dashed #7a8cad;display:grid;gap:9px}
+.algo-branch-title{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#cad4ff;font-weight:800}
+.algo-empty{font-size:13px;color:#aab4c8;padding:9px;border:1px dashed #4f627a;border-radius:8px}
+.algo-inner-add{display:flex;gap:7px;flex-wrap:wrap}
+.algo-inner-add select{width:auto;max-width:230px;min-width:135px;font-size:13px}
+.algo-inner-add button{font-size:13px}
+.algo-columns{display:grid;grid-template-columns:minmax(220px,1fr) minmax(280px,1fr);gap:14px;margin:19px 0}
+.algo-subpanel{padding:13px;background:#111a2b;border:1px solid #415475;border-radius:11px;min-width:0}
+.algo-subpanel h4{margin:0 0 12px;color:#e7eafd}
+.algo-subpanel .algo-field{margin:10px 0!important}
+.algo-python{margin:0;max-height:280px;overflow:auto;background:#0b1321;color:#d4e3ff;border:1px solid #313e58;padding:13px;white-space:pre;line-height:1.5;font-size:13px}
+.algo-toolbar{margin:16px 0}
+.algo-toolbar button{font-size:14px}
+.algo-result{border:1px solid #536b92;border-radius:11px;background:#111a2b;padding:14px;white-space:normal}
+.algo-result h4{margin:0 0 8px;font-size:16px}
+.algo-result p{margin:5px 0 9px;color:#e5e9f8}
+.algo-result details{margin-top:9px;font-size:13px}
+.algo-result details summary{cursor:pointer}
+.algo-result ol{padding-left:23px}
+.algo-result li{padding:3px 0}
+.algo-result pre{white-space:pre-wrap;max-height:250px}
+.algo-success{border-color:#4fbb96;background:#132b2a}
+.algo-error{border-color:#d9a26c;background:#31251f}
+.algo-test-row{padding:10px;margin:9px 0;border-radius:8px;border-left:3px solid #d9a26c;background:#141e30}
+.algo-pass{border-color:#62d0ad}
+.algo-fail{border-color:#ef969a}
+.algo-test-row .small{white-space:pre-line}
+@media(max-width:720px){.algorithm-builder{padding:11px;margin:18px -3px}.algo-columns{grid-template-columns:1fr}.algo-fields{display:grid;grid-template-columns:1fr}.algo-header>div:last-child{width:100%}.algo-node{padding:9px}.algo-branch{margin-left:2px;padding-left:9px}.algo-inner-add select,.algo-inner-add button{width:100%;max-width:none}.algo-toolbar button{width:100%}.algo-subpanel{padding:10px}}
+
+.algo-help{margin:10px 0 14px;border:1px solid #475878;border-radius:8px;padding:9px 12px;background:#172034}
+.algo-help summary{cursor:pointer;font-size:13px;font-weight:700}
+.algo-help ol{padding-left:20px;margin:8px 0;color:#d6dfed;font-size:13px;line-height:1.6}
+.algo-help li{margin:6px 0}
+.algo-help code{color:#c8ceff}
+.algo-node-hint{font-size:11px;color:#bac4d7;margin:8px 0 0;line-height:1.4}
+
 </style>
 </head>
 <body>
@@ -142,7 +206,6 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
   <p class="small">Логин ученика выдаёт учитель (например, student01). Для учителя: teacher.</p>
   <div class="row" style="margin-top:12px">
     <button id="loginButton">Войти</button>
-    <button id="demoLoginButton" class="secondary" type="button">Посмотреть демо ученика</button>
   </div>
   <p id="loginError" class="small" role="status"></p>
 </section>
@@ -4547,7 +4610,6 @@ async function sendAnswerToSheet(data) {
 }
   function init() {
   $("loginButton").addEventListener("click", login);
-  $("demoLoginButton").addEventListener("click", openStudentDemo);
   $("demoTeacherButton").addEventListener("click", openStudentDemo);
   $("demoBackButton").addEventListener("click", closeStudentDemo);
   for (const id of ['demoClass','demoLevel','demoGroup','demoElective']) {
@@ -4617,7 +4679,7 @@ async function login() {
     return;
   }
   if (!supabaseClient) {
-    errorBox.textContent = "Авторизация недоступна: не загрузилась библиотека Supabase. Демо можно открыть без подключения.";
+    errorBox.textContent = "Авторизация недоступна: не загрузилась библиотека Supabase. Проверь интернет и обнови страницу.";
     return;
   }
 
@@ -4751,6 +4813,7 @@ async function enterApp(profile, username) {
 
   $("login").classList.add("hidden");
   $("forcePassword").classList.add("hidden");
+  $("demoControls").classList.add("hidden");
   $("app").classList.remove("hidden");
   $("exit").classList.remove("hidden");
   $("headerName").textContent = user.name;
@@ -4868,9 +4931,24 @@ async function logout() {
   $("password").value = "";
 }
 
-function openStudentDemo() {
-  if (previewMode) return;
-  previewReturnUser = user && user.role === 'teacher' ? user : null;
+async function openStudentDemo() {
+  // Скрыть кнопку недостаточно: проверяем реальную сессию и роль на сервере.
+  if (previewMode || !user || user.role !== 'teacher' || !activeProfile || activeProfile.role !== 'teacher' || !supabaseClient) return;
+  const demoButton = $('demoTeacherButton');
+  demoButton.disabled = true;
+  try {
+    const {data:authData,error:authError} = await supabaseClient.auth.getUser();
+    if (authError || authData?.user?.id !== user.id) throw new Error('Сеанс учителя не подтверждён. Войди заново.');
+    const {data:verifiedProfile,error:profileError} = await supabaseClient.from('profiles')
+      .select('role').eq('id',authData.user.id).single();
+    if (profileError || verifiedProfile?.role !== 'teacher') throw new Error('Демо доступно только учителю.');
+  } catch (error) {
+    $('teacherActionMessage').textContent = error.message || 'Не получилось проверить права для демо.';
+    return;
+  } finally {
+    demoButton.disabled = false;
+  }
+  previewReturnUser = user;
   previewMode = true;
   $('demoClass').value = '10';
   $('demoLevel').value = 'advanced';
@@ -5054,6 +5132,7 @@ function renderLesson() {
     <div class="experiment"><h3>Попробуй сам · 8 минут</h3><p>${esc(user.studyLevel === 'advanced' ? l.experimentAdvanced : l.experimentBasic)}</p><p class="read-tip">Это тренировка перед основным заданием: ответы здесь не сохраняются и не оцениваются автоматически.</p></div>
     <div class="selfcheck"><h3>Самопроверка · 5 минут</h3><p class="read-tip">Сначала ответь без подсказки, затем открой ориентир. Он не заменяет собственное объяснение.</p>${(l.selfCheck||[]).map((item,i) => `<details><summary>${i+1}. ${esc(item.q)}</summary><p>${esc(item.a)}</p></details>`).join('')}</div>
     <h3>Основное практическое задание</h3><p>${esc(user.studyLevel === 'advanced' && l.taskAdvanced ? l.taskAdvanced : l.taskBasic || l.task)}</p>
+    ${algIsAvailable(l) ? algMarkup(l) : ''}
     <label for="answer">Твоё решение</label>
     <textarea id="answer" ${previewMode ? 'readonly' : ''} placeholder="${previewMode ? 'В демо сохранение отключено' : 'Вставь код или напиши ход решения...'}">${esc(answer)}</textarea>
     <div class="row" style="margin-top:12px">
@@ -5063,6 +5142,8 @@ function renderLesson() {
     <p id="message" class="small"></p>
     ${p.done ? '<p class="good">✓ Модуль выполнен и засчитан в прогресс.</p>' : ""}
   `;
+
+  if (algIsAvailable(l)) algInitControls(l);
 
   $("saveAnswer").addEventListener("click", async () => {
     if (previewMode) return;
@@ -5579,6 +5660,547 @@ function renderTeacherCourseOverview() {
     <p class="small">Каждое направление рассчитано на 30 учебных недель. Одна группа выбирает один электив; занятия идут отдельно от обязательной программы.</p>
     ${Object.values(ELECTIVE_COURSES).map(course=>`<p><b>${esc(course.title)}</b>: ${course.lessons.map(l=>esc(l.title)).join(' · ')}</p>`).join('')}
   </section>`;
+}
+
+/* Визуальный конструктор алгоритмов. Без eval и без исполнения произвольного Python. */
+const ALG_TEMPLATES = {
+  greeting: {
+    name: 'Приветствие (ввод и вывод)', tip: 'Измени имя, запусти и посмотри, как ввод становится результатом.',
+    inputs: {name:'Маша'},
+    tests: [
+      {input:{name:'Маша'}, expected:'Привет, Маша'},
+      {input:{name:'Лев'}, expected:'Привет, Лев'}
+    ],
+    blocks: [
+      {type:'input', variable:'name', prompt:'Как тебя зовут?', kind:'text'},
+      {type:'print', expression:'"Привет, " + name'}
+    ]
+  },
+  sum: {
+    name: 'Сложение двух чисел', tip: 'Попробуй поменять + на - или удалить вычисление. Проверка объяснит, что произошло.',
+    inputs:{a:'4',b:'7'},
+    tests:[
+      {input:{a:'4',b:'7'},expected:'11'},
+      {input:{a:'0',b:'8'},expected:'8'},
+      {input:{a:'-3',b:'2'},expected:'-1'}
+    ],
+    blocks:[
+      {type:'input',variable:'a', prompt:'Первое число',kind:'number'},
+      {type:'input',variable:'b', prompt:'Второе число',kind:'number'},
+      {type:'set',variable:'result',expression:'a + b'},
+      {type:'print',expression:'result'}
+    ]
+  },
+  parity: {
+    name: 'Проверка чётности', tip: 'Используй условие с остатком от деления. Проверь чётное, нечётное и ноль.',
+    inputs:{n:'8'},
+    tests:[
+      {input:{n:'8'},expected:'Чётное'},
+      {input:{n:'7'},expected:'Нечётное'},
+      {input:{n:'0'},expected:'Чётное'}
+    ],
+    blocks:[
+      {type:'input',variable:'n',prompt:'Введи число',kind:'number'},
+      {type:'if',condition:'n % 2 == 0',yes:[{type:'print',expression:'"Чётное"'}],no:[{type:'print',expression:'"Нечётное"'}]}
+    ]
+  },
+  for_sum: {
+    name: 'Цикл: сумма от 1 до N', tip: 'Пройди по всем числам и прибавь их к сумме. Найди, что изменится при удалении накопителя.',
+    inputs:{n:'5'},
+    tests:[
+      {input:{n:'5'},expected:'15'},
+      {input:{n:'1'},expected:'1'},
+      {input:{n:'4'},expected:'10'}
+    ],
+    blocks:[
+      {type:'input',variable:'n',prompt:'Верхняя граница N',kind:'number'},
+      {type:'set',variable:'total',expression:'0'},
+      {type:'for',variable:'i',start:'1',end:'n',body:[{type:'set',variable:'total',expression:'total + i'}]},
+      {type:'print',expression:'total'}
+    ]
+  },
+  while_count: {
+    name: 'Цикл while: счётчик', tip: 'Цикл продолжается, пока условие верно. Удали увеличение счётчика и запусти: увидишь защиту от бесконечного цикла.',
+    inputs:{n:'3'},
+    tests:[
+      {input:{n:'3'},expected:'1\n2\n3'},
+      {input:{n:'1'},expected:'1'},
+      {input:{n:'0'},expected:''}
+    ],
+    blocks:[
+      {type:'input',variable:'n',prompt:'До какого числа считать?',kind:'number'},
+      {type:'set',variable:'i',expression:'1'},
+      {type:'while',condition:'i <= n',body:[
+        {type:'print',expression:'i'},
+        {type:'set',variable:'i',expression:'i + 1'}
+      ]}
+    ]
+  },
+  blank: {name:'Чистый алгоритм',tip:'Собери свой алгоритм из команд. В этом режиме проверяй результат вручную — автоматического эталона нет.',inputs:{},tests:[],blocks:[]}
+};
+const ALG_BLOCK_NAMES = {
+  input:'Ввод значения', set:'Вычислить / присвоить', print:'Вывести результат',
+  if:'Условие: если / иначе', for:'Цикл FOR', while:'Цикл WHILE'
+};
+const ALG_BLOCK_HINTS = {
+  input:'Ввод: программа получает значение от человека и запоминает его в переменной.',
+  set:'Вычисление: справа формула, слева имя переменной, в которую сохраняется результат.',
+  print:'Вывод: покажи число, переменную или текст в обычных кавычках, например «"Готово"».',
+  if:'Условие: проверь сравнение (например, n > 0). В ветке ДА выполняются одни команды, в НЕТ — другие.',
+  for:'FOR: повтори действия для всех целых чисел от первой границы до второй включительно.',
+  while:'WHILE: повторяй действия, пока условие верно. Обязательно меняй значение, влияющее на условие.'
+};
+const ALG_BLOCK_DEFAULTS = {
+  input:{type:'input',variable:'n',prompt:'Введи число',kind:'number'},
+  set:{type:'set',variable:'result',expression:'0'},
+  print:{type:'print',expression:'result'},
+  if:{type:'if',condition:'n > 0',yes:[],no:[]},
+  for:{type:'for',variable:'i',start:'1',end:'5',body:[]},
+  while:{type:'while',condition:'n > 0',body:[]}
+};
+const algorithmEditors = new Map();
+let algorithmNodeCounter = 1;
+function algClone(obj) {return JSON.parse(JSON.stringify(obj));}
+function algGiveIds(blocks) {
+  blocks.forEach(block => {
+    block.id = 'alg-' + algorithmNodeCounter++;
+    if (block.yes) algGiveIds(block.yes);
+    if (block.no) algGiveIds(block.no);
+    if (block.body) algGiveIds(block.body);
+  });
+}
+function algSelectTemplateForLesson(l) {
+  const text = (l.title + ' ' + (l.taskAdvanced||'') + ' ' + (l.taskBasic||'')).toLowerCase();
+  if (/while|пока\s|до выполнения условия/.test(text)) return 'while_count';
+  if (/чётност|четност|остаток|услови|ветвлен|if\b|логическ/.test(text)) return 'parity';
+  if (/цикл|for\b|повторени|сумм.*чис|накопител|перебор/.test(text)) return 'for_sum';
+  if (/ввод|вывод|переменн|тип данных|арифмет|сложени|вычислен/.test(text)) return 'sum';
+  return 'greeting';
+}
+function algIsAvailable(l) {
+  if (!user || !l) return false;
+  if (track === 'ege' && user.classNumber === 10 &&
+      (user.previewElective || electiveGroupTracks[user.studyGroup]) === 'website') return false;
+  // Для Python/алгоритмов доступен полноценный блоковый редактор. В иных темах — только объяснения.
+  const haystack = `${l.title} ${l.code||''} ${l.task||''}`;
+  if (user.classNumber === 10 && track === 'game') return true;
+  if (track === 'ege' && user.classNumber === 10) return true;
+  return /python|print\s*\(|input\s*\(|range\s*\(|\bfor\s+\w+\s+in\b|\bwhile\s|\bif\s|алгоритм|цикл|программирован|перебор|трассиров/i.test(haystack);
+}
+function algCurrentKey(l) {return (previewMode ? 'demo:' : (user?.id||'unknown') + ':') + l.id;}
+function algGetState(l) {
+  const key = algCurrentKey(l);
+  if (!algorithmEditors.has(key)) algSetTemplate(key,algSelectTemplateForLesson(l));
+  return algorithmEditors.get(key);
+}
+function algSetTemplate(key,templateName) {
+  const preset = ALG_TEMPLATES[templateName] || ALG_TEMPLATES.blank;
+  const blocks = algClone(preset.blocks);
+  algGiveIds(blocks);
+  algorithmEditors.set(key,{templateName,blocks,inputs:algClone(preset.inputs)});
+}
+function algAvailableOptions() {
+  return Object.entries(ALG_BLOCK_NAMES).map(([key, label])=>`<option value="${key}">${esc(label)}</option>`).join('');
+}
+function algTemplateOptions(selected) {
+  return Object.entries(ALG_TEMPLATES).map(([key, item]) =>
+    `<option value="${key}" ${key===selected?'selected':''}>${esc(item.name)}</option>`).join('');
+}
+function algMarkup(l) {
+  const state=algGetState(l);
+  return `<section class="algorithm-builder" id="algorithmBuilder" aria-label="Визуальный конструктор алгоритмов">
+    <div class="algo-header"><div><span class="pill">БЛОК-СХЕМЫ → PYTHON</span>
+      <h3>Собери алгоритм без написания кода</h3>
+      <p class="small">Нажимай на команды, меняй поля и порядок блоков. Программа выполняется в браузере, Python-код показывается для знакомства с синтаксисом.</p>
+    </div><div><label for="algoTemplate">Тренировочный пример</label>
+      <select id="algoTemplate">${algTemplateOptions(state.templateName)}</select></div></div>
+    <p id="algoTip" class="algo-tip">${esc(ALG_TEMPLATES[state.templateName].tip)}</p>
+    <details class="algo-help"><summary>Как работать с конструктором — инструкция для новичков</summary>
+      <ol><li>Выбери готовый тренировочный пример и нажми «Запустить». Посмотри результат и шаги.</li>
+      <li>Поменяй число в тестовых данных или условие в блоке. Запусти снова и сравни.</li>
+      <li>Добавляй новые команды кнопками сверху, меняй порядок стрелками ↑ ↓, а действия внутри условия или цикла — кнопкой «Добавить внутрь».</li>
+      <li><b>Выражения:</b> <code>a + b</code> — сложение, <code>n % 2</code> — остаток, <code>n == 5</code> — сравнение, <code>n &gt; 5 and n &lt; 10</code> — два условия. Текст записывай в кавычках, например <code>"Привет"</code>.</li>
+      <li>«Проверить на примерах» сравнит результат с эталонами выбранной тренировки. Для сдачи вставь алгоритм в ответ и отдельно нажми «Сохранить ответ».</li></ol>
+    </details>
+    <div class="algo-palette" aria-label="Добавить команду">${Object.entries(ALG_BLOCK_NAMES).map(([key,label])=>
+      `<button class="secondary" type="button" data-algo-action="add" data-algo-target="root" data-algo-type="${key}">+ ${esc(label)}</button>`).join('')}</div>
+    <div class="algo-flow" id="algoFlow"></div>
+    <div class="algo-columns">
+      <div class="algo-subpanel"><h4>1. Тестовые значения</h4><div id="algoInputs"></div>
+        <p class="small">Введи свои числа или текст. Тесты с эталоном будут использовать собственные наборы данных.</p></div>
+      <div class="algo-subpanel"><h4>2. Такой Python получится</h4>
+        <pre id="algoPython" class="algo-python"></pre>
+        <p class="small">Это учебное представление блоков, а не запуск настоящего Python. Функции, файлы и библиотеки в конструкторе пока не выполняются.</p></div>
+    </div>
+    <div class="row algo-toolbar">
+      <button type="button" id="algoRun">▶ Запустить с моими данными</button>
+      <button class="secondary" type="button" id="algoTests">✓ Проверить на примерах</button>
+      <button class="secondary" type="button" id="algoSend" ${previewMode?'disabled':''}>Вставить решение в ответ</button>
+      <button class="secondary" type="button" id="algoReset">Сбросить пример</button>
+    </div>
+    <div id="algoResult" class="algo-result" aria-live="polite" role="status">Собери алгоритм или измени готовый пример, затем нажми «Запустить».</div>
+  </section>`;
+}
+function algFindNode(blocks,id) {
+  for (let i=0;i<blocks.length;i++) {
+    const node=blocks[i];
+    if(node.id===id) return {node,list:blocks,index:i};
+    for(const branch of ['yes','no','body']) if (node[branch]) {
+      const found=algFindNode(node[branch],id); if(found) return found;
+    }
+  }
+  return null;
+}
+function algInputField(node,key,label,placeholder='') {
+  return `<label class="algo-field"><span>${esc(label)}</span><input data-algo-node="${node.id}" data-algo-field="${key}" autocomplete="off" value="${esc(node[key]||'')}" placeholder="${esc(placeholder)}"></label>`;
+}
+function algBranchMarkup(branch, label, state, node, depth) {
+  const children = node[branch] || [];
+  return `<div class="algo-branch"><div class="algo-branch-title">${esc(label)}</div>
+    ${children.length ? children.map(child => algNodeMarkup(child,depth+1)).join('') : '<div class="algo-empty">Добавь команду внутрь блока</div>'}
+    <div class="algo-inner-add"><select data-algo-branch-select="${node.id}:${branch}" aria-label="Выбрать вложенную команду">${algAvailableOptions()}</select>
+    <button type="button" class="secondary" data-algo-action="add-inner" data-algo-parent="${node.id}" data-algo-branch="${branch}">Добавить внутрь</button></div>
+  </div>`;
+}
+function algNodeMarkup(node,depth=0) {
+  if(depth>7) return '<div class="notice">Слишком много вложенных блоков.</div>';
+  const fields = node.type==='input' ?
+      algInputField(node,'variable','Переменная','n') + algInputField(node,'prompt','Вопрос','Введи число') +
+      `<label class="algo-field"><span>Тип ввода</span><select data-algo-node="${node.id}" data-algo-field="kind"><option value="number" ${node.kind==='number'?'selected':''}>Целое число</option><option value="decimal" ${node.kind==='decimal'?'selected':''}>Дробное число</option><option value="text" ${node.kind==='text'?'selected':''}>Текст</option></select></label>` :
+    node.type==='set' ? algInputField(node,'variable','Запомнить в','result') + algInputField(node,'expression','Вычислить','a + b') :
+    node.type==='print' ? algInputField(node,'expression','Что вывести','result') :
+    node.type==='if' ? algInputField(node,'condition','Проверить условие','n > 0') :
+    node.type==='for' ? algInputField(node,'variable','Счётчик','i') + algInputField(node,'start','От (включительно)','1') + algInputField(node,'end','До (включительно)','5') :
+    node.type==='while' ? algInputField(node,'condition','Пока истинно','i <= 5') : '';
+  const body = node.type==='if' ? algBranchMarkup('yes','ДА — условие истинно',null,node,depth) + algBranchMarkup('no','НЕТ — иначе',null,node,depth) :
+    (node.type==='for'||node.type==='while') ? algBranchMarkup('body','ПОВТОРЯТЬ',null,node,depth):'';
+  return `<div class="algo-node" data-node-id="${node.id}" data-kind="${node.type}">
+    <div class="algo-node-top"><b>${esc(ALG_BLOCK_NAMES[node.type]||node.type)}</b>
+      <div class="algo-node-actions"><button title="Выше" type="button" class="secondary" data-algo-action="up" data-algo-id="${node.id}">↑</button>
+      <button title="Ниже" type="button" class="secondary" data-algo-action="down" data-algo-id="${node.id}">↓</button>
+      <button title="Удалить" type="button" class="secondary" data-algo-action="remove" data-algo-id="${node.id}">×</button></div></div>
+    <div class="algo-fields">${fields}</div><p class="algo-node-hint">${esc(ALG_BLOCK_HINTS[node.type]||'')}</p>${body}</div>`;
+}
+function algRenderEditor() {
+  const container=$('algorithmBuilder'); if(!container) return;
+  const l=getCoursesForClass(user.classNumber,user.studyLevel,user.studyGroup,user.previewElective)[track]?.lessons.find(x=>x.id===lessonId);
+  if(!l)return;
+  const state=algGetState(l);
+  $('algoTip').textContent=ALG_TEMPLATES[state.templateName].tip;
+  $('algoFlow').innerHTML=`<div class="algo-terminator">● НАЧАЛО</div>${state.blocks.length ?
+    state.blocks.map(node=>algNodeMarkup(node)).join('') : '<p class="algo-empty">Алгоритм пуст. Добавь первую команду сверху.</p>'}
+    <div class="algo-terminator">■ КОНЕЦ</div>`;
+  const inputs=[];
+  (function collect(blocks){for (const node of blocks){
+    if(node.type==='input'&&!inputs.some(item=>item.name===node.variable)) inputs.push({name:node.variable,prompt:node.prompt,kind:node.kind});
+    for(const b of ['yes','no','body']) if(node[b]) collect(node[b]);
+  }})(state.blocks);
+  $('algoInputs').innerHTML=inputs.length?inputs.map(entry=>
+    `<label class="algo-field"><span>${esc(entry.prompt||entry.name)} (${esc(entry.name)}, ${entry.kind==='text'?'текст':entry.kind==='decimal'?'дробное':'целое число'})</span>
+    <input data-algo-test-input="${esc(entry.name)}" value="${esc(state.inputs[entry.name]??'')}" placeholder="${entry.kind==='text'?'Маша':'5'}"></label>`).join('')
+    : '<p class="small">В блоках нет команды ввода. Алгоритм запустится без внешних значений.</p>';
+  $('algoPython').textContent=algGeneratePython(state.blocks);
+}
+function algPythonLines(blocks,level=0) {
+  const indent='    '.repeat(level), out=[];
+  for(const b of blocks) {
+    if(b.type==='input') out.push(indent+`${b.variable} = ${b.kind==='text'?'input(':b.kind==='decimal'?'float(input(':'int(input('}${JSON.stringify(b.prompt||'Введи значение')}${b.kind==='text'?')':'))'}`);
+    if(b.type==='set') out.push(indent+`${b.variable} = ${b.expression}`);
+    if(b.type==='print') out.push(indent+`print(${b.expression})`);
+    if(b.type==='if') {
+      out.push(indent+`if ${b.condition}:`);
+      out.push(...(b.yes.length?algPythonLines(b.yes,level+1):[indent+'    pass']));
+      if (b.no.length){out.push(indent+'else:');out.push(...algPythonLines(b.no,level+1));}
+    }
+    if(b.type==='for') {
+      out.push(indent+`for ${b.variable} in range(${b.start}, (${b.end}) + 1):`);
+      out.push(...(b.body.length?algPythonLines(b.body,level+1):[indent+'    pass']));
+    }
+    if(b.type==='while') {
+      out.push(indent+`while ${b.condition}:`);
+      out.push(...(b.body.length?algPythonLines(b.body,level+1):[indent+'    pass']));
+    }
+  }
+  return out;
+}
+function algGeneratePython(blocks){return algPythonLines(blocks).join('\n')||'# Добавь блоки, и здесь появится код Python';}
+function algTokenize(source) {
+  const tokens=[];let pos=0;
+  const reg=/^\s*(?:(\d+(?:\.\d+)?)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|([\p{L}_][\p{L}\p{N}_]*)|(\*\*|\/\/|==|!=|<=|>=|[()+\-*\/%<>]))/u;
+  while(pos<source.length){
+    if(/^\s*$/.test(source.slice(pos)))break;
+    const m=source.slice(pos).match(reg);
+    if(!m)throw new Error(`Не понимаю выражение возле «${source.slice(pos,pos+15)}». Проверь операторы, скобки и кавычки.`);
+    tokens.push({type:m[1]?'number':m[2]?'string':m[3]?'word':'op',value:m[1]||m[2]||m[3]||m[4]});
+    pos+=m[0].length;
+    if(tokens.length>120)throw new Error('Слишком длинное выражение. Раздели вычисление на несколько блоков.');
+  }
+  return tokens;
+}
+const ALG_PRECEDENCE={or:1,and:2,'==':3,'!=':3,'>':3,'<':3,'>=':3,'<=':3,'+':4,'-':4,'*':5,'/':5,'//':5,'%':5,'**':6};
+function algParseExpression(source) {
+  if(!String(source).trim())throw new Error('Выражение пустое. Введи число, имя переменной или формулу.');
+  const tokens=algTokenize(String(source));let cursor=0;
+  const peek=()=>tokens[cursor]?.value;
+  const take=()=>tokens[cursor++];
+  function atom(){
+    const tok=take(); if(!tok)throw new Error('В выражении не хватает числа, переменной или закрывающей скобки.');
+    if(tok.value==='('){const exp=parse(0);if(peek()!==')')throw new Error('Не хватает закрывающей скобки «)».');take();return exp;}
+    if(['not','-','+'].includes(tok.value))return {type:'unary',op:tok.value,operand:parse(7)};
+    if(tok.type==='number')return {type:'literal',value:Number(tok.value)};
+    if(tok.type==='string'){
+      const raw=tok.value.slice(1,-1).replace(/\\n/g,'\n').replace(/\\t/g,'\t').replace(/\\(["'\\])/g,'$1');
+      return {type:'literal',value:raw};
+    }
+    if(tok.type==='word'){
+      if(tok.value==='True')return {type:'literal',value:true};
+      if(tok.value==='False')return {type:'literal',value:false};
+      if(['and','or'].includes(tok.value))throw new Error(`Оператор «${tok.value}» должен быть между двумя условиями.`);
+      return {type:'variable',name:tok.value};
+    }
+    throw new Error(`Неожиданный знак «${tok.value}». Проверь порядок действий.`);
+  }
+  function parse(minPrec){
+    let left=atom();
+    while(peek()&&Object.hasOwn(ALG_PRECEDENCE,peek())&&ALG_PRECEDENCE[peek()]>=minPrec){
+      const op=take().value, prec=ALG_PRECEDENCE[op];
+      const right=parse(prec+(op==='**'?0:1));
+      left={type:'binary',op,left,right};
+    }
+    return left;
+  }
+  const ast=parse(0);
+  if(cursor!==tokens.length)throw new Error(`Лишний элемент «${tokens[cursor].value}». Проверь выражение и скобки.`);
+  return ast;
+}
+function algEvaluate(ast,env){
+  if(ast.type==='literal')return ast.value;
+  if(ast.type==='variable'){
+    if(!Object.hasOwn(env,ast.name))throw new Error(`Переменная «${ast.name}» ещё не создана. Добавь блок «Ввод» или «Вычислить» до её использования.`);
+    return env[ast.name];
+  }
+  if(ast.type==='unary'){
+    const val=algEvaluate(ast.operand,env);
+    if(ast.op==='not')return !Boolean(val);
+    if(typeof val!=='number')throw new Error('Знаки + и - можно поставить только перед числом.');
+    return ast.op==='-'?-val:val;
+  }
+  if(ast.op==='and')return Boolean(algEvaluate(ast.left,env))&&Boolean(algEvaluate(ast.right,env));
+  if(ast.op==='or')return Boolean(algEvaluate(ast.left,env))||Boolean(algEvaluate(ast.right,env));
+  const left=algEvaluate(ast.left,env),right=algEvaluate(ast.right,env);
+  if(['+','-','*','/','//','%','**'].includes(ast.op)){
+    if(ast.op==='+'&&typeof left==='string'&&typeof right==='string')return left+right;
+    if(typeof left!=='number'||typeof right!=='number')throw new Error('В вычислении используются несовместимые типы. Для арифметики нужны числа, а текст можно складывать только с текстом.');
+    if(['/','//','%'].includes(ast.op)&&right===0)throw new Error('Деление на ноль невозможно. Измени входные данные или добавь проверку условия.');
+    let val;
+    switch(ast.op){case '+':val=left+right;break;case '-':val=left-right;break;case '*':val=left*right;break;
+      case '/':val=left/right;break;case '//':val=Math.floor(left/right);break;case '%':val=((left%right)+right)%right;break;case '**':val=left**right;break;}
+    if(!Number.isFinite(val)||Math.abs(val)>1e15)throw new Error('Получилось слишком большое число. Проверь формулу и значения.');
+    return val;
+  }
+  if(['>','<','>=','<='].includes(ast.op)&&typeof left!==typeof right)throw new Error('Нельзя сравнивать число и текст знаком > или <. Проверь тип ввода.');
+  switch(ast.op){
+    case '==':return left===right;case '!=':return left!==right;
+    case '>':return left>right;case '<':return left<right;case '>=':return left>=right;case '<=':return left<=right;
+  }
+  throw new Error('Неизвестная операция «'+ast.op+'».');
+}
+function algFormat(value){return typeof value==='boolean'?(value?'True':'False'):String(value);}
+function algRunBlocks(blocks,inputs) {
+  const env=Object.create(null),output=[],trace=[];
+  let steps=0, currentNode=null;
+  const step=(node,note)=>{
+    currentNode=node;
+    steps++;
+    if(steps>600)throw new Error('Алгоритм выполнил больше 600 шагов. Возможно, цикл бесконечный: проверь условие WHILE и изменение счётчика.');
+    if(trace.length<32)trace.push(`${steps}. ${note}`);
+  };
+  const expr=source=>algEvaluate(algParseExpression(source),env);
+  const nameCheck=name=>{
+    if(!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name||''))throw new Error(`Имя переменной «${name||'(пусто)'}» должно начинаться с латинской буквы и состоять из букв, цифр или _.`);
+    if(['True','False','and','or','not','if','for','while','print','input'].includes(name))throw new Error(`«${name}» — служебное слово Python. Выбери другое имя переменной.`);
+  };
+  const execute=(arr,depth=0)=>{
+    if(depth>12)throw new Error('Слишком большая вложенность блоков. Упрости алгоритм.');
+    for(const node of arr){
+      currentNode=node;
+      if(node.type==='input'){
+        nameCheck(node.variable);
+        if(!Object.hasOwn(inputs,node.variable)||String(inputs[node.variable]).trim()==='')throw new Error(`Не задано значение «${node.variable}». Заполни поле тестовых данных.`);
+        const raw=String(inputs[node.variable]).trim();
+        if(node.kind!=='text'){
+          const valid = node.kind==='decimal' ? /^[+-]?\d+(?:\.\d+)?$/.test(raw) : /^[+-]?\d+$/.test(raw);
+          if(!valid)throw new Error(`В «${node.variable}» ожидается ${node.kind==='decimal'?'число':'целое число'}, но введено «${raw}». Введи, например, 5 или -2.`);
+          env[node.variable]=Number(raw);
+        } else env[node.variable]=String(inputs[node.variable]);
+        step(node,`Ввод ${node.variable} = ${algFormat(env[node.variable])}`);
+      }else if(node.type==='set'){
+        nameCheck(node.variable);
+        env[node.variable]=expr(node.expression);
+        step(node,`${node.variable} = ${algFormat(env[node.variable])}`);
+      }else if(node.type==='print'){
+        const value=expr(node.expression);output.push(algFormat(value));
+        step(node,`Вывод: ${algFormat(value)}`);
+        if(output.length>80)throw new Error('Вывод превысил 80 строк. Похоже, алгоритм печатает слишком много.');
+      }else if(node.type==='if'){
+        const ok=Boolean(expr(node.condition));step(node,`Проверка «${node.condition}» → ${ok?'ДА':'НЕТ'}`);
+        execute(ok?node.yes:node.no,depth+1);
+      }else if(node.type==='for'){
+        nameCheck(node.variable);
+        const from=expr(node.start),to=expr(node.end);
+        if(!Number.isInteger(from)||!Number.isInteger(to))throw new Error('В цикле FOR границы должны быть целыми числами.');
+        if(to-from>600)throw new Error('Слишком много повторений FOR. Уменьши верхнюю границу (максимум 600 шагов).');
+        step(node,`Цикл FOR ${node.variable}: от ${from} до ${to}`);
+        for(let i=from;i<=to;i++){
+          env[node.variable]=i;step(node,`Повторение: ${node.variable} = ${i}`);
+          execute(node.body,depth+1);
+        }
+      }else if(node.type==='while'){
+        let round=0;
+        step(node,`Цикл WHILE: ${node.condition}`);
+        while(Boolean(expr(node.condition))){
+          round++; if(round>150)throw new Error(`Цикл WHILE повторился ${round} раз. Вероятно, условие никогда не станет ложным. Измени счётчик внутри цикла.`);
+          step(node,`Повторение WHILE №${round}`);
+          execute(node.body,depth+1);
+        }
+        step(node,`Цикл WHILE завершён: условие ложно`);
+      }
+    }
+  };
+  try {
+    execute(blocks);
+    return {ok:true,output:output.join('\n'),trace,steps,env};
+  }catch(error){
+    return {ok:false,message:error.message||'Непонятная ошибка алгоритма.',blockId:currentNode?.id,trace,output:output.join('\n'),steps};
+  }
+}
+function algShowResult(html,type='') {
+  const target=$('algoResult');if(!target)return;
+  target.className='algo-result '+(type==='error'?'algo-error':type==='success'?'algo-success':'');
+  target.innerHTML=html;
+}
+function algResultDetails(result) {
+  if(!result.ok) {
+    return `<p><b>Ошибка в блоке:</b> ${esc(result.message)}</p>`+
+      (result.blockId?`<p class="small">Подсвечен блок с ошибкой. Поправь его и запусти снова.</p>`:'');
+  }
+  return `<p><b>Получилось:</b></p><pre>${esc(result.output||'(ничего не выведено)')}</pre>
+    <p class="small">Выполнено шагов: ${result.steps}</p>`;
+}
+function algShowTrace(result) {
+  return `<details><summary>Посмотреть выполнение по шагам</summary><ol>${result.trace.map(row=>`<li>${esc(row.replace(/^\d+\.\s*/,''))}</li>`).join('')}</ol>
+    ${result.steps>32?'<p class="small">Показаны первые 32 шага.</p>':''}</details>`;
+}
+function algClearHighlights() {
+  document.querySelectorAll('#algoFlow .algo-node.algo-highlight').forEach(node=>node.classList.remove('algo-highlight'));
+}
+function algHighlight(id) {
+  algClearHighlights();if(!id)return;
+  const node=Array.from(document.querySelectorAll('#algoFlow .algo-node')).find(el=>el.dataset.nodeId===id);
+  if(node){node.classList.add('algo-highlight');node.scrollIntoView({block:'nearest',behavior:'smooth'});}
+}
+function algRunCurrent() {
+  const l=getCoursesForClass(user.classNumber,user.studyLevel,user.studyGroup,user.previewElective)[track]?.lessons.find(x=>x.id===lessonId);
+  if(!l)return;
+  const state=algGetState(l);algClearHighlights();
+  const res=algRunBlocks(state.blocks,state.inputs);if(!res.ok)algHighlight(res.blockId);
+  algShowResult(`<h4>${res.ok?'Алгоритм выполнился':'Нашли ошибку'}</h4>${algResultDetails(res)}${algShowTrace(res)}
+    ${res.ok?'<p class="small">Программа запустилась, но правильность решения учебной задачи лучше проверить ещё и на разных тестах.</p>':''}`,res.ok?'success':'error');
+}
+function algFailureHint(blocks) {
+  const flat=[];
+  (function visit(list){for(const block of list){flat.push(block.type);for(const branch of ['yes','no','body'])if(block[branch])visit(block[branch]);}})(blocks);
+  if(flat.includes('if'))return 'Подсказка: проверь знак сравнения и команды в ветках ДА и НЕТ. Раскрой шаги выполнения — увидишь, какую ветку выбрала программа.';
+  if(flat.includes('while'))return 'Подсказка: посмотри, как меняется счётчик. Если начальное значение или условие неверные, цикл сделает лишнее или слишком мало повторений.';
+  if(flat.includes('for'))return 'Подсказка: проверь начальную и конечную границу цикла, а также начальное значение накопителя (например, total = 0).';
+  if(flat.includes('set'))return 'Подсказка: проверь, в какую переменную сохраняется результат и что именно написано справа от знака =.';
+  return 'Подсказка: сравни команды вывода с ожидаемым ответом и проверь порядок блоков.';
+}
+function algRunTests() {
+  const l=getCoursesForClass(user.classNumber,user.studyLevel,user.studyGroup,user.previewElective)[track]?.lessons.find(x=>x.id===lessonId);
+  if(!l)return;
+  const state=algGetState(l);algClearHighlights();
+  const tests=ALG_TEMPLATES[state.templateName].tests;
+  if(!tests.length){algShowResult('<h4>Нет эталонных тестов</h4><p>Ты выбрал свободный алгоритм. Запусти его со своими данными и сравни ответ с ожидаемым результатом.</p>');return;}
+  let ok=0;
+  const rows=tests.map((test,i)=>{
+    const res=algRunBlocks(state.blocks,test.input);
+    const passed=res.ok && res.output.trim()===test.expected.trim();
+    if(passed)ok++;
+    if(!res.ok && res.blockId)algHighlight(res.blockId);
+    const inputs=Object.entries(test.input).map(([k,v])=>`${k}=${v}`).join(', ');
+    return `<div class="algo-test-row ${passed?'algo-pass':'algo-fail'}"><b>${passed?'✓':'✗'} Тест ${i+1}: ${esc(inputs)}</b>
+      <div class="small">Ожидали: ${esc(test.expected||'(пустой вывод)')} · Получили: ${esc(res.ok?(res.output||'(пустой вывод)'):('Ошибка: '+res.message))}</div>
+      ${!res.ok?'<p class="small">Посмотри подсвеченный блок и исправь ошибку.</p>':(!passed?`<p class="small">${esc(algFailureHint(state.blocks))}</p>`:'')}
+      ${!passed?algShowTrace(res):''}
+    </div>`;
+  });
+  algShowResult(`<h4>${ok===tests.length?'Все тесты пройдены!':'Есть что исправить'}</h4><p>${ok} из ${tests.length} проверок прошли успешно.</p>
+    ${rows.join('')}<p class="small">Эти проверки относятся к выбранному тренировочному примеру, а не автоматически к заданию текущего урока.</p>`,ok===tests.length?'success':'error');
+}
+function algSendToAnswer() {
+  if(previewMode)return;
+  const l=getCoursesForClass(user.classNumber,user.studyLevel,user.studyGroup,user.previewElective)[track]?.lessons.find(x=>x.id===lessonId);
+  if(!l)return;
+  const state=algGetState(l),answer=$('answer');if(!answer)return;
+  const existing=answer.value.trim();
+  const text='Мой алгоритм (собран из блоков):\n```python\n'+algGeneratePython(state.blocks)+'\n```';
+  if(existing && !confirm('Заменить текущий текст ответа алгоритмом из конструктора?'))return;
+  answer.value=text;
+  algShowResult('<h4>Алгоритм перенесён в ответ</h4><p>Теперь нажми «Сохранить ответ» под заданием. До нажатия он ещё не отправлен учителю.</p>','success');
+  answer.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function algInitControls(l) {
+  const wrap=$('algorithmBuilder');if(!wrap)return;
+  algRenderEditor();
+  $('algoTemplate').addEventListener('change', e=>{
+    const key=algCurrentKey(l);
+    if(!confirm('Загрузить другой тренировочный пример? Текущие блоки будут заменены.')){
+      e.target.value=algGetState(l).templateName;return;
+    }
+    algSetTemplate(key,e.target.value);algRenderEditor();algShowResult('Выбран новый тренировочный пример. Измени блоки и нажми «Запустить».');
+  });
+  wrap.addEventListener('change',e=>{
+    const nodeId=e.target.dataset.algoNode;
+    if(nodeId){
+      const state=algGetState(l),found=algFindNode(state.blocks,nodeId);
+      if(found)found.node[e.target.dataset.algoField]=e.target.value;
+      algRenderEditor();algShowResult('Блок обновлён. Запусти алгоритм ещё раз, чтобы проверить изменения.');
+    }
+  });
+  wrap.addEventListener('input',e=>{
+    const name=e.target.dataset.algoTestInput;
+    if(name)algGetState(l).inputs[name]=e.target.value;
+  });
+  wrap.addEventListener('click',e=>{
+    const button=e.target.closest('[data-algo-action]');if(!button)return;
+    const action=button.dataset.algoAction, state=algGetState(l);
+    if(action==='add'||action==='add-inner'){
+      const key=action==='add' ? button.dataset.algoType :
+        wrap.querySelector(`[data-algo-branch-select="${button.dataset.algoParent}:${button.dataset.algoBranch}"]`)?.value;
+      if(!Object.hasOwn(ALG_BLOCK_DEFAULTS,key))return;
+      const newNode=algClone(ALG_BLOCK_DEFAULTS[key]);algGiveIds([newNode]);
+      if(action==='add')state.blocks.push(newNode);
+      else {
+        const found=algFindNode(state.blocks,button.dataset.algoParent);
+        if(found && found.node[button.dataset.algoBranch]) found.node[button.dataset.algoBranch].push(newNode);
+      }
+    }else{
+      const found=algFindNode(state.blocks,button.dataset.algoId);if(!found)return;
+      if(action==='remove')found.list.splice(found.index,1);
+      if(action==='up'&&found.index>0)[found.list[found.index-1],found.list[found.index]]=[found.list[found.index],found.list[found.index-1]];
+      if(action==='down'&&found.index<found.list.length-1)[found.list[found.index+1],found.list[found.index]]=[found.list[found.index],found.list[found.index+1]];
+    }
+    algRenderEditor();algShowResult('Порядок блоков изменён. Запусти алгоритм, чтобы проверить результат.');
+  });
+  $('algoRun').addEventListener('click',algRunCurrent);
+  $('algoTests').addEventListener('click',algRunTests);
+  $('algoSend').addEventListener('click',algSendToAnswer);
+  $('algoReset').addEventListener('click',()=>{
+    if(!confirm('Вернуть первоначальные блоки этого примера?'))return;
+    algSetTemplate(algCurrentKey(l),algGetState(l).templateName);
+    algRenderEditor();algShowResult('Начальный алгоритм восстановлен.');
+  });
 }
 
 init();
