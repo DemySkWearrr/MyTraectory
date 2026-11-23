@@ -77,6 +77,12 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
 }
 
 /* Teacher cabinet for grades 10 and 11 */
+.elective-config-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:10px;margin:12px 0}
+.elective-config-card{border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--panel2)}
+.elective-config-card label{margin-top:4px}
+.elective-config-card button{margin-top:8px;width:100%}
+.elective-config-card .small{margin-bottom:4px}
+
 .teacher-filters {display:grid;grid-template-columns:repeat(3,minmax(0,210px)) auto;gap:14px;align-items:end;margin:14px 0 12px}
 .teacher-filters label {margin-top:0}
 .teacher-filter-action {padding-bottom:1px}
@@ -184,11 +190,9 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
           </select>
         </div>
         <div>
-          <label for="teacherGroupFilter">Группа</label>
+          <label for="teacherGroupFilter" id="teacherGroupFilterLabel">Группа / электив</label>
           <select id="teacherGroupFilter">
             <option value="all">Все группы</option>
-            <option value="1">1 группа</option>
-            <option value="2">2 группа</option>
             <option value="unassigned">Без группы</option>
           </select>
         </div>
@@ -202,16 +206,22 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
           </select>
         </div>
         <div class="teacher-filter-action">
-          <button class="secondary" id="distributeGroups" disabled>Разбить по группам</button>
+          <button class="secondary" id="distributeGroups" disabled>Распределить по группам</button>
         </div>
       </div>
       <p class="small" id="teacherActionMessage" role="status"></p>
       <div class="grid" id="teacherStats"></div>
+      <details class="course-overview" id="electiveSettingsPanel" open>
+        <summary>10 класс · 7 групп элективного курса</summary>
+        <p class="small">Группа выбирает одно направление — сайтостроение, Telegram-боты или Python. Укажи его для каждой группы. Назначение ученика в группу делается отдельно ниже; уровень «базовый/углублённый» от этого не меняется.</p>
+        <div id="electiveGroupManager"></div>
+        <p id="teacherElectiveMessage" class="small" role="status"></p>
+      </details>
       <h3 id="teacherListTitle">Ученики</h3>
       <div id="teacherStudents"></div>
       <details class="course-overview">
         <summary>Учебные планы для 10-го и 11-го классов</summary>
-        <p class="small">Для каждого класса есть базовый (5 занятий) и углублённый (20 занятий) уровни на 5 недель. Темы и сложность различаются.</p>
+        <p class="small">Основная программа: базовый уровень — 5 занятий, углублённый — 20 занятий за 5 недель. Элективы 10 класса — дополнительные направления, их стартовые модули не заменяют обязательную программу.</p>
         <div id="teacherCourseOverview"></div>
       </details>
       <div class="notice">
@@ -819,20 +829,271 @@ const COURSE_PLANS = {
   }
 };;
 
-function getCoursesForClass(classNumber, studyLevel) {
+const ELECTIVE_COURSES = {
+  "website": {
+    "title": "Сайтостроение",
+    "description": "Создаём веб-страницы от HTML до собственного адаптивного мини-сайта.",
+    "lessons": [
+      {
+        "id": "el_website_01",
+        "title": "1. Структура веб-страницы: HTML",
+        "level": "Элективный курс",
+        "minutes": 45,
+        "theory": "<p>HTML задаёт структуру страницы: заголовки, абзацы, списки и ссылки. Теги помогают браузеру понять назначение содержимого. Перед написанием страницы полезно составить схему её блоков.</p>",
+        "code": "<!doctype html>\n<html lang=\"ru\">\n<head><meta charset=\"UTF-8\"><title>Мой сайт</title></head>\n<body><h1>Мой первый сайт</h1><p>Привет!</p></body>\n</html>",
+        "taskBasic": "Создай страницу с заголовком, двумя абзацами и ссылкой.",
+        "taskAdvanced": "Сделай семантическую страницу с header, main, section и footer; проверь валидность структуры.",
+        "task": "Создай страницу с заголовком, двумя абзацами и ссылкой.",
+        "week": 1,
+        "session": 1
+      },
+      {
+        "id": "el_website_02",
+        "title": "2. Стили CSS и оформление",
+        "level": "Элективный курс",
+        "minutes": 45,
+        "theory": "<p>CSS задаёт внешний вид сайта: цвета, размеры шрифтов, отступы, рамки и расположение элементов. Стили можно подключить отдельным файлом. Селекторы определяют, к каким элементам применяются правила.</p>",
+        "code": "body {font-family: system-ui; margin: 24px;}\nh1 {color: #5365bf;}\n.card {padding: 16px; border: 1px solid #ddd;}",
+        "taskBasic": "Оформи заголовок и карточку с текстом: цвет, отступы, граница.",
+        "taskAdvanced": "Создай два варианта карточек и адаптируй типографику с помощью CSS-переменных.",
+        "task": "Оформи заголовок и карточку с текстом: цвет, отступы, граница.",
+        "week": 2,
+        "session": 1
+      },
+      {
+        "id": "el_website_03",
+        "title": "3. Блоки, Flexbox и адаптивность",
+        "level": "Элективный курс",
+        "minutes": 45,
+        "theory": "<p>Flexbox помогает выстраивать элементы в ряд или столбец. Медиазапросы меняют оформление под ширину экрана. Страница должна читаться и на телефоне, и на компьютере.</p>",
+        "code": ".cards {display:flex; gap:12px; flex-wrap:wrap;}\n.card {flex:1 1 220px;}\n@media (max-width:600px) {.cards {flex-direction:column;}}",
+        "taskBasic": "Сверстай две карточки рядом и сделай их вертикальными на узком экране.",
+        "taskAdvanced": "Создай адаптивный каталог из шести карточек с сеткой и несколькими точками перелома.",
+        "task": "Сверстай две карточки рядом и сделай их вертикальными на узком экране.",
+        "week": 3,
+        "session": 1
+      },
+      {
+        "id": "el_website_04",
+        "title": "4. JavaScript: интерактивная кнопка",
+        "level": "Элективный курс",
+        "minutes": 45,
+        "theory": "<p>JavaScript добавляет поведение: обработку нажатия кнопок, изменение текста, проверку полей. Для получения элемента используют querySelector, а для обработки действий addEventListener.</p>",
+        "code": "const button = document.querySelector(\"#hello\");\nbutton.addEventListener(\"click\", () => {\n  document.querySelector(\"#result\").textContent = \"Привет!\";\n});",
+        "taskBasic": "Добавь кнопку, которая меняет текст на странице после нажатия.",
+        "taskAdvanced": "Реализуй переключение темы с сохранением выбора и корректной работой без перезагрузки.",
+        "task": "Добавь кнопку, которая меняет текст на странице после нажатия.",
+        "week": 4,
+        "session": 1
+      },
+      {
+        "id": "el_website_05",
+        "title": "5. Итоговый проект: персональный сайт",
+        "level": "Элективный курс",
+        "minutes": 45,
+        "theory": "<p>Сайт должен иметь понятную цель, навигацию, содержимое и мобильную версию. Перед сдачей проверь ссылки, орфографию, доступность кнопок и вид на небольшом экране.</p>",
+        "code": "<!-- Структура проекта -->\n<!-- index.html, style.css, script.js -->",
+        "taskBasic": "Сделай небольшой сайт о хобби с двумя разделами, изображением и собственным оформлением.",
+        "taskAdvanced": "Создай мини-портфолио с несколькими секциями, интерактивным элементом и адаптивным дизайном.",
+        "task": "Сделай небольшой сайт о хобби с двумя разделами, изображением и собственным оформлением.",
+        "week": 5,
+        "session": 1
+      }
+    ]
+  },
+  "telegram": {
+    "title": "Telegram-боты",
+    "description": "Понимаем логику бота, команды и обработку сообщений; строим небольшой проект на Python.",
+    "lessons": [
+      {
+        "id": "el_telegram_01",
+        "title": "1. Что такое бот и сценарий диалога",
+        "level": "Элективный курс",
+        "minutes": 45,
+        "theory": "<p>Бот получает сообщения от пользователя и отвечает по заранее определённому алгоритму. Продумай команды /start, /help и переходы между шагами. Для создания бота используют BotFather; токен нужно хранить в секрете.</p>",
+        "code": "Событие: сообщение /start\n  → приветствие\n  → выбор команды\n  → ответ",
+        "taskBasic": "Нарисуй блок-схему бота с командами /start и /help.",
+        "taskAdvanced": "Спроектируй диалог с тремя состояниями и обработкой неожиданного ввода.",
+        "task": "Нарисуй блок-схему бота с командами /start и /help.",
+        "week": 1,
+        "session": 1
+      },
+      {
+        "id": "el_telegram_02",
+        "title": "2. Python и ответы на команды",
+        "level": "Элективный курс",
+        "minutes": 45,
+        "theory": "<p>Программу удобно разделять на функции: одна обрабатывает команду, другая формирует ответ. Сначала проверь логику локально, не подключая Telegram.</p>",
+        "code": "def reply(command):\n    if command == \"/start\":\n        return \"Привет!\"\n    if command == \"/help\":\n        return \"Команды: /start, /help\"\n    return \"Не знаю команду\"\n\nprint(reply(\"/start\"))",
+        "taskBasic": "Напиши Python-функцию, которая отвечает на три команды.",
+        "taskAdvanced": "Добавь нормализацию ввода, тесты и сообщение для неизвестной команды.",
+        "task": "Напиши Python-функцию, которая отвечает на три команды.",
+        "week": 2,
+        "session": 1
+      },
+      {
+        "id": "el_telegram_03",
+        "title": "3. Подключение Telegram API",
+        "level": "Элективный курс",
+        "minutes": 45,
+        "theory": "<p>Для реальной работы бота нужен токен Telegram Bot API. Не вставляй токен в публикуемый код и не отправляй его в поле ответа на платформе. Используй переменные окружения и тестовый бот.</p>",
+        "code": "import os\ntoken = os.getenv(\"TELEGRAM_BOT_TOKEN\")\nif not token:\n    print(\"Сначала задай TELEGRAM_BOT_TOKEN\")",
+        "taskBasic": "Опиши последовательность настройки тестового бота и правила защиты токена.",
+        "taskAdvanced": "Подключи тестового бота с безопасным хранением токена и реализуй ответ на /start.",
+        "task": "Опиши последовательность настройки тестового бота и правила защиты токена.",
+        "week": 3,
+        "session": 1
+      },
+      {
+        "id": "el_telegram_04",
+        "title": "4. Кнопки и состояния",
+        "level": "Элективный курс",
+        "minutes": 45,
+        "theory": "<p>Кнопки уменьшают количество случайных ошибок во вводе. Для многошагового диалога нужно сохранять текущее состояние пользователя и предусматривать команду отмены.</p>",
+        "code": "state = \"menu\"\nchoice = input(\"1 — справка, 2 — выход: \")\nif choice == \"1\":\n    print(\"Справка\")\nelse:\n    print(\"Выход\")",
+        "taskBasic": "Составь сценарий бота с двумя кнопками и командой «Назад».",
+        "taskAdvanced": "Реализуй диалог из нескольких шагов с состояниями, проверкой данных и возвратом в меню.",
+        "task": "Составь сценарий бота с двумя кнопками и командой «Назад».",
+        "week": 4,
+        "session": 1
+      },
+      {
+        "id": "el_telegram_05",
+        "title": "5. Итоговый бот-помощник",
+        "level": "Элективный курс",
+        "minutes": 45,
+        "theory": "<p>Хороший бот решает одну понятную задачу и объясняет пользователю команды. Проверь нормальные и ошибочные запросы, повторное использование и команду /help.</p>",
+        "code": "def help_text():\n    return \"Доступно: /start, /help, /task\"\n\nprint(help_text())",
+        "taskBasic": "Сделай план и прототип бота-помощника для школьной задачи.",
+        "taskAdvanced": "Собери работающий прототип с командами, состояниями и журналом тестирования без хранения личных данных.",
+        "task": "Сделай план и прототип бота-помощника для школьной задачи.",
+        "week": 5,
+        "session": 1
+      }
+    ]
+  },
+  "python": {
+    "title": "Python-проекты",
+    "description": "Дополнительная практика на Python: небольшие утилиты, обработка данных, алгоритмы и итоговый проект.",
+    "lessons": [
+      {
+        "id": "el_python_01",
+        "title": "1. Ввод, вывод и типы данных",
+        "level": "Элективный курс",
+        "minutes": 45,
+        "theory": "<p>Python позволяет сохранять числа и строки в переменных. input() получает строку, а int() переводит текст в целое число. Проверяй ввод до вычислений.</p>",
+        "code": "name = input(\"Имя: \")\nage = int(input(\"Возраст: \"))\nprint(f\"{name}, через год тебе будет {age+1}\")",
+        "taskBasic": "Создай программу, которая спрашивает имя и возраст и выводит сообщение.",
+        "taskAdvanced": "Добавь проверку некорректного ввода и повторный запрос числа.",
+        "task": "Создай программу, которая спрашивает имя и возраст и выводит сообщение.",
+        "week": 1,
+        "session": 1
+      },
+      {
+        "id": "el_python_02",
+        "title": "2. Условия и выбор действий",
+        "level": "Элективный курс",
+        "minutes": 45,
+        "theory": "<p>Условие if выполняет команды, когда проверка истинна. elif и else позволяют обработать другие случаи. Составляй таблицу возможных входных данных до написания программы.</p>",
+        "code": "score = int(input(\"Баллы: \"))\nif score >= 80:\n    print(\"Отлично\")\nelif score >= 50:\n    print(\"Хорошо\")\nelse:\n    print(\"Нужно потренироваться\")",
+        "taskBasic": "Напиши программу, которая по количеству баллов выводит одну из трёх оценок.",
+        "taskAdvanced": "Добавь обработку границ диапазона и тестирование всех ветвей.",
+        "task": "Напиши программу, которая по количеству баллов выводит одну из трёх оценок.",
+        "week": 2,
+        "session": 1
+      },
+      {
+        "id": "el_python_03",
+        "title": "3. Циклы и счётчики",
+        "level": "Элективный курс",
+        "minutes": 45,
+        "theory": "<p>Цикл for повторяет действия определённое число раз. while подходит для повторения до наступления условия. Счётчики и накопители позволяют подсчитывать результаты.</p>",
+        "code": "total = 0\nfor number in range(1, 11):\n    total += number\nprint(total)",
+        "taskBasic": "Посчитай сумму чисел от 1 до введённого N.",
+        "taskAdvanced": "Найди сумму чётных чисел, сравни два решения и оцени количество шагов.",
+        "task": "Посчитай сумму чисел от 1 до введённого N.",
+        "week": 3,
+        "session": 1
+      },
+      {
+        "id": "el_python_04",
+        "title": "4. Списки и функции",
+        "level": "Элективный курс",
+        "minutes": 45,
+        "theory": "<p>Список хранит набор значений, а функция объединяет повторяющиеся команды. Функция может возвращать результат с помощью return. Разделение на функции облегчает проверку программы.</p>",
+        "code": "def average(values):\n    return sum(values) / len(values) if values else 0\n\nprint(average([3, 4, 5]))",
+        "taskBasic": "Напиши функцию, которая принимает список оценок и считает среднее.",
+        "taskAdvanced": "Добавь обработку пустого списка, минимального и максимального значений и тесты.",
+        "task": "Напиши функцию, которая принимает список оценок и считает среднее.",
+        "week": 4,
+        "session": 1
+      },
+      {
+        "id": "el_python_05",
+        "title": "5. Итоговый Python-проект",
+        "level": "Элективный курс",
+        "minutes": 45,
+        "theory": "<p>Проект начинается с постановки задачи: входные данные, алгоритм, результат и примеры тестов. Код стоит разделять на небольшие функции и проверять крайние случаи.</p>",
+        "code": "def menu():\n    print(\"1. Добавить\")\n    print(\"2. Показать\")\n    print(\"0. Выход\")\n\nmenu()",
+        "taskBasic": "Напиши простую консольную программу с меню и двумя действиями.",
+        "taskAdvanced": "Создай консольное приложение с функциями, списком данных, проверкой ввода и тестами.",
+        "task": "Напиши простую консольную программу с меню и двумя действиями.",
+        "week": 5,
+        "session": 1
+      }
+    ]
+  }
+};
+const ELECTIVE_TRACK_NAMES = {website:'Сайтостроение', telegram:'Telegram-боты', python:'Python-проекты'};
+let electiveGroupTracks = Object.fromEntries(Array.from({length:7}, (_,i)=>[i+1,null]));
+let electiveGroupsLoadError = '';
+
+function groupNumbers(classNumber) {
+  return classNumber === 10 ? [1,2,3,4,5,6,7] :
+    classNumber === 11 ? [1,2] : [];
+}
+function electiveTrackName(trackKey) {
+  return ELECTIVE_TRACK_NAMES[trackKey] || 'Направление не назначено';
+}
+function teacherGroupName(value, classNumber = null) {
+  if (!groupNumbers(classNumber).includes(value)) return 'Без группы';
+  if (classNumber === 10) return `Элективная группа ${value} · ${electiveTrackName(electiveGroupTracks[value])}`;
+  return `Группа ${value}`;
+}
+function getCoursesForClass(classNumber, studyLevel, studyGroup = null) {
   const course = COURSE_PLANS[classNumber]?.[studyLevel];
-  // Course IDs remain "game" for compatibility with the existing student_progress schema.
-  // The unique lesson IDs prevent cross-level/grade progress collisions.
-  return course ? { game: course } : {};
+  if (!course) return {};
+  // Reuse existing course_id 'ege' for elective progress compatibility with existing schema.
+  // Unique elective lesson IDs keep historical EGE answers completely separate.
+  const result = {game: course};
+  const direction = classNumber === 10 ? electiveGroupTracks[studyGroup] : null;
+  if (direction && ELECTIVE_COURSES[direction]) {
+    result.ege = ELECTIVE_COURSES[direction];
+  }
+  return result;
 }
-
-function allLessons(classNumber, studyLevel) {
-  return Object.values(getCoursesForClass(classNumber, studyLevel)).flatMap(c => c.lessons);
+function allLessons(classNumber, studyLevel, studyGroup = null) {
+  return Object.values(getCoursesForClass(classNumber, studyLevel, studyGroup)).flatMap(c => c.lessons);
 }
-
 function studyLevelName(level) {
   return level === 'basic' ? 'Базовый уровень' :
     level === 'advanced' ? 'Углублённый уровень' : 'Уровень не назначен';
+}
+async function loadElectiveGroups() {
+  electiveGroupsLoadError = '';
+  electiveGroupTracks = Object.fromEntries(Array.from({length:7},(_,i)=>[i+1,null]));
+  const {data,error} = await supabaseClient.from('elective_groups')
+    .select('group_number, track').order('group_number');
+  if (error) {
+    electiveGroupsLoadError = 'Не удалось загрузить направления элективов. Выполни SQL-миграцию для 7 групп.';
+    console.error('Ошибка загрузки elective_groups:', error);
+    return;
+  }
+  for (const row of data || []) {
+    if (groupNumbers(10).includes(row.group_number) && (row.track === null || ELECTIVE_COURSES[row.track])) {
+      electiveGroupTracks[row.group_number] = row.track;
+    }
+  }
 }
 
 const $ = id => document.getElementById(id);
@@ -898,7 +1159,24 @@ async function sendAnswerToSheet(data) {
   $("teacherGroupFilter").addEventListener("change", renderTeacherView);
   $("teacherLevelFilter").addEventListener("change", renderTeacherView);
   $("distributeGroups").addEventListener("click", distributeGroups);
+  $("electiveGroupManager").addEventListener("click", async event => {
+    const button = event.target.closest('button[data-elective-group]');
+    if (button) await saveElectiveGroupTrack(Number(button.dataset.electiveGroup));
+  });
   renderTeacherCourseOverview();
+  $("teacherStudents").addEventListener("change", event => {
+    const input = event.target;
+    if (!input.id.startsWith('student-class-')) return;
+    const studentId = input.id.slice('student-class-'.length);
+    const groupInput = $('student-group-' + studentId);
+    if (!groupInput) return;
+    const student = cloudClassData.find(item => item.id === studentId);
+    const nextClass = input.value ? Number(input.value) : null;
+    const currentGroup = student && student.classNumber === nextClass ? student.studyGroup : null;
+    groupInput.innerHTML = teacherPlacementOptions(currentGroup, 'group', nextClass);
+    const groupLabel = $('student-group-label-' + studentId);
+    if (groupLabel) groupLabel.textContent = nextClass === 10 ? 'Элективная группа (1–7)' : 'Группа';
+  });
   $("teacherStudents").addEventListener("click", async event => {
     const button = event.target.closest("button[data-teacher-action]");
     if (!button) return;
@@ -1049,7 +1327,7 @@ async function enterApp(profile, username) {
     name: profile.full_name,
     role: profile.role,
     classNumber: profile.class_number === 10 || profile.class_number === 11 ? profile.class_number : null,
-    studyGroup: profile.study_group === 1 || profile.study_group === 2 ? profile.study_group : null,
+    studyGroup: groupNumbers(profile.class_number).includes(profile.study_group) ? profile.study_group : null,
     studyLevel: ['basic','advanced'].includes(profile.study_level) ? profile.study_level : null,
     progress: { game: {}, ege: {} },
     answers: {},
@@ -1061,6 +1339,7 @@ async function enterApp(profile, username) {
   $("app").classList.remove("hidden");
   $("exit").classList.remove("hidden");
   $("headerName").textContent = user.name;
+  if (user.role === 'teacher' || user.classNumber === 10) await loadElectiveGroups();
 
   $("roleLabel").textContent =
     user.role === "teacher" ? "Кабинет учителя" : "Личный кабинет ученика";
@@ -1089,10 +1368,10 @@ async function enterApp(profile, username) {
     }
 
     renderStudentTracks();
-    const keys = Object.keys(getCoursesForClass(user.classNumber, user.studyLevel));
+    const keys = Object.keys(getCoursesForClass(user.classNumber, user.studyLevel, user.studyGroup));
     if (keys.length) {
       track = keys[0];
-      lessonId = getCoursesForClass(user.classNumber, user.studyLevel)[track].lessons[0].id;
+      lessonId = getCoursesForClass(user.classNumber, user.studyLevel, user.studyGroup)[track].lessons[0].id;
       setTrackButtons();
       renderTrack();
       renderLesson();
@@ -1173,13 +1452,21 @@ async function logout() {
 }
 
 function renderStudentTracks() {
-  const courses = getCoursesForClass(user.classNumber, user.studyLevel);
+  const courses = getCoursesForClass(user.classNumber, user.studyLevel, user.studyGroup);
   $("roleLabel").textContent = user.classNumber
     ? `Личный кабинет · ${user.classNumber} класс · ${studyLevelName(user.studyLevel)}`
     : "Личный кабинет ученика";
   $("classPlanInfo").textContent = user.classNumber
-    ? `${user.classNumber} класс · ${teacherGroupName(user.studyGroup)} · ${studyLevelName(user.studyLevel)}`
+    ? `${user.classNumber} класс · ${teacherGroupName(user.studyGroup, user.classNumber)} · ${studyLevelName(user.studyLevel)}`
     : "Класс не назначен";
+  if (user.classNumber === 10) {
+    const electiveStatus = electiveGroupsLoadError || (!user.studyGroup
+      ? 'Элективная группа пока не назначена — попроси учителя выбрать одну из семи.'
+      : !electiveGroupTracks[user.studyGroup]
+        ? `Группа ${user.studyGroup}: направление электива ещё не выбрано учителем.`
+        : `Электив ${user.studyGroup}-й группы: ${electiveTrackName(electiveGroupTracks[user.studyGroup])}.`);
+    $("classPlanInfo").textContent += ' · ' + electiveStatus;
+  }
   $("intro").textContent = !Object.keys(courses).length
     ? "Попроси учителя назначить класс и уровень, чтобы открыть твои уроки."
     : user.classNumber === 10
@@ -1190,10 +1477,13 @@ function renderStudentTracks() {
         ? 'Углублённый триместр: 20 занятий по информатике с подготовкой к ЕГЭ.'
         : 'Базовый триместр: 5 обзорных занятий по информатике и простым задачам.';
   $("trackTabs").innerHTML = Object.entries(courses).map(([key, course]) =>
-    `<span class="pill">${esc(course.title)} · ${course.lessons.length} занятий</span>`).join("");
+    `<button class="secondary" data-track="${esc(key)}" type="button">${esc(key === 'ege' ? 'Электив: ' + course.title : course.title)} · ${course.lessons.length} занятий</button>`).join("");
+  $("trackTabs").querySelectorAll('[data-track]').forEach(button => {
+    button.addEventListener('click', () => switchTrack(button.dataset.track));
+  });
 }
 function switchTrack(nextTrack) {
-  const courses = getCoursesForClass(user.classNumber, user.studyLevel);
+  const courses = getCoursesForClass(user.classNumber, user.studyLevel, user.studyGroup);
   if (!courses[nextTrack]) return;
   track = nextTrack;
   lessonId = courses[nextTrack].lessons[0].id;
@@ -1209,7 +1499,7 @@ function setTrackButtons() {
 }
 
 function renderTrack() {
-  const course = getCoursesForClass(user.classNumber, user.studyLevel)[track];
+  const course = getCoursesForClass(user.classNumber, user.studyLevel, user.studyGroup)[track];
   if (!course) return;
   const lessons = course.lessons;
   const progress = user.progress[track] || {};
@@ -1218,7 +1508,8 @@ function renderTrack() {
   $("percent").textContent = pct + "%";
   $("bar").style.width = pct + "%";
   $("doneCount").textContent = `${done} / ${lessons.length}`;
-  $("points").textContent = (user.points || 0) + " баллов";
+  $("points").textContent = Object.entries(getCoursesForClass(user.classNumber,user.studyLevel,user.studyGroup))
+    .reduce((sum,[key,course]) => sum + course.lessons.filter(l => user.progress[key]?.[l.id]?.done).length * 10,0) + " баллов";
   let lastWeek = 0;
   $("lessonList").innerHTML = `<p class="small">${esc(course.description)}</p>` + lessons.map(l => {
     const heading = l.week !== lastWeek ? `<h3 class="lesson-week-heading">Неделя ${l.week}</h3>` : "";
@@ -1244,7 +1535,8 @@ function lessonPayload(l, answer, done) {
     classNumber: user.classNumber,
     studyGroup: user.studyGroup,
     studyLevel: user.studyLevel,
-    track: getCoursesForClass(user.classNumber, user.studyLevel)[track]?.title || track,
+    electiveDirection: user.classNumber === 10 ? electiveTrackName(electiveGroupTracks[user.studyGroup]) : null,
+    track: getCoursesForClass(user.classNumber, user.studyLevel, user.studyGroup)[track]?.title || track,
     lessonId: l.id,
     lessonTitle: l.title,
     answer,
@@ -1254,7 +1546,7 @@ function lessonPayload(l, answer, done) {
 }
 
 function renderLesson() {
-  const l = getCoursesForClass(user.classNumber, user.studyLevel)[track]?.lessons.find(x => x.id === lessonId);
+  const l = getCoursesForClass(user.classNumber, user.studyLevel, user.studyGroup)[track]?.lessons.find(x => x.id === lessonId);
   if (!l) return;
 
   const p = user.progress[track][l.id] || {};
@@ -1265,7 +1557,7 @@ function renderLesson() {
     <h2 style="margin-top:12px">${esc(l.title)}</h2>
     <h3>Теория</h3><div>${l.theory}</div>
     <h3>Пример решения / фрагмент алгоритма</h3><pre><code>${esc(l.code)}</code></pre>
-    <h3>Практическое задание</h3><p>${esc(l.task)}</p>
+    <h3>Практическое задание</h3><p>${esc(user.studyLevel === 'advanced' && l.taskAdvanced ? l.taskAdvanced : l.taskBasic || l.task)}</p>
     <label for="answer">Твоё решение</label>
     <textarea id="answer" placeholder="Вставь код или напиши ход решения...">${esc(answer)}</textarea>
     <div class="row" style="margin-top:12px">
@@ -1409,14 +1701,23 @@ async function resetStudentPassword(studentId, studentName) {
 // The teacher interface is identical for grades 10 and 11.
 // Grade/group are stored in public.profiles, with teacher-only edits through an RPC.
 const teacherClassOptions = [10, 11, null];
-const teacherGroupOptions = [1, 2, null];
+// 10th-grade elective groups have 7 numbers, 11th-grade groups retain their existing 2.
 
 function teacherClassName(value) {
   return value === 10 || value === 11 ? `${value} класс` : "Без класса";
 }
 
-function teacherGroupName(value) {
-  return value === 1 || value === 2 ? `${value} группа` : "Без группы";
+function updateTeacherGroupFilter() {
+  const classChoice = $('teacherClassFilter').value;
+  const classNumber = [10,11].includes(Number(classChoice)) ? Number(classChoice) : null;
+  const allowed = classNumber === null ? [1,2,3,4,5,6,7] : groupNumbers(classNumber);
+  $('teacherGroupFilterLabel').textContent = classNumber === 10 ? 'Элективная группа' : 'Группа';
+  const input = $('teacherGroupFilter');
+  const oldValue = input.value;
+  input.innerHTML = '<option value="all">Все группы</option>' +
+    allowed.map(group=>`<option value="${group}">${esc(classNumber === null ? 'Группа '+group : teacherGroupName(group,classNumber))}</option>`).join('') +
+    '<option value="unassigned">Без группы</option>';
+  input.value = oldValue === 'all' || oldValue === 'unassigned' || allowed.includes(Number(oldValue)) ? oldValue : 'all';
 }
 
 function getFilteredStudents() {
@@ -1437,25 +1738,25 @@ function getFilteredStudents() {
 }
 
 function getStudentCompleted(student, course) {
-  const lessons = getCoursesForClass(student.classNumber, student.studyLevel)[course]?.lessons || [];
+  const lessons = getCoursesForClass(student.classNumber, student.studyLevel, student.studyGroup)[course]?.lessons || [];
   return lessons.filter(lesson => student.progress[course]?.[lesson.id]?.done).length;
 }
 
 function getStudentAnswers(student, currentOnly = true) {
-  const ids = new Set(allLessons(student.classNumber, student.studyLevel).map(item => item.id));
+  const ids = new Set(allLessons(student.classNumber, student.studyLevel, student.studyGroup).map(item => item.id));
   return Object.entries(student.answers).filter(([lessonId, value]) =>
     String(value).trim() && (currentOnly ? ids.has(lessonId) : !ids.has(lessonId)));
 }
 
 function getStudentPoints(student) {
-  return Object.keys(getCoursesForClass(student.classNumber, student.studyLevel))
+  return Object.keys(getCoursesForClass(student.classNumber, student.studyLevel, student.studyGroup))
     .reduce((sum, key) => sum + getStudentCompleted(student, key) * 10, 0);
 }
 
-function teacherPlacementOptions(selected, type) {
+function teacherPlacementOptions(selected, type, classNumber = null) {
   const items = type === "class"
     ? [[null, "Не назначен"], [10, "10 класс"], [11, "11 класс"]]
-    : [[null, "Нет группы"], [1, "1 группа"], [2, "2 группа"]];
+    : [[null, "Нет группы"], ...groupNumbers(classNumber).map(n => [n,teacherGroupName(n,classNumber)])];
   return items.map(([value, label]) => {
     const selectedAttr = selected === value ? " selected" : "";
     return `<option value="${value === null ? "" : value}"${selectedAttr}>${label}</option>`;
@@ -1463,7 +1764,7 @@ function teacherPlacementOptions(selected, type) {
 }
 
 function renderStudentCard(student) {
-  const courses = getCoursesForClass(student.classNumber, student.studyLevel);
+  const courses = getCoursesForClass(student.classNumber, student.studyLevel, student.studyGroup);
   const completed = Object.keys(courses).reduce((sum, key) => sum + getStudentCompleted(student, key), 0);
   const currentAnswers = getStudentAnswers(student);
   const archiveAnswers = getStudentAnswers(student, false);
@@ -1471,28 +1772,28 @@ function renderStudentCard(student) {
   const progressLabels = Object.entries(courses).map(([key, item]) =>
     `${esc(item.title)}: ${getStudentCompleted(student, key)}/${item.lessons.length}`).join(" · ");
   const answerList = entries => entries.map(([lessonId, value]) => {
-    const lesson = allLessons(student.classNumber, student.studyLevel).find(item => item.id === lessonId);
+    const lesson = allLessons(student.classNumber, student.studyLevel, student.studyGroup).find(item => item.id === lessonId);
     return `<p><b>${esc(lesson?.title || lessonId)}</b><br>${esc(value).replace(/\n/g,"<br>")}</p>`;
   }).join("");
   return `
     <div class="student-row">
       <div class="row between">
         <b>${esc(student.name)}</b>
-        <span class="pill">${completed}/${allLessons(student.classNumber, student.studyLevel).length} модулей</span>
+        <span class="pill">${completed}/${allLessons(student.classNumber, student.studyLevel, student.studyGroup).length} модулей</span>
       </div>
-      <p class="small">${teacherClassName(student.classNumber)} · ${teacherGroupName(student.studyGroup)} ·
+      <p class="small">${teacherClassName(student.classNumber)} · ${teacherGroupName(student.studyGroup,student.classNumber)} ·
         <b>${studyLevelName(student.studyLevel)}</b> · ${progressLabels || "Учебный план не назначен"} · Ответов: ${currentAnswers.length}</p>
       ${currentAnswers.length ? `<details><summary>Посмотреть ответы (${currentAnswers.length})</summary>${answerList(currentAnswers)}</details>`
         : `<span class="small">Ответы по текущему плану пока не сохранены.</span>`}
       ${archiveAnswers.length ? `<details><summary>Архив прежних уроков (${archiveAnswers.length})</summary>${answerList(archiveAnswers)}</details>` : ""}
       <div class="placement-box">
-        <b>Класс, группа и уровень обучения</b>
+        <b>Класс, группа электива (10 кл.) и уровень обучения</b>
         <div class="placement-controls">
           <div><label for="student-class-${id}">Класс</label>
             <select id="student-class-${id}">${teacherPlacementOptions(student.classNumber,"class")}</select>
           </div>
-          <div><label for="student-group-${id}">Группа</label>
-            <select id="student-group-${id}">${teacherPlacementOptions(student.studyGroup,"group")}</select>
+          <div><label id="student-group-label-${id}" for="student-group-${id}">${student.classNumber===10?'Элективная группа (1–7)':'Группа'}</label>
+            <select id="student-group-${id}">${teacherPlacementOptions(student.studyGroup,"group",student.classNumber)}</select>
           </div>
           <div><label for="student-level-${id}">Уровень</label>
             <select id="student-level-${id}">
@@ -1521,18 +1822,19 @@ function renderStudentCard(student) {
 }
 
 function renderTeacherView() {
+  updateTeacherGroupFilter();
   const selected = getFilteredStudents();
   const selectedClass = $("teacherClassFilter").value;
-  const canDistribute = selectedClass === "10" || selectedClass === "11";
+  const canDistribute = selectedClass === '11';
   $("distributeGroups").disabled = !canDistribute;
   $("distributeGroups").title = canDistribute
     ? "Распределить учеников выбранного класса, у которых пока нет группы"
-    : "Сначала выбери 10 или 11 класс";
+    : "Для элективов 10 класса группа выбирается учеником и назначается вручную; автоматическое распределение доступно только 11 классу";
 
   const totalAnswers = selected.reduce((sum, student) =>
     sum + getStudentAnswers(student).length, 0);
   const totalCompleted = selected.reduce((sum, student) =>
-    sum + Object.keys(getCoursesForClass(student.classNumber, student.studyLevel)).reduce((count, key) => count + getStudentCompleted(student, key), 0), 0);
+    sum + Object.keys(getCoursesForClass(student.classNumber, student.studyLevel, student.studyGroup)).reduce((count, key) => count + getStudentCompleted(student, key), 0), 0);
 
   $("teacherStats").innerHTML = `
     <div class="card third"><h2>${selected.length}</h2><p>Учеников в выборке</p></div>
@@ -1552,11 +1854,11 @@ function renderTeacherView() {
   const visibleClasses = teacherClassOptions.filter(classNumber =>
     selected.some(student => student.classNumber === classNumber));
   $("teacherStudents").innerHTML = visibleClasses.map(classNumber => {
-    const groupSections = teacherGroupOptions.map(groupNumber => {
+    const groupSections = [...groupNumbers(classNumber),null].map(groupNumber => {
       const grouped = selected.filter(student =>
         student.classNumber === classNumber && student.studyGroup === groupNumber);
       if (!grouped.length) return "";
-      return `<div class="student-group-heading"><h3>${teacherGroupName(groupNumber)} · ${grouped.length}</h3></div>` +
+      return `<div class="student-group-heading"><h3>${esc(teacherGroupName(groupNumber,classNumber))} · ${grouped.length}</h3></div>` +
         grouped.map(renderStudentCard).join("");
     }).join("");
     return `<h3 class="student-class-heading">${teacherClassName(classNumber)}</h3>${groupSections}`;
@@ -1574,6 +1876,11 @@ async function saveStudentPlacement(studentId) {
   const classNumber = classInput.value ? Number(classInput.value) : null;
   const studyGroup = groupInput.value ? Number(groupInput.value) : null;
   const studyLevel = levelInput.value || null;
+  if (studyGroup !== null && !groupNumbers(classNumber).includes(studyGroup)) {
+    message.textContent = `Для ${classNumber || 'невыбранного'} класса эта группа недоступна.`;
+    message.className = 'reset-message error';
+    return;
+  }
   if (!classNumber && (studyGroup !== null || studyLevel !== null)) {
     message.textContent = "Сначала назначь класс ученику, затем группу и уровень.";
     message.className = "reset-message error";
@@ -1594,7 +1901,7 @@ async function saveStudentPlacement(studentId) {
     student.studyGroup = studyGroup;
     student.studyLevel = studyLevel;
     $("teacherActionMessage").textContent =
-      `${student.name}: ${teacherClassName(classNumber)} / ${teacherGroupName(studyGroup)} / ${studyLevelName(studyLevel)}. Назначение сохранено.`;
+      `${student.name}: ${teacherClassName(classNumber)} / ${teacherGroupName(studyGroup,classNumber)} / ${studyLevelName(studyLevel)}. Назначение сохранено.`;
     renderTeacherView();
   } catch (error) {
     console.error("Не удалось обновить класс/группу:", error);
@@ -1607,7 +1914,10 @@ async function saveStudentPlacement(studentId) {
 async function distributeGroups() {
   const selectedClass = $("teacherClassFilter").value;
   const classNumber = Number(selectedClass);
-  if (![10,11].includes(classNumber)) return;
+  if (classNumber !== 11) {
+    $('teacherActionMessage').textContent = 'В 10 классе семь элективных групп: распределение должно учитывать выбор ученика, поэтому назначай их вручную.';
+    return;
+  }
   const ungrouped = cloudClassData.filter(student =>
     student.classNumber === classNumber && student.studyGroup === null).length;
   if (!ungrouped) {
@@ -1630,6 +1940,48 @@ async function distributeGroups() {
     console.error("Не удалось распределить по группам:", error);
     $("teacherActionMessage").textContent =
       "Не удалось распределить учеников. Проверь SQL-функцию distribute_unassigned_students.";
+    button.disabled = false;
+  }
+}
+
+function renderElectiveGroupManager() {
+  const container = $('electiveGroupManager');
+  container.innerHTML = `<div class="elective-config-grid">${groupNumbers(10).map(groupNumber => {
+    const track = electiveGroupTracks[groupNumber];
+    const count = cloudClassData.filter(s => s.classNumber === 10 && s.studyGroup === groupNumber).length;
+    const options = [[null,'Направление пока не выбрано'],...Object.entries(ELECTIVE_TRACK_NAMES)];
+    return `<div class="elective-config-card">
+      <b>Группа ${groupNumber}</b> <span class="small">· ${count} учеников</span>
+      <label for="elective-track-${groupNumber}">Направление</label>
+      <select id="elective-track-${groupNumber}">${options.map(([value,label])=>
+        `<option value="${value||''}"${track===value?' selected':''}>${esc(label)}</option>`).join('')}</select>
+      <button class="secondary" data-elective-group="${groupNumber}" id="elective-save-${groupNumber}">Сохранить направление</button>
+    </div>`;
+  }).join('')}</div>`;
+  if (electiveGroupsLoadError) $('teacherElectiveMessage').textContent = electiveGroupsLoadError;
+}
+
+async function saveElectiveGroupTrack(groupNumber) {
+  if (!groupNumbers(10).includes(groupNumber)) return;
+  const button = $('elective-save-'+groupNumber);
+  const message = $('teacherElectiveMessage');
+  const trackKey = $('elective-track-'+groupNumber).value || null;
+  button.disabled = true;
+  message.textContent = `Сохраняем направление группы ${groupNumber}…`;
+  try {
+    const {error} = await supabaseClient.rpc('set_elective_group_track', {
+      target_group: groupNumber,
+      target_track: trackKey
+    });
+    if (error) throw error;
+    electiveGroupTracks[groupNumber] = trackKey;
+    electiveGroupsLoadError = '';
+    message.textContent = `Группа ${groupNumber}: ${electiveTrackName(trackKey)}. Сохранено в Supabase.`;
+    renderTeacherView();
+  } catch(error) {
+    console.error('Не удалось сохранить направление электива:',error);
+    message.textContent = 'Не удалось сохранить направление: проверь SQL для elective_groups и права учителя.';
+  } finally {
     button.disabled = false;
   }
 }
@@ -1676,7 +2028,7 @@ async function renderTeacher() {
       id: profile.id,
       name: profile.full_name,
       classNumber: profile.class_number === 10 || profile.class_number === 11 ? profile.class_number : null,
-      studyGroup: profile.study_group === 1 || profile.study_group === 2 ? profile.study_group : null,
+      studyGroup: groupNumbers(profile.class_number).includes(profile.study_group) ? profile.study_group : null,
       studyLevel: ['basic','advanced'].includes(profile.study_level) ? profile.study_level : null,
       progress: courseProgress,
       answers,
@@ -1684,17 +2036,19 @@ async function renderTeacher() {
     };
   });
   renderTeacherView();
+  renderElectiveGroupManager();
 }
 
 function exportCSV() {
-  const rows = [["Ученик", "Класс", "Группа", "Уровень", "Завершено занятий", "Всего занятий", "Баллы", "Ответов по текущему плану"]];
+  const rows = [["Ученик", "Класс", "Группа", "Направление электива", "Уровень", "Завершено занятий", "Всего занятий", "Баллы", "Ответов по текущему плану"]];
   getFilteredStudents().forEach(student => {
-    const lessons = allLessons(student.classNumber, student.studyLevel);
+    const lessons = allLessons(student.classNumber, student.studyLevel, student.studyGroup);
     const completed = lessons.filter(l => student.progress.game?.[l.id]?.done).length;
     rows.push([
       student.name,
       student.classNumber ?? "Не назначен",
       student.studyGroup ?? "Не назначена",
+      student.classNumber === 10 ? electiveTrackName(electiveGroupTracks[student.studyGroup]) : '',
       studyLevelName(student.studyLevel),
       completed,
       lessons.length,
@@ -1723,7 +2077,10 @@ function renderTeacherCourseOverview() {
         <p class="small">${esc(course.description)}</p>
         <ol>${course.lessons.map(lesson => `<li>Неделя ${lesson.week}, занятие ${lesson.session}: ${esc(lesson.title)}</li>`).join("")}</ol></section>`;
     }).join('');
-  }).join('');
+  }).join('') + `<section><h3 class="student-class-heading">Элективы 10 класса · три направления</h3>
+    <p class="small">Пять стартовых модулей на каждое направление. Группа выбирает только одно; расписание электива отдельно от основной программы.</p>
+    ${Object.values(ELECTIVE_COURSES).map(course=>`<p><b>${esc(course.title)}</b>: ${course.lessons.map(l=>esc(l.title)).join(' · ')}</p>`).join('')}
+  </section>`;
 }
 
 init();
