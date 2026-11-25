@@ -296,6 +296,25 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
   .gd-order-item{grid-template-columns:22px minmax(0,1fr) 34px 34px;gap:4px}
 }
 
+
+/* Exam-style worked example and independent practice for 11th grade. */
+.ege-example{margin:24px 0;padding:20px;border:1px solid var(--accent);border-radius:14px;background:linear-gradient(180deg,#222b43,#1b2335);color:var(--text)}
+.ege-example h3{margin:12px 0 4px}.ege-example h4{margin:6px 0}
+.ege-heading{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ege-label{display:inline-block;background:var(--accent);color:#101522;font-weight:800;padding:4px 11px;border-radius:50px;font-size:13px}
+.ege-disclaimer{font-size:13px;color:var(--muted)}
+.ege-worked,.ege-independent{padding:14px 16px;margin-top:14px;border:1px solid var(--border);border-radius:11px;background:var(--panel)}
+.ege-worked ol{padding-left:22px;margin:8px 0}.ege-worked li{margin:6px 0}
+.ege-answer{color:var(--green)!important}
+.ege-input-row{display:flex;gap:10px;align-items:center;margin-top:8px}
+.ege-input-row input{flex:1;min-width:0}
+.ege-feedback{margin:10px 0;padding:11px 13px;border-radius:9px;background:var(--panel2);color:var(--text)}
+.ege-correct{border:1px solid var(--green);color:var(--green)}
+.ege-wrong{border:1px solid #edaa89;color:#ffd2bc}.ege-try{color:var(--muted)}
+.ege-hint,.ege-solution{margin:10px 0;padding:8px 0}.ege-hint summary,.ege-solution summary{cursor:pointer;font-weight:650}
+#egeCopyAnswer{margin:12px 0}
+@media(max-width:620px){.ege-example{padding:12px;margin:18px 0}.ege-worked,.ege-independent{padding:12px}.ege-input-row{flex-direction:column;align-items:stretch}.ege-input-row button{width:100%}}
+
 </style>
 </head>
 <body>
@@ -5581,8 +5600,26 @@ async function createStudentAccount(event) {
     const {data, error} = await supabaseClient.functions.invoke("create-student", {
       body: {username, password, surname, firstName, classNumber, classLetter, studyGroup, studyLevel}
     });
-    if (error) throw new Error(data?.error || error.message || "Ошибка подключения к Supabase Function.");
-    if (!data?.success) throw new Error(data?.error || "Не удалось создать ученика.");
+    if (error) {
+      // Supabase SDK uses a generic FunctionsHttpError for non-2xx responses.
+      // The actual error explanation is in error.context (Response).
+      let details = data?.error || "";
+      const response = error.context;
+      if (!details && response && typeof response.json === "function") {
+        try {
+          const payload = await response.clone().json();
+          details = typeof payload?.error === "string" ? payload.error : "";
+        } catch (_) { /* Some gateway failures don't return JSON. */ }
+      }
+      if (!details) {
+        const status = Number(response?.status) || 0;
+        details = status
+          ? `Supabase отклонил запрос (HTTP ${status}). Проверь Edge Functions → create-student → Logs.`
+          : "Не удалось вызвать create-student. Проверь подключение и наличие Edge Function.";
+      }
+      throw new Error(details);
+    }
+    if (!data?.success) throw new Error(data?.error || "Сервер не подтвердил создание ученика.");
     $("createStudentPassword").value = "";
     message.textContent = `${surname} ${firstName} (${username}) создан. Ученик сможет войти по временному паролю и сменить его при первом входе.`;
     message.classList.add("success");
@@ -6203,6 +6240,447 @@ function tbInitLab(lesson){const el=$('tbLab');if(!el)return;const lab=TASKBOARD
   el.addEventListener('keydown',e=>{if(e.target.id==='tbSimInput'&&e.key==='Enter'){e.preventDefault();el.querySelector('[data-tb-action="sim-add"]').click();}});
 }
 
+
+// Авторские тренировочные задачи по спецификации КИМ ЕГЭ-2027.
+// Это примеры ПО ТИПУ экзамена, а не воспроизведение официальных заданий ФИПИ.
+const EGE_PRACTICE_11 = {
+  "b11_01": {
+    "number": "11",
+    "topic": "Количество информации в идентификаторе",
+    "worked": "Для каждого символа номера используют алфавит из 16 знаков. Номер содержит 10 символов. Какой минимальный объём в байтах занимает номер при посимвольном кодировании и округлении всего номера до байта?",
+    "steps": [
+      "16 знаков кодируются 4 битами, поскольку 2⁴ = 16.",
+      "10 × 4 = 40 бит.",
+      "40 : 8 = 5 байт."
+    ],
+    "workedAnswer": "5",
+    "practice": "Алфавит содержит 8 знаков. Номер состоит из 12 символов. Сколько байт требуется для хранения номера без дополнительных сведений?",
+    "answer": "5",
+    "hint": "Сначала найди число бит на символ (2³ = 8), затем умножь на 12 и переведи биты в байты.",
+    "solution": "3 × 12 = 36 бит. Округляем до целого числа байт вверх: 5 байт.",
+    "extend": "Что изменится, если каждый символ хранится в отдельном байте?"
+  },
+  "b11_02": {
+    "number": "14",
+    "topic": "Перевод из двоичной системы",
+    "worked": "Найди десятичное значение 11010₂.",
+    "steps": [
+      "Читаем разряды слева направо: 16, 8, 4, 2, 1.",
+      "Берём разряды с единицей: 16 + 8 + 2.",
+      "Получаем 26."
+    ],
+    "workedAnswer": "26",
+    "practice": "Чему равно число 101101₂ в десятичной системе?",
+    "answer": "45",
+    "hint": "У единиц веса 32, 8, 4 и 1.",
+    "solution": "101101₂ = 32 + 8 + 4 + 1 = 45.",
+    "extend": "Переведи полученное число обратно в двоичную систему."
+  },
+  "b11_03": {
+    "number": "10",
+    "topic": "Сети: адрес сети по маске",
+    "worked": "Компьютер имеет IP-адрес 192.168.14.37/24. Каков адрес сети?",
+    "steps": [
+      "Маска /24 оставляет первые 24 бита адреса (три октета) для сети.",
+      "Последний октет обнуляем.",
+      "Адрес сети: 192.168.14.0."
+    ],
+    "workedAnswer": "192.168.14.0",
+    "practice": "IP-адрес компьютера 10.0.5.73/24. Запиши адрес сети.",
+    "answer": "10.0.5.0",
+    "hint": "При /24 три первые части IP остаются прежними, последняя становится 0.",
+    "solution": "Адрес сети 10.0.5.0.",
+    "extend": "Объясни, почему адрес компьютера и адрес сети — не одно и то же."
+  },
+  "b11_04": {
+    "number": "9",
+    "topic": "Подсчёт данных в электронной таблице",
+    "worked": "В диапазоне A1:A6 находятся 4, 11, 12, 6, 17, 10. Сколько значений строго больше 10?",
+    "steps": [
+      "Сравниваем каждое число с 10.",
+      "Подходят 11, 12 и 17; само число 10 не подходит.",
+      "Формула в таблице: =СЧЁТЕСЛИ(A1:A6;\">10\")."
+    ],
+    "workedAnswer": "3",
+    "practice": "В A1:A6 находятся 9, 15, 20, 14, 8, 12. Сколько значений строго больше 10?",
+    "answer": "4",
+    "hint": "Значение 10 не подходит, так как условие строгое. Проверь каждую из 6 ячеек.",
+    "solution": "Больше 10: 15, 20, 14 и 12. Всего 4.",
+    "extend": "Как изменилась бы формула для подсчёта значений ≥ 10?"
+  },
+  "b11_05": {
+    "number": "2",
+    "topic": "Логика: таблица истинности",
+    "worked": "Для скольких наборов из трёх переменных A, B, C истинно выражение (A И НЕ B) ИЛИ C?",
+    "steps": [
+      "Если C = 1, выражение истинно при всех четырёх сочетаниях A и B.",
+      "Если C = 0, нужно A = 1 и B = 0 — ещё один набор.",
+      "Всего 4 + 1 = 5 наборов."
+    ],
+    "workedAnswer": "5",
+    "practice": "Для скольких наборов A, B, C истинно выражение (A ИЛИ B) И НЕ C?",
+    "answer": "3",
+    "hint": "Сначала установи C = 0. После этого посчитай комбинации A, B, где хотя бы одна переменная истинна.",
+    "solution": "При C = 0 подходящие (A,B): (0,1), (1,0), (1,1). Ответ: 3.",
+    "extend": "Составь полную таблицу истинности из 8 строк."
+  },
+  "c11_01": {
+    "number": "11",
+    "topic": "Кодирование идентификаторов",
+    "worked": "Алфавит содержит 40 символов. Для одного идентификатора записывают 25 символов, отводя на каждый минимальное одинаковое количество бит. Сколько байт займёт идентификатор?",
+    "steps": [
+      "2⁵ = 32 недостаточно, 2⁶ = 64 достаточно: 6 бит на символ.",
+      "25 × 6 = 150 бит.",
+      "150 / 8 = 18,75 байта. Выделить можно только целое число байт: 19."
+    ],
+    "workedAnswer": "19",
+    "practice": "В алфавите 18 символов. Идентификатор состоит из 21 символа. Сколько минимум байт нужно, если каждый символ кодируют одинаковым числом бит, а вся запись занимает целое число байт?",
+    "answer": "14",
+    "hint": "На символ нужно 5 бит (2⁴ < 18 ≤ 2⁵). Итог округли до целых байт вверх.",
+    "solution": "21 × 5 = 105 бит. 105/8 = 13,125. Требуется 14 байт.",
+    "extend": "Чем отличается округление всей записи от округления каждого символа?"
+  },
+  "c11_02": {
+    "number": "14",
+    "topic": "Позиционная запись числа",
+    "worked": "Сколько единиц содержит двоичная запись числа 29?",
+    "steps": [
+      "29 = 16 + 8 + 4 + 1.",
+      "Значит двоичная запись 11101₂.",
+      "В ней четыре единицы."
+    ],
+    "workedAnswer": "4",
+    "practice": "Сколько единиц содержит двоичная запись числа 45?",
+    "answer": "4",
+    "hint": "45 = 32 + 8 + 4 + 1.",
+    "solution": "45 = 101101₂. Единиц — 4.",
+    "extend": "Попробуй решить через Python: bin(45).count(\"1\")."
+  },
+  "c11_03": {
+    "number": "2",
+    "topic": "Логические выражения и таблицы истинности",
+    "worked": "Сколько строк полной таблицы истинности (A И B) ИЛИ НЕ C для трёх переменных дают истину?",
+    "steps": [
+      "При C = 0 выражение истинно при любых A и B: 4 строки.",
+      "При C = 1 требуется A = 1 и B = 1: ещё 1 строка.",
+      "Ответ: 5."
+    ],
+    "workedAnswer": "5",
+    "practice": "Сколько строк таблицы истинности трёх переменных делают истинным (A И НЕ B) И C?",
+    "answer": "1",
+    "hint": "Для конъюнкции истинны сразу все три условия: A = 1, B = 0, C = 1.",
+    "solution": "Единственный подходящий набор (1,0,1). Ответ: 1.",
+    "extend": "Проверь ответ перебором всех 8 наборов."
+  },
+  "c11_04": {
+    "number": "4",
+    "topic": "Условие Фано и префиксные коды",
+    "worked": "Три знака имеют коды 0, 10 и 110. Какое кратчайшее двоичное слово можно дать четвёртому знаку, сохранив условие Фано?",
+    "steps": [
+      "Новый код не может начинаться с уже имеющегося полного кода.",
+      "Ветви 0 и 10 заняты; ветвь 110 тоже занята.",
+      "Кратчайшая свободная ветвь дерева кодов — 111."
+    ],
+    "workedAnswer": "111",
+    "practice": "Коды трёх символов: 0, 11, 100. Укажи кратчайшее двоичное слово для четвёртого символа, при котором условие Фано сохранится.",
+    "answer": "101",
+    "hint": "Нельзя брать код, начинающийся с 0 или 11; среди трёхбитных вариантов проверь 101.",
+    "solution": "Код 101 не является началом другого кода и не содержит существующий код в качестве префикса. Ответ: 101.",
+    "extend": "Изобрази дерево двоичных слов и отметь занятые ветви."
+  },
+  "c11_05": {
+    "number": "7",
+    "topic": "Объём растрового изображения",
+    "worked": "Несжатое изображение содержит 512 × 512 пикселей и использует 8 бит на пиксель. Сколько КиБ оно занимает?",
+    "steps": [
+      "Пикселей: 512 × 512 = 262144.",
+      "8 бит на пиксель = 1 байт на пиксель.",
+      "262144 / 1024 = 256 КиБ."
+    ],
+    "workedAnswer": "256",
+    "practice": "Изображение 256 × 128 пикселей имеет глубину цвета 4 бита на пиксель. Сколько КиБ займут несжатые пиксели без заголовка?",
+    "answer": "16",
+    "hint": "Умножь ширину, высоту и 4 бита. Затем переведи в байты (÷8) и КиБ (÷1024).",
+    "solution": "256 × 128 × 4 / 8 / 1024 = 16 КиБ.",
+    "extend": "Как изменится объём, если глубина цвета станет вдвое больше?"
+  },
+  "c11_08": {
+    "number": "10",
+    "topic": "IP-адрес и маска подсети",
+    "worked": "Устройство имеет адрес 192.168.12.77/26. Укажи адрес его подсети.",
+    "steps": [
+      "Маска /26 равна 255.255.255.192.",
+      "Размер блока последнего октета — 64 адреса: 0–63, 64–127, 128–191, 192–255.",
+      "77 попадает в диапазон 64–127; адрес сети 192.168.12.64."
+    ],
+    "workedAnswer": "192.168.12.64",
+    "practice": "Для IP 192.168.12.150/26 укажи адрес подсети.",
+    "answer": "192.168.12.128",
+    "hint": "Разбей последний октет на блоки по 64. В какой блок попадает 150?",
+    "solution": "150 находится в блоке 128–191. Адрес сети 192.168.12.128.",
+    "extend": "Найди широковещательный адрес этой подсети."
+  },
+  "c11_09": {
+    "number": "9",
+    "topic": "Фильтрация чисел в таблице",
+    "worked": "В ячейках A1:A5 записаны 3, 12, 8, 17, 11. Сколько ячеек удовлетворяет условию A ≥ 11?",
+    "steps": [
+      "Проверяем числа 3, 12, 8, 17, 11.",
+      "Подходят 12, 17 и 11; граница 11 включена.",
+      "Формула: =СЧЁТЕСЛИ(A1:A5;\">=11\")."
+    ],
+    "workedAnswer": "3",
+    "practice": "В диапазоне A1:A6 записаны 8, 12, 15, 2, 11, 7. Сколько значений строго больше 10?",
+    "answer": "3",
+    "hint": "Перебери значения или используй СЧЁТЕСЛИ с условием \">10\".",
+    "solution": "Подходят 12, 15 и 11. Всего 3.",
+    "extend": "Попробуй теперь посчитать среднее только подходящих значений."
+  },
+  "c11_10": {
+    "number": "3",
+    "topic": "Связанные таблицы базы данных",
+    "worked": "Есть таблица «Темы»: (1, Python), (2, Логика). В таблице «Задания» поле topic_id имеет значения 1, 1, 2, 2, 2. Сколько заданий относится к теме «Логика»?",
+    "steps": [
+      "По таблице «Темы» определяем id логики: 2.",
+      "В записях «Заданий» выбираем строки с topic_id = 2.",
+      "Таких записей три."
+    ],
+    "workedAnswer": "3",
+    "practice": "Темы: (1, Python), (2, Алгоритмы). В таблице заданий topic_id идут как 1, 2, 2, 1, 2, 2. Сколько заданий относится к теме «Алгоритмы»?",
+    "answer": "4",
+    "hint": "Сначала найди идентификатор «Алгоритмов», потом сосчитай соответствующие внешние ключи.",
+    "solution": "У «Алгоритмов» id = 2. В наборе 1,2,2,1,2,2 четыре двойки. Ответ: 4.",
+    "extend": "Почему нельзя ориентироваться только на порядковый номер строки?"
+  },
+  "c11_11": {
+    "number": "1",
+    "topic": "Кратчайший путь во взвешенном графе",
+    "worked": "Даны дороги A–B длины 3, A–C длины 4, B–D длины 5, C–D длины 2. Найди длину кратчайшего пути A→D.",
+    "steps": [
+      "Маршрут A–B–D имеет длину 3 + 5 = 8.",
+      "Маршрут A–C–D имеет длину 4 + 2 = 6.",
+      "Минимум — 6."
+    ],
+    "workedAnswer": "6",
+    "practice": "Даны дороги A–B (6), A–C (2), C–B (1), B–D (3), C–D (9). Найди длину кратчайшего пути A→D.",
+    "answer": "6",
+    "hint": "Не пропусти путь из трёх рёбер A–C–B–D.",
+    "solution": "A–C–B–D = 2 + 1 + 3 = 6; A–B–D = 9; A–C–D = 11. Ответ: 6.",
+    "extend": "Нарисуй граф и отметь найденный путь цветом."
+  },
+  "c11_12": {
+    "number": "5",
+    "topic": "Анализ вычислительного алгоритма",
+    "worked": "Алгоритм берёт число 6, переводит его в двоичную систему и приписывает справа бит чётности: 0, если единиц чётное число, иначе 1. Чему равно получившееся двоичное число в десятичной системе?",
+    "steps": [
+      "6₁₀ = 110₂, в записи две единицы.",
+      "Приписываем справа 0: 1100₂.",
+      "1100₂ = 12₁₀."
+    ],
+    "workedAnswer": "12",
+    "practice": "То же правило применили к числу 7. Какое десятичное число получится после приписывания бита чётности?",
+    "answer": "15",
+    "hint": "7₁₀ = 111₂, там три единицы; приписывай 1.",
+    "solution": "111₂ → 1111₂ → 15₁₀.",
+    "extend": "Подбери исходное число, для которого результат равен 18."
+  },
+  "c11_13": {
+    "number": "6",
+    "topic": "Циклы исполнителя «Черепаха»",
+    "worked": "Черепаха 4 раза повторяет команды «вперёд 3 клетки; направо 90°». Каков периметр получившегося квадрата?",
+    "steps": [
+      "Поворот 90° и четыре повтора дают квадрат.",
+      "Каждая из четырёх сторон равна 3.",
+      "Периметр 4 × 3 = 12."
+    ],
+    "workedAnswer": "12",
+    "practice": "Черепаха 5 раз делает «вперёд 2 клетки; направо 72°». Какова суммарная длина нарисованных отрезков?",
+    "answer": "10",
+    "hint": "Умножь длину каждого отрезка на число повторений. Форма — правильный пятиугольник.",
+    "solution": "5 × 2 = 10 клеток.",
+    "extend": "Что нужно изменить в программе, чтобы получить шестиугольник?"
+  },
+  "c11_14": {
+    "number": "24",
+    "topic": "Обработка символьной строки",
+    "worked": "Программа ищет самую длинную подряд идущую последовательность буквы «А» в строке «ААБААВ». Какова её длина?",
+    "steps": [
+      "Строка разбивается символами не-А на группы «АА» и «АА».",
+      "Обе группы имеют длину 2.",
+      "Максимальная длина — 2."
+    ],
+    "workedAnswer": "2",
+    "practice": "Какова максимальная длина непрерывной серии буквы «А» в строке «ААБАААБА»?",
+    "answer": "3",
+    "hint": "После буквы Б счётчик непрерывной серии обнуляется.",
+    "solution": "Серии: АА (2), ААА (3), А (1). Максимум 3.",
+    "extend": "Напиши Python-цикл, который работает для любого текста."
+  },
+  "c11_15": {
+    "number": "16",
+    "topic": "Рекурсивные функции",
+    "worked": "Задана функция F(1)=1, при n > 1: F(n)=F(n−1)+2n. Найди F(3).",
+    "steps": [
+      "F(1) = 1.",
+      "F(2) = 1 + 2×2 = 5.",
+      "F(3) = 5 + 2×3 = 11."
+    ],
+    "workedAnswer": "11",
+    "practice": "Для той же функции найди F(4).",
+    "answer": "19",
+    "hint": "Продолжи вычисление от F(3) = 11.",
+    "solution": "F(4) = F(3) + 2×4 = 11 + 8 = 19.",
+    "extend": "Сравни рекурсивный и циклический способы вычисления."
+  },
+  "c11_16": {
+    "number": "17",
+    "topic": "Анализ пар соседних чисел",
+    "worked": "Для последовательности 5, 2, 7, 1 найдите наибольшую сумму двух соседних элементов.",
+    "steps": [
+      "Считаем пары: 5+2=7, 2+7=9, 7+1=8.",
+      "Сравниваем получившиеся суммы.",
+      "Максимум 9."
+    ],
+    "workedAnswer": "9",
+    "practice": "Для последовательности 3, 9, 4, 8, 2 найди наибольшую сумму пары соседних элементов.",
+    "answer": "13",
+    "hint": "Посмотри пары (3,9), (9,4), (4,8), (8,2); нельзя складывать несоседние числа.",
+    "solution": "Суммы 12, 13, 12, 10. Максимум 13.",
+    "extend": "Реши задачу одним проходом по списку без сортировки."
+  },
+  "c11_17": {
+    "number": "8",
+    "topic": "Комбинаторика: число слов",
+    "worked": "Сколько трёхбуквенных слов можно составить из букв А, Б, В, если буква А встречается ровно один раз?",
+    "steps": [
+      "Выбираем позицию единственной А: 3 способа.",
+      "Два оставшихся места заполняем Б или В: 2×2 = 4 способа.",
+      "Всего 3×4 = 12."
+    ],
+    "workedAnswer": "12",
+    "practice": "Сколько четырёхбуквенных слов из А, Б, В содержат ровно одну букву А?",
+    "answer": "32",
+    "hint": "Выбери одну из четырёх позиций для А; остальные места имеют по два варианта.",
+    "solution": "4×2³ = 4×8 = 32.",
+    "extend": "Проверь формулу программой itertools.product."
+  },
+  "c11_18": {
+    "number": "19–21",
+    "topic": "Игры: выигрыш за один ход",
+    "worked": "В куче N камней (1 ≤ N < 10). За ход можно добавить 1 или 2 камня. Игрок выигрывает, когда камней стало не меньше 10. Перечисли все N, из которых можно победить за один ход.",
+    "steps": [
+      "Для победы за один ход требуется N+1 ≥ 10 или N+2 ≥ 10.",
+      "Отсюда N ≥ 8.",
+      "При N < 10 подходят 8 и 9."
+    ],
+    "workedAnswer": "8 9",
+    "practice": "Новая игра: победа при достижении ≥ 15, можно добавить 1 или 3 камня. Перечисли все стартовые N от 1 до 14, из которых игрок выигрывает сразу.",
+    "answer": "12 13 14",
+    "hint": "Выбирай выгодный ход +3. Для немедленной победы нужно N+3 ≥ 15.",
+    "solution": "N ≥ 12. В указанном диапазоне это 12, 13, 14.",
+    "extend": "После этого найди позиции, где можно гарантировать победу своим вторым ходом."
+  },
+  "c11_19": {
+    "number": "22",
+    "topic": "Параллельные процессы",
+    "worked": "Задачи A (4 мин) и B (7 мин) начинаются одновременно. C (3 мин) стартует после A. D (2 мин) — только после B и C. Когда завершится весь проект?",
+    "steps": [
+      "A закончится на 4-й минуте, B — на 7-й.",
+      "C стартует после A и закончится на 4+3=7-й минуте.",
+      "D ждёт обе ветви: стартует на 7-й и завершится на 9-й."
+    ],
+    "workedAnswer": "9",
+    "practice": "Процессы A (5 мин) и B (3 мин) запускаются вместе. C (6 мин) начинается после завершения обоих. Через сколько минут завершатся все процессы?",
+    "answer": "11",
+    "hint": "Параллельные задачи не надо складывать: ждём самую долгую, потом запускаем C.",
+    "solution": "max(5,3)+6 = 11 минут.",
+    "extend": "Нарисуй диаграмму с полосками времени для каждого процесса."
+  },
+  "c11_20": {
+    "number": "27",
+    "topic": "Анализ данных и простая кластеризация (вводная тренировка)",
+    "worked": "Две группы точек на оси X: первая — 0 и 2, вторая — 10 и 12. Найди сумму X-координат центров групп, если центр — среднее значение координат.",
+    "steps": [
+      "Центр первой группы: (0+2)/2 = 1.",
+      "Центр второй группы: (10+12)/2 = 11.",
+      "Сумма координат центров 1+11 = 12."
+    ],
+    "workedAnswer": "12",
+    "practice": "Первая группа точек: (1;2) и (3;2), вторая: (7;2) и (9;2). Найди сумму X-координат центров двух групп.",
+    "answer": "10",
+    "hint": "По X средние значения будут (1+3)/2 и (7+9)/2.",
+    "solution": "Центры по X: 2 и 8. Сумма 10. Это лишь подготовительный фрагмент, не полная задача №27.",
+    "extend": "Для полного экзаменационного задания нужны работа с файлами, алгоритм анализа и запись ответа по формату 2027 года."
+  }
+};
+const egeAttempts = new Map();
+function egeNormalizeAnswer(value) {
+  return String(value || '').trim().toLowerCase().replace(/ё/g,'е')
+    .replace(/[−–]/g,'-').replace(/[,;]+/g,' ')
+    .replace(/\s+/g,' ');
+}
+function egePracticeMarkup(lesson) {
+  if (!user || user.classNumber !== 11 || track !== 'game') return '';
+  const task = EGE_PRACTICE_11[lesson.id];
+  if (!task) return '';
+  return `<section class="ege-example" id="egeExample">
+    <div class="ege-heading"><span class="ege-label">ЕГЭ-2027 · № ${esc(task.number)}</span><span class="small">Тренировка по теме занятия</span></div>
+    <h3>Как эта тема встречается в ЕГЭ</h3>
+    <p class="ege-disclaimer">Авторские учебные задачи по типу экзамена. Они помогают освоить метод, но не воспроизводят задания ФИПИ и могут быть проще реального КИМ.</p>
+    <p><b>${esc(task.topic)}</b></p>
+    <div class="ege-worked"><b>Разобранный пример</b><p>${esc(task.worked)}</p>
+      <ol>${task.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol>
+      <p class="ege-answer">Ответ примера: <strong>${esc(task.workedAnswer)}</strong></p>
+    </div>
+    <div class="ege-independent">
+      <h4>Теперь реши сам</h4><p>${esc(task.practice)}</p>
+      <label for="egeStudentAnswer">Твой короткий ответ</label>
+      <div class="row ege-input-row"><input id="egeStudentAnswer" autocomplete="off" placeholder="Введи ответ здесь" aria-describedby="egeFeedback"><button type="button" id="egeCheck">Проверить ответ</button></div>
+      <div class="ege-feedback small" id="egeFeedback" role="status" aria-live="polite">Попробуй ответить самостоятельно, не открывая подсказку.</div>
+      <details class="ege-hint" id="egeHint"><summary>Нужна подсказка?</summary><p>${esc(task.hint)}</p></details>
+      <details class="ege-solution hidden" id="egeSolution"><summary>Подробное решение самостоятельной задачи</summary><p>${esc(task.solution)}</p><p class="small">Усложнение: ${esc(task.extend)}</p></details>
+      <button type="button" id="egeCopyAnswer" class="secondary hidden">Добавить мой результат в ответ для учителя</button>
+      <p class="small">Проверка работает в браузере. Для сохранения учителю перенеси результат в поле ответа и нажми «Сохранить ответ».</p>
+    </div>
+  </section>`;
+}
+function egePracticeInit(lesson) {
+  const task=EGE_PRACTICE_11[lesson.id];
+  if (!task || user?.classNumber!==11 || track!=='game') return;
+  const input=$('egeStudentAnswer'), btn=$('egeCheck'), feedback=$('egeFeedback');
+  const solution=$('egeSolution'), copyBtn=$('egeCopyAnswer');
+  if (!input || !btn || !feedback) return;
+  const check = () => {
+    const raw=input.value.trim();
+    if (!raw) { feedback.textContent='Сначала запиши ответ, а потом нажимай «Проверить».';feedback.className='ege-feedback small ege-try';return; }
+    const key=(user?.id||'demo')+':'+lesson.id;
+    const attempts=(egeAttempts.get(key)||0)+1;egeAttempts.set(key,attempts);
+    const correct=egeNormalizeAnswer(raw)===egeNormalizeAnswer(task.answer);
+    if (correct) {
+      feedback.textContent='✓ Верно! Ты применил метод из разобранного примера. Можешь перенести результат учителю.';
+      feedback.className='ege-feedback small ege-correct';
+      copyBtn.classList.remove('hidden');solution.classList.remove('hidden');
+    } else {
+      feedback.textContent= attempts>=2
+        ? 'Пока неверно. Сверь условие, единицы измерения и границы диапазона. Теперь доступен полный разбор — изучи его и попробуй ещё раз.'
+        : 'Не совпало. Проверь ход вычислений и открой подсказку — решение ещё можно исправить.';
+      feedback.className='ege-feedback small ege-wrong';
+      if(attempts>=2)solution.classList.remove('hidden');
+    }
+  };
+  btn.addEventListener('click',check);
+  input.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();check();}});
+  copyBtn.addEventListener('click',()=>{
+    if (egeNormalizeAnswer(input.value)!==egeNormalizeAnswer(task.answer)) return;
+    const answerInput=$('answer');
+    if (!answerInput || previewMode) return;
+    const line=`ЕГЭ-2027, задание №${task.number} по теме «${task.topic}»: мой ответ — ${input.value.trim()}.`;
+    if (!answerInput.value.includes(line)) answerInput.value=(answerInput.value.trim()+'\n'+line).trim();
+    feedback.textContent='Результат добавлен в поле ответа ниже. Нажми «Сохранить ответ», чтобы отправить его учителю.';
+  });
+  if (previewMode) copyBtn.disabled = true;
+}
+
 function renderLesson() {
   const currentLessonList = studentVisibleCourses()[track]?.lessons || [];
   const currentLessonIndex = currentLessonList.findIndex(x => x.id === lessonId);
@@ -6228,6 +6706,7 @@ function renderLesson() {
     <div class="worked-notes"><h4>Разбор примера по шагам</h4><p class="small">Сначала прочитай код и предскажи результат, затем раскрой объяснение каждой важной строки.</p>${l.codeNotes || ''}</div>
     <div class="experiment"><h3>Попробуй сам · 8 минут</h3><p>${esc(user.studyLevel === 'advanced' ? l.experimentAdvanced : l.experimentBasic)}</p><p class="read-tip">Это тренировка перед основным заданием: ответы здесь не сохраняются и не оцениваются автоматически.</p></div>
     <div class="selfcheck"><h3>Самопроверка · 5 минут</h3><p class="read-tip">Сначала ответь без подсказки, затем открой ориентир. Он не заменяет собственное объяснение.</p>${(l.selfCheck||[]).map((item,i) => `<details><summary>${i+1}. ${esc(item.q)}</summary><p>${esc(item.a)}</p></details>`).join('')}</div>
+    ${egePracticeMarkup(l)}
     ${track === "extra_python_tasks" ? tbLabMarkup(l) : ""}
     ${GUIDED_LABS[l.id] ? gdLabMarkup(l) : ""}
     <h3>Основное практическое задание</h3><p>${esc(user.studyLevel === 'advanced' && l.taskAdvanced ? l.taskAdvanced : l.taskBasic || l.task)}</p>
@@ -6244,6 +6723,7 @@ function renderLesson() {
     ${p.done ? '<p class="good">✓ Модуль выполнен и засчитан в прогресс.</p>' : ""}
   `;
 
+  egePracticeInit(l);
   if (algIsAvailable(l)) algInitControls(l);
   if (track === "extra_python_tasks") tbInitLab(l);
   if (GUIDED_LABS[l.id]) gdInitLab(l);
@@ -6882,6 +7362,7 @@ const ALG_TEMPLATES = {
   },
   blank: {name:'Чистый алгоритм',tip:'Собери свой алгоритм из команд. В этом режиме проверяй результат вручную — автоматического эталона нет.',inputs:{},tests:[],blocks:[]}
 };
+const ALG_LESSON_TASKS = {"8b_01":{"name":"Первые команды print","goal":"Собери алгоритм, который выводит имя ученика, а затем результат 8 × 7.","tip":"Тема урока: Первые команды print. Добавь команду вывода, чтобы получить две строки.","inputs":{"name":"Маша"},"tests":[{"input":{"name":"Маша"},"expected":"Маша\n56"},{"input":{"name":"Лев"},"expected":"Лев\n56"}],"blocks":[{"type":"input","variable":"name","prompt":"Имя","kind":"text"},{"type":"print","expression":"8 * 7"}]},"8b_02":{"name":"Переменные и присваивание","goal":"Введи целый возраст; вычисли, сколько лет будет через два года.","tip":"Тема урока: Переменные и присваивание. Нужно новое значение, а не просто вывод возраста.","inputs":{"age":"14"},"tests":[{"input":{"age":"14"},"expected":"16"},{"input":{"age":"0"},"expected":"2"},{"input":{"age":"17"},"expected":"19"}],"blocks":[{"type":"input","variable":"age","prompt":"Введи age","kind":"number"},{"type":"print","expression":"future"}]},"8b_03":{"name":"Стоимость покупки","goal":"Вычисли цену покупки: цена × количество − 10 рублей скидки.","tip":"Тема урока: Стоимость покупки. Сначала вычисление, затем вывод.","inputs":{"price":"25","qty":"4"},"tests":[{"input":{"price":"25","qty":"4"},"expected":"90"},{"input":{"price":"10","qty":"1"},"expected":"0"},{"input":{"price":"50","qty":"3"},"expected":"140"}],"blocks":[{"type":"input","variable":"price","prompt":"Введи price","kind":"number"},{"type":"input","variable":"qty","prompt":"Введи qty","kind":"number"},{"type":"print","expression":"total"}]},"8b_04":{"name":"Целочисленное деление и остаток","goal":"Переведи минуты в полные часы и оставшиеся минуты, выведи две строки.","tip":"Тема урока: Целочисленное деление и остаток. Используй // и %, а не обычное деление.","inputs":{"minutes":"135"},"tests":[{"input":{"minutes":"135"},"expected":"2\n15"},{"input":{"minutes":"59"},"expected":"0\n59"},{"input":{"minutes":"120"},"expected":"2\n0"}],"blocks":[{"type":"input","variable":"minutes","prompt":"Введи minutes","kind":"number"},{"type":"set","variable":"rest","expression":"minutes % 60"},{"type":"print","expression":"hours"},{"type":"print","expression":"rest"}]},"8b_07":{"name":"Псевдослучайное число по формуле","goal":"Сделай простой учебный псевдогенератор: (seed × 7 + 3) % 10 + 1. Одинаковое seed даёт одинаковый результат.","tip":"Тема урока: Псевдослучайное число по формуле. Это учебная формула, не настоящая функция random.randint().","inputs":{"seed":"4"},"tests":[{"input":{"seed":"4"},"expected":"2"},{"input":{"seed":"0"},"expected":"4"},{"input":{"seed":"10"},"expected":"4"}],"blocks":[{"type":"input","variable":"seed","prompt":"Введи seed","kind":"number"},{"type":"print","expression":"number"}]},"8b_08":{"name":"Три ветви для знака числа","goal":"Выведи «Плюс», «Минус» или «Ноль» в зависимости от введённого числа.","tip":"Тема урока: Три ветви для знака числа. Нужна проверка нуля отдельно от положительного и отрицательного случая.","inputs":{"n":"-2"},"tests":[{"input":{"n":"5"},"expected":"Плюс"},{"input":{"n":"-7"},"expected":"Минус"},{"input":{"n":"0"},"expected":"Ноль"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"}]},"annual_python_05":{"name":"Три ветви для знака числа","goal":"Выведи «Плюс», «Минус» или «Ноль» в зависимости от введённого числа.","tip":"Тема урока: Три ветви для знака числа. Нужна проверка нуля отдельно от положительного и отрицательного случая.","inputs":{"n":"-2"},"tests":[{"input":{"n":"5"},"expected":"Плюс"},{"input":{"n":"-7"},"expected":"Минус"},{"input":{"n":"0"},"expected":"Ноль"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"}]},"8b_10":{"name":"Составное условие диапазона","goal":"Проверь, попадает ли число в отрезок [10; 99].","tip":"Тема урока: Составное условие диапазона. Используй and, обе границы включены.","inputs":{"n":"57"},"tests":[{"input":{"n":"57"},"expected":"Да"},{"input":{"n":"10"},"expected":"Да"},{"input":{"n":"100"},"expected":"Нет"},{"input":{"n":"9"},"expected":"Нет"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"}]},"8b_12":{"name":"Цикл while до достижения нуля","goal":"Начинай с положительного числа n, выводи его и уменьшай на единицу, пока не получится ноль.","tip":"Тема урока: Цикл while до достижения нуля. Эта задача закрепляет условие остановки while; поток ввода по одному числу тренируется отдельно.","inputs":{"n":"3"},"tests":[{"input":{"n":"3"},"expected":"3\n2\n1"},{"input":{"n":"1"},"expected":"1"},{"input":{"n":"0"},"expected":""}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"}]},"8b_13":{"name":"Логическая переменная и отладка","goal":"Вычисли булеву переменную is_even и выведи True/False.","tip":"Тема урока: Логическая переменная и отладка. Проверь n % 2 == 0 и покажи вычисленное логическое значение.","inputs":{"n":"6"},"tests":[{"input":{"n":"6"},"expected":"True"},{"input":{"n":"7"},"expected":"False"},{"input":{"n":"0"},"expected":"True"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"print","expression":"is_even"}]},"8b_14":{"name":"Алгоритм Евклида: находим НОД","goal":"Пока b не равно нулю, замени пару (a, b) на (b, a % b). Выведи НОД.","tip":"Тема урока: Алгоритм Евклида: находим НОД. Нужен именно цикл Евклида, а не сумма чисел.","inputs":{"a":"48","b":"18"},"tests":[{"input":{"a":"48","b":"18"},"expected":"6"},{"input":{"a":"17","b":"13"},"expected":"1"},{"input":{"a":"24","b":"0"},"expected":"24"}],"blocks":[{"type":"input","variable":"a","prompt":"Введи a","kind":"number"},{"type":"input","variable":"b","prompt":"Введи b","kind":"number"},{"type":"print","expression":"a"}]},"8b_16":{"name":"Разложение на простые множители","goal":"Найди все простые множители числа n в порядке возрастания, один на строке.","tip":"Тема урока: Разложение на простые множители. Если делится — печатай множитель и уменьши n. Иначе увеличь d.","inputs":{"n":"84"},"tests":[{"input":{"n":"84"},"expected":"2\n2\n3\n7"},{"input":{"n":"13"},"expected":"13"},{"input":{"n":"12"},"expected":"2\n2\n3"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"set","variable":"d","expression":"2"}]},"8b_17":{"name":"Проверка простоты числа","goal":"Выведи True для простых чисел, False для составных и единицы.","tip":"Тема урока: Проверка простоты числа. Перебирать делители достаточно до d² ≤ n.","inputs":{"n":"29"},"tests":[{"input":{"n":"1"},"expected":"False"},{"input":{"n":"2"},"expected":"True"},{"input":{"n":"9"},"expected":"False"},{"input":{"n":"29"},"expected":"True"},{"input":{"n":"49"},"expected":"False"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"set","variable":"prime","expression":"True"},{"type":"print","expression":"prime"}]},"a10_20":{"name":"Проверка простоты числа","goal":"Выведи True для простых чисел, False для составных и единицы.","tip":"Тема урока: Проверка простоты числа. Перебирать делители достаточно до d² ≤ n.","inputs":{"n":"29"},"tests":[{"input":{"n":"1"},"expected":"False"},{"input":{"n":"2"},"expected":"True"},{"input":{"n":"9"},"expected":"False"},{"input":{"n":"29"},"expected":"True"},{"input":{"n":"49"},"expected":"False"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"set","variable":"prime","expression":"True"},{"type":"print","expression":"prime"}]},"8b_19":{"name":"Поиск входных данных по результату","goal":"Перебери все x от 0 до max, выведи те, для которых (2*x) % 5 == 4.","tip":"Тема урока: Поиск входных данных по результату. Решение — полный перебор кандидатов и проверка условия.","inputs":{"max":"20"},"tests":[{"input":{"max":"20"},"expected":"2\n7\n12\n17"},{"input":{"max":"5"},"expected":"2"},{"input":{"max":"1"},"expected":""}],"blocks":[{"type":"input","variable":"max","prompt":"Введи max","kind":"number"}]},"b10_01":{"name":"Шаги алгоритма: прибавь пять","goal":"Введи n, прибавь 5 и выведи результат.","tip":"Тема урока: Шаги алгоритма: прибавь пять. Проверь порядок: ввод → вычисление → вывод.","inputs":{"n":"7"},"tests":[{"input":{"n":"7"},"expected":"12"},{"input":{"n":"-2"},"expected":"3"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"print","expression":"result"}]},"b10_02":{"name":"Блок-схема «Нужен ли зонт?»","goal":"Введи 1, если дождь идёт, и 0, если нет. Выведи решение.","tip":"Тема урока: Блок-схема «Нужен ли зонт?». Условие разделяет алгоритм на две ветви.","inputs":{"rain":"1"},"tests":[{"input":{"rain":"1"},"expected":"Возьми зонт"},{"input":{"rain":"0"},"expected":"Зонт не нужен"}],"blocks":[{"type":"input","variable":"rain","prompt":"Введи rain","kind":"number"}]},"b10_03":{"name":"Зачёт при десяти баллах","goal":"Если баллов не менее 10, выведи «Зачёт», иначе «Повтори».","tip":"Тема урока: Зачёт при десяти баллах. Граница 10 включается в успешную ветку.","inputs":{"points":"10"},"tests":[{"input":{"points":"10"},"expected":"Зачёт"},{"input":{"points":"3"},"expected":"Повтори"},{"input":{"points":"15"},"expected":"Зачёт"}],"blocks":[{"type":"input","variable":"points","prompt":"Введи points","kind":"number"}]},"b10_04":{"name":"Повторяем вывод десять раз","goal":"Выведи номера от 1 до 10 через цикл for.","tip":"Тема урока: Повторяем вывод десять раз. В цикле должны быть 10 повторений.","inputs":{},"tests":[{"input":{},"expected":"1\n2\n3\n4\n5\n6\n7\n8\n9\n10"}],"blocks":[]},"b10_05":{"name":"Счётчик шагов","goal":"Введи число шагов и выведи от 1 до него, затем «Готово».","tip":"Тема урока: Счётчик шагов. Для количества шагов используй переменную n.","inputs":{"n":"4"},"tests":[{"input":{"n":"4"},"expected":"1\n2\n3\n4\nГотово"},{"input":{"n":"1"},"expected":"1\nГотово"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"print","expression":"\"Готово\""}]},"a10_01":{"name":"Цена билетов со скидкой","goal":"Найди стоимость tickets билетов по price рублей. Для 5+ билетов скидка 10%.","tip":"Тема урока: Цена билетов со скидкой. Декомпозируй: исходная цена → проверка количества → скидка → результат.","inputs":{"tickets":"5","price":"100"},"tests":[{"input":{"tickets":"5","price":"100"},"expected":"450"},{"input":{"tickets":"4","price":"100"},"expected":"400"},{"input":{"tickets":"6","price":"50"},"expected":"270"}],"blocks":[{"type":"input","variable":"tickets","prompt":"Введи tickets","kind":"number"},{"type":"input","variable":"price","prompt":"Введи price","kind":"number"},{"type":"set","variable":"cost","expression":"tickets * price"},{"type":"print","expression":"cost"}]},"a10_03":{"name":"Три конструкции блок-схемы","goal":"Найди сумму чисел от 1 до n с помощью повторения.","tip":"Тема урока: Три конструкции блок-схемы. Выдели последовательность, цикл и вычисление внутри цикла.","inputs":{"n":"5"},"tests":[{"input":{"n":"5"},"expected":"15"},{"input":{"n":"0"},"expected":"0"},{"input":{"n":"2"},"expected":"3"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"set","variable":"total","expression":"0"},{"type":"print","expression":"total"}]},"a10_16":{"name":"Три конструкции блок-схемы","goal":"Найди сумму чисел от 1 до n с помощью повторения.","tip":"Тема урока: Три конструкции блок-схемы. Выдели последовательность, цикл и вычисление внутри цикла.","inputs":{"n":"5"},"tests":[{"input":{"n":"5"},"expected":"15"},{"input":{"n":"0"},"expected":"0"},{"input":{"n":"2"},"expected":"3"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"set","variable":"total","expression":"0"},{"type":"print","expression":"total"}]},"annual_python_09":{"name":"Три конструкции блок-схемы","goal":"Найди сумму чисел от 1 до n с помощью повторения.","tip":"Тема урока: Три конструкции блок-схемы. Выдели последовательность, цикл и вычисление внутри цикла.","inputs":{"n":"5"},"tests":[{"input":{"n":"5"},"expected":"15"},{"input":{"n":"0"},"expected":"0"},{"input":{"n":"2"},"expected":"3"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"set","variable":"total","expression":"0"},{"type":"print","expression":"total"}]},"a10_04":{"name":"Трассировка минимального значения","goal":"Найди наименьшее из трёх введённых чисел через последовательные сравнения.","tip":"Тема урока: Трассировка минимального значения. Смотри промежуточные значения best во вкладке трассировки.","inputs":{"a":"7","b":"4","c":"9"},"tests":[{"input":{"a":"7","b":"4","c":"9"},"expected":"4"},{"input":{"a":"-1","b":"-8","c":"3"},"expected":"-8"},{"input":{"a":"2","b":"2","c":"2"},"expected":"2"}],"blocks":[{"type":"input","variable":"a","prompt":"Введи a","kind":"number"},{"type":"input","variable":"b","prompt":"Введи b","kind":"number"},{"type":"input","variable":"c","prompt":"Введи c","kind":"number"},{"type":"set","variable":"best","expression":"a"},{"type":"if","condition":"c < best","yes":[{"type":"set","variable":"best","expression":"c"}],"no":[]},{"type":"print","expression":"best"}]},"a10_05":{"name":"Условие входа в кабинет","goal":"Преподаватель допускает всегда; иначе нужны возраст 14+ и пропуск. has_pass, teacher — 0/1.","tip":"Тема урока: Условие входа в кабинет. Соедини and/or правильно, используя скобки.","inputs":{"age":"14","has_pass":"1","teacher":"0"},"tests":[{"input":{"age":"14","has_pass":"1","teacher":"0"},"expected":"Можно"},{"input":{"age":"13","has_pass":"1","teacher":"0"},"expected":"Нельзя"},{"input":{"age":"12","has_pass":"0","teacher":"1"},"expected":"Можно"}],"blocks":[{"type":"input","variable":"age","prompt":"Введи age","kind":"number"},{"type":"input","variable":"has_pass","prompt":"Введи has_pass","kind":"number"},{"type":"input","variable":"teacher","prompt":"Введи teacher","kind":"number"}]},"a10_15":{"name":"Условие права на скидку","goal":"Скидка при билете и (возраст 7–17 или is_student=1).","tip":"Тема урока: Условие права на скидку. Билет обязателен для обоих вариантов.","inputs":{"age":"13","is_student":"0","ticket":"1"},"tests":[{"input":{"age":"13","is_student":"0","ticket":"1"},"expected":"Скидка"},{"input":{"age":"20","is_student":"1","ticket":"1"},"expected":"Скидка"},{"input":{"age":"13","is_student":"0","ticket":"0"},"expected":"Без скидки"},{"input":{"age":"20","is_student":"0","ticket":"1"},"expected":"Без скидки"}],"blocks":[{"type":"input","variable":"age","prompt":"Введи age","kind":"number"},{"type":"input","variable":"is_student","prompt":"Введи is_student","kind":"number"},{"type":"input","variable":"ticket","prompt":"Введи ticket","kind":"number"}]},"a10_06":{"name":"Считаем цифры через while","goal":"Подсчитай количество цифр числа, включая отдельный случай n = 0.","tip":"Тема урока: Считаем цифры через while. Каждое деление // 10 удаляет одну цифру.","inputs":{"n":"2026"},"tests":[{"input":{"n":"2026"},"expected":"4"},{"input":{"n":"7"},"expected":"1"},{"input":{"n":"0"},"expected":"1"},{"input":{"n":"100"},"expected":"3"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"set","variable":"count","expression":"0"},{"type":"print","expression":"count"}]},"a10_07":{"name":"Таблица квадратов через for","goal":"Выведи квадраты чисел 1, ..., n.","tip":"Тема урока: Таблица квадратов через for. Внутри цикла вычисли i ** 2.","inputs":{"n":"4"},"tests":[{"input":{"n":"4"},"expected":"1\n4\n9\n16"},{"input":{"n":"1"},"expected":"1"},{"input":{"n":"3"},"expected":"1\n4\n9"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"}]},"a10_09":{"name":"Два вложенных цикла: произведения","goal":"Выведи произведения i*j для i = 1..rows и j = 1..cols, каждое на отдельной строке.","tip":"Тема урока: Два вложенных цикла: произведения. Внутренний цикл должен выполняться для каждого шага внешнего.","inputs":{"rows":"2","cols":"3"},"tests":[{"input":{"rows":"2","cols":"3"},"expected":"1\n2\n3\n2\n4\n6"},{"input":{"rows":"1","cols":"2"},"expected":"1\n2"}],"blocks":[{"type":"input","variable":"rows","prompt":"Введи rows","kind":"number"},{"type":"input","variable":"cols","prompt":"Введи cols","kind":"number"}]},"annual_python_10":{"name":"Два вложенных цикла: произведения","goal":"Выведи произведения i*j для i = 1..rows и j = 1..cols, каждое на отдельной строке.","tip":"Тема урока: Два вложенных цикла: произведения. Внутренний цикл должен выполняться для каждого шага внешнего.","inputs":{"rows":"2","cols":"3"},"tests":[{"input":{"rows":"2","cols":"3"},"expected":"1\n2\n3\n2\n4\n6"},{"input":{"rows":"1","cols":"2"},"expected":"1\n2"}],"blocks":[{"type":"input","variable":"rows","prompt":"Введи rows","kind":"number"},{"type":"input","variable":"cols","prompt":"Введи cols","kind":"number"}]},"a10_13":{"name":"Количество итераций вложенных циклов","goal":"Подсчитай, сколько выполнится внутренних шагов, если оба цикла от 1 до n.","tip":"Тема урока: Количество итераций вложенных циклов. Найди экспериментально зависимость от n.","inputs":{"n":"3"},"tests":[{"input":{"n":"3"},"expected":"9"},{"input":{"n":"1"},"expected":"1"},{"input":{"n":"5"},"expected":"25"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"set","variable":"steps","expression":"0"},{"type":"print","expression":"steps"}]},"annual_python_01":{"name":"Сумма двух чисел: алгоритм","goal":"Введи два числа и выведи сумму.","tip":"Тема урока: Сумма двух чисел: алгоритм. Введи a, b, вычисли сумму и выведи результат.","inputs":{"a":"2","b":"5"},"tests":[{"input":{"a":"2","b":"5"},"expected":"7"},{"input":{"a":"-3","b":"2"},"expected":"-1"},{"input":{"a":"0","b":"8"},"expected":"8"}],"blocks":[{"type":"input","variable":"a","prompt":"Введи a","kind":"number"},{"type":"input","variable":"b","prompt":"Введи b","kind":"number"},{"type":"print","expression":"total"}]},"annual_python_03":{"name":"Сумма двух чисел: алгоритм","goal":"Введи два числа и выведи сумму.","tip":"Тема урока: Сумма двух чисел: алгоритм. Введи a, b, вычисли сумму и выведи результат.","inputs":{"a":"2","b":"5"},"tests":[{"input":{"a":"2","b":"5"},"expected":"7"},{"input":{"a":"-3","b":"2"},"expected":"-1"},{"input":{"a":"0","b":"8"},"expected":"8"}],"blocks":[{"type":"input","variable":"a","prompt":"Введи a","kind":"number"},{"type":"input","variable":"b","prompt":"Введи b","kind":"number"},{"type":"print","expression":"total"}]},"annual_python_02":{"name":"Приветствие с именем","goal":"Введи имя и выведи «Привет, Имя».","tip":"Тема урока: Приветствие с именем. Здесь текст нужно заключать в кавычки.","inputs":{"name":"Маша"},"tests":[{"input":{"name":"Маша"},"expected":"Привет, Маша"},{"input":{"name":"Лев"},"expected":"Привет, Лев"}],"blocks":[{"type":"input","variable":"name","prompt":"Введи name","kind":"text"}]},"annual_python_04":{"name":"Остаток от деления","goal":"Найди остаток от деления числа n на d.","tip":"Тема урока: Остаток от деления. Оператор % возвращает остаток, а не целую часть.","inputs":{"n":"23","d":"4"},"tests":[{"input":{"n":"23","d":"4"},"expected":"3"},{"input":{"n":"12","d":"5"},"expected":"2"},{"input":{"n":"14","d":"7"},"expected":"0"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"input","variable":"d","prompt":"Введи d","kind":"number"}]},"annual_python_06":{"name":"Попадание в отрезок 10–20","goal":"Выведи Да для чисел от 10 до 20 включительно, иначе Нет.","tip":"Тема урока: Попадание в отрезок 10–20. Нужны обе границы и операция and.","inputs":{"n":"14"},"tests":[{"input":{"n":"10"},"expected":"Да"},{"input":{"n":"20"},"expected":"Да"},{"input":{"n":"21"},"expected":"Нет"},{"input":{"n":"9"},"expected":"Нет"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"}]},"annual_python_07":{"name":"Цикл while 1–10","goal":"С помощью while выведи целые числа от 1 до 10.","tip":"Тема урока: Цикл while 1–10. Внутри цикла обязательно изменяй i, иначе он не закончится.","inputs":{},"tests":[{"input":{},"expected":"1\n2\n3\n4\n5\n6\n7\n8\n9\n10"}],"blocks":[{"type":"set","variable":"i","expression":"1"}]},"annual_python_08":{"name":"Чётные числа через цикл for","goal":"Выведи все чётные числа от 2 до n.","tip":"Тема урока: Чётные числа через цикл for. Отбирай подходящие числа с помощью if.","inputs":{"n":"10"},"tests":[{"input":{"n":"10"},"expected":"2\n4\n6\n8\n10"},{"input":{"n":"5"},"expected":"2\n4"},{"input":{"n":"2"},"expected":"2"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"}]},"c11_12":{"name":"Сумма двух чисел: алгоритм","goal":"Упражнение по теме: Введи два числа и выведи сумму.","tip":"Тема урока: Сумма двух чисел: алгоритм. Введи a, b, вычисли сумму и выведи результат.","inputs":{"a":"2","b":"5"},"tests":[{"input":{"a":"2","b":"5"},"expected":"7"},{"input":{"a":"-3","b":"2"},"expected":"-1"},{"input":{"a":"0","b":"8"},"expected":"8"}],"blocks":[{"type":"input","variable":"a","prompt":"Введи a","kind":"number"},{"type":"input","variable":"b","prompt":"Введи b","kind":"number"},{"type":"print","expression":"total"}]},"c11_13":{"name":"Три ветви для знака числа","goal":"Упражнение по теме: Выведи «Плюс», «Минус» или «Ноль» в зависимости от введённого числа.","tip":"Тема урока: Три ветви для знака числа. Нужна проверка нуля отдельно от положительного и отрицательного случая.","inputs":{"n":"-2"},"tests":[{"input":{"n":"5"},"expected":"Плюс"},{"input":{"n":"-7"},"expected":"Минус"},{"input":{"n":"0"},"expected":"Ноль"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"}]},"b11_04":{"name":"Чётные числа через цикл for","goal":"Упражнение по теме: Выведи все чётные числа от 2 до n.","tip":"Тема урока: Чётные числа через цикл for. Отбирай подходящие числа с помощью if.","inputs":{"n":"10"},"tests":[{"input":{"n":"10"},"expected":"2\n4\n6\n8\n10"},{"input":{"n":"5"},"expected":"2\n4"},{"input":{"n":"2"},"expected":"2"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"}]},"a10_02":{"name":"Заказ с доставкой","goal":"Сначала вычисли итоговую сумму: если subtotal >= 1000, доставка бесплатна; иначе прибавь delivery.","tip":"Тема урока: Заказ с доставкой. Разбей решение на вычисление базовой суммы и добавление доставки.","inputs":{"subtotal":"850","delivery":"150"},"tests":[{"input":{"subtotal":"850","delivery":"150"},"expected":"1000"},{"input":{"subtotal":"1000","delivery":"200"},"expected":"1000"},{"input":{"subtotal":"1200","delivery":"60"},"expected":"1200"}],"blocks":[{"type":"input","variable":"subtotal","prompt":"Введи subtotal","kind":"number"},{"type":"input","variable":"delivery","prompt":"Введи delivery","kind":"number"},{"type":"set","variable":"total","expression":"subtotal"},{"type":"print","expression":"total"}]},"8b_09":{"name":"Минимум и максимум из трёх чисел","goal":"Введи a, b, c. Выведи минимум, затем максимум.","tip":"Тема урока: Минимум и максимум из трёх чисел. Для каждого числа выполни две проверки: на минимум и на максимум.","inputs":{"a":"3","b":"7","c":"5"},"tests":[{"input":{"a":"3","b":"7","c":"5"},"expected":"3\n7"},{"input":{"a":"10","b":"-1","c":"0"},"expected":"-1\n10"},{"input":{"a":"2","b":"2","c":"2"},"expected":"2\n2"}],"blocks":[{"type":"input","variable":"a","prompt":"Введи a","kind":"number"},{"type":"input","variable":"b","prompt":"Введи b","kind":"number"},{"type":"input","variable":"c","prompt":"Введи c","kind":"number"},{"type":"set","variable":"small","expression":"a"},{"type":"set","variable":"large","expression":"a"},{"type":"if","condition":"c < small","yes":[{"type":"set","variable":"small","expression":"c"}],"no":[]},{"type":"if","condition":"b > large","yes":[{"type":"set","variable":"large","expression":"b"}],"no":[]},{"type":"if","condition":"c > large","yes":[{"type":"set","variable":"large","expression":"c"}],"no":[]},{"type":"print","expression":"small"},{"type":"print","expression":"large"}]},"annual_python_23":{"name":"Минимум и максимум из трёх чисел","goal":"Введи a, b, c. Выведи минимум, затем максимум.","tip":"Тема урока: Минимум и максимум из трёх чисел. Для каждого числа выполни две проверки: на минимум и на максимум.","inputs":{"a":"3","b":"7","c":"5"},"tests":[{"input":{"a":"3","b":"7","c":"5"},"expected":"3\n7"},{"input":{"a":"10","b":"-1","c":"0"},"expected":"-1\n10"},{"input":{"a":"2","b":"2","c":"2"},"expected":"2\n2"}],"blocks":[{"type":"input","variable":"a","prompt":"Введи a","kind":"number"},{"type":"input","variable":"b","prompt":"Введи b","kind":"number"},{"type":"input","variable":"c","prompt":"Введи c","kind":"number"},{"type":"set","variable":"small","expression":"a"},{"type":"set","variable":"large","expression":"a"},{"type":"if","condition":"c < small","yes":[{"type":"set","variable":"small","expression":"c"}],"no":[]},{"type":"if","condition":"b > large","yes":[{"type":"set","variable":"large","expression":"b"}],"no":[]},{"type":"if","condition":"c > large","yes":[{"type":"set","variable":"large","expression":"c"}],"no":[]},{"type":"print","expression":"small"},{"type":"print","expression":"large"}]},"a10_08":{"name":"Счётчик, накопитель и минимум","goal":"Для трёх чисел подсчитай количество положительных, сумму чётных и минимум. Выведи три строки.","tip":"Тема урока: Счётчик, накопитель и минимум. В реальном задании N чисел вводятся в цикле; здесь начни с трёх и проследи все накопители.","inputs":{"a":"3","b":"4","c":"-2"},"tests":[{"input":{"a":"3","b":"4","c":"-2"},"expected":"2\n2\n-2"},{"input":{"a":"-1","b":"-2","c":"-3"},"expected":"0\n-2\n-3"},{"input":{"a":"3","b":"4","c":"5"},"expected":"3\n4\n3"}],"blocks":[{"type":"input","variable":"a","prompt":"Введи a","kind":"number"},{"type":"input","variable":"b","prompt":"Введи b","kind":"number"},{"type":"input","variable":"c","prompt":"Введи c","kind":"number"},{"type":"set","variable":"positive","expression":"0"},{"type":"set","variable":"even_sum","expression":"0"},{"type":"set","variable":"small","expression":"a"},{"type":"if","condition":"b > 0","yes":[{"type":"set","variable":"positive","expression":"positive + 1"}],"no":[]},{"type":"if","condition":"c > 0","yes":[{"type":"set","variable":"positive","expression":"positive + 1"}],"no":[]},{"type":"if","condition":"a % 2 == 0","yes":[{"type":"set","variable":"even_sum","expression":"even_sum + a"}],"no":[]},{"type":"if","condition":"b % 2 == 0","yes":[{"type":"set","variable":"even_sum","expression":"even_sum + b"}],"no":[]},{"type":"if","condition":"c % 2 == 0","yes":[{"type":"set","variable":"even_sum","expression":"even_sum + c"}],"no":[]},{"type":"if","condition":"b < small","yes":[{"type":"set","variable":"small","expression":"b"}],"no":[]},{"type":"if","condition":"c < small","yes":[{"type":"set","variable":"small","expression":"c"}],"no":[]},{"type":"print","expression":"positive"},{"type":"print","expression":"even_sum"},{"type":"print","expression":"small"}]},"a10_17":{"name":"Анализ цифр: количество, сумма, максимум","goal":"Для целого числа n выведи три результата: сколько цифр, их сумму и максимальную цифру. Учти ноль и отрицательный ввод.","tip":"Тема урока: Анализ цифр: количество, сумма, максимум. Одна итерация while обрабатывает ровно одну цифру числа.","inputs":{"n":"352"},"tests":[{"input":{"n":"352"},"expected":"3\n10\n5"},{"input":{"n":"-709"},"expected":"3\n16\n9"},{"input":{"n":"0"},"expected":"1\n0\n0"},{"input":{"n":"40"},"expected":"2\n4\n4"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"set","variable":"count","expression":"0"},{"type":"set","variable":"total","expression":"0"},{"type":"set","variable":"max_digit","expression":"0"},{"type":"if","condition":"n == 0","yes":[{"type":"set","variable":"count","expression":"1"}],"no":[{"type":"while","condition":"n > 0","body":[{"type":"set","variable":"digit","expression":"n % 10"},{"type":"set","variable":"count","expression":"count + 1"},{"type":"set","variable":"total","expression":"total + digit"},{"type":"if","condition":"digit > max_digit","yes":[{"type":"set","variable":"max_digit","expression":"digit"}],"no":[]},{"type":"set","variable":"n","expression":"n // 10"}]}]},{"type":"print","expression":"count"},{"type":"print","expression":"total"},{"type":"print","expression":"max_digit"}]},"a10_10":{"name":"Поиск цифры 7 в числе","goal":"Подсчитай, сколько цифр 7 встречается в натуральном n.","tip":"Тема урока: Поиск цифры 7 в числе. Проверь последнюю цифру, затем отбрось её через // 10.","inputs":{"n":"7772"},"tests":[{"input":{"n":"7772"},"expected":"3"},{"input":{"n":"123"},"expected":"0"},{"input":{"n":"707"},"expected":"2"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"set","variable":"count","expression":"0"},{"type":"print","expression":"count"}]},"a10_19":{"name":"Вложенный перебор: сумма и чётность","goal":"Для пар 1 ≤ a ≤ b ≤ max выведи a*10+b, если (a+b)%5==0 И (a*b)%2==0.","tip":"Тема урока: Вложенный перебор: сумма и чётность. Оба условия обязательны; пары кодируются числом a*10+b.","inputs":{"max":"5"},"tests":[{"input":{"max":"5"},"expected":"14\n23"},{"input":{"max":"3"},"expected":"23"},{"input":{"max":"1"},"expected":""}],"blocks":[{"type":"input","variable":"max","prompt":"Введи max","kind":"number"}]},"8b_05":{"name":"Делимость на 3 и 5","goal":"Для n выведи True/False: сначала делимость на 3, затем на 5.","tip":"Тема урока: Делимость на 3 и 5. Остаток от деления равен нулю тогда и только тогда, когда число делится.","inputs":{"n":"15"},"tests":[{"input":{"n":"15"},"expected":"True\nTrue"},{"input":{"n":"9"},"expected":"True\nFalse"},{"input":{"n":"20"},"expected":"False\nTrue"},{"input":{"n":"7"},"expected":"False\nFalse"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"print","expression":"n % 5 == 0"}]},"8b_11":{"name":"Квадратное уравнение: действительные корни","goal":"Введи a, b, c. Выведи корни по возрастанию (по одному), либо «Нет корней»; при a = 0 — «Не квадратное».","tip":"Тема урока: Квадратное уравнение: действительные корни. Сначала D, затем отдельно три случая: два, один или ноль действительных корней.","inputs":{"a":"1","b":"-3","c":"2"},"tests":[{"input":{"a":"1","b":"-3","c":"2"},"expected":"1\n2"},{"input":{"a":"1","b":"2","c":"1"},"expected":"-1"},{"input":{"a":"1","b":"0","c":"1"},"expected":"Нет корней"},{"input":{"a":"0","b":"2","c":"1"},"expected":"Не квадратное"}],"blocks":[{"type":"input","variable":"a","prompt":"Введи a","kind":"number"},{"type":"input","variable":"b","prompt":"Введи b","kind":"number"},{"type":"input","variable":"c","prompt":"Введи c","kind":"number"}]},"8b_15":{"name":"Разбор цифр в заданной системе счисления","goal":"Введи n и основание b от 2 до 10. Выведи цифры числа в обратном порядке.","tip":"Тема урока: Разбор цифр в заданной системе счисления. Деление и остаток должны использовать введённое основание b.","inputs":{"n":"13","b":"2"},"tests":[{"input":{"n":"13","b":"2"},"expected":"1\n0\n1\n1"},{"input":{"n":"352","b":"10"},"expected":"2\n5\n3"},{"input":{"n":"9","b":"3"},"expected":"0\n0\n1"}],"blocks":[{"type":"input","variable":"n","prompt":"Введи n","kind":"number"},{"type":"input","variable":"b","prompt":"Введи b","kind":"number"}]},"8b_06":{"name":"Вещественные числа: среднее и разность","goal":"Введи две температуры; выведи среднее и модуль разности без abs().","tip":"Тема урока: Вещественные числа: среднее и разность. Модуль разности можно получить ветвлением: большее минус меньшее.","inputs":{"t1":"16.5","t2":"23.5"},"tests":[{"input":{"t1":"16.5","t2":"23.5"},"expected":"20\n7"},{"input":{"t1":"10","t2":"12"},"expected":"11\n2"},{"input":{"t1":"-5","t2":"5"},"expected":"0\n10"}],"blocks":[{"type":"input","variable":"t1","prompt":"Введи t1","kind":"decimal"},{"type":"input","variable":"t2","prompt":"Введи t2","kind":"decimal"},{"type":"set","variable":"average","expression":"(t1 + t2) / 2"},{"type":"print","expression":"average"},{"type":"print","expression":"difference"}]},"8b_18":{"name":"Множество возможных результатов","goal":"Проверь все x от 0 до max для (2*x+1)%4 и выведи каждый результат только при первом появлении.","tip":"Тема урока: Множество возможных результатов. Возможные значения рассматриваем как множество: одинаковый результат дважды не печатаем.","inputs":{"max":"6"},"tests":[{"input":{"max":"0"},"expected":"1"},{"input":{"max":"2"},"expected":"1\n3"},{"input":{"max":"6"},"expected":"1\n3"}],"blocks":[{"type":"input","variable":"max","prompt":"Введи max","kind":"number"},{"type":"set","variable":"seen1","expression":"False"},{"type":"set","variable":"seen3","expression":"False"}]},"annual_telegram_03":{"name":"Команда /start для бота","goal":"Введи текст команды. Для /start выведи приветствие, иначе предложи /start.","tip":"Тема урока: Команда /start для бота. Собираем простую логику обработчика: проверяем сообщение пользователя.","inputs":{"command":"/start"},"tests":[{"input":{"command":"/start"},"expected":"Привет!"},{"input":{"command":"/help"},"expected":"Отправь /start"}],"blocks":[{"type":"input","variable":"command","prompt":"Команда в чате","kind":"text"}]},"annual_telegram_04":{"name":"Команда /start для бота","goal":"Введи текст команды. Для /start выведи приветствие, иначе предложи /start.","tip":"Тема урока: Команда /start для бота. Собираем простую логику обработчика: проверяем сообщение пользователя.","inputs":{"command":"/start"},"tests":[{"input":{"command":"/start"},"expected":"Привет!"},{"input":{"command":"/help"},"expected":"Отправь /start"}],"blocks":[{"type":"input","variable":"command","prompt":"Команда в чате","kind":"text"}]},"annual_telegram_13":{"name":"Отмена и проверка команды бота","goal":"Для /cancel выведи «Отменено», для пустого сообщения — «Пустой ввод», иначе — «Принято».","tip":"Тема урока: Отмена и проверка команды бота. Проверь отмену прежде дальнейшей обработки ответа.","inputs":{"message":"/cancel"},"tests":[{"input":{"message":"/cancel"},"expected":"Отменено"},{"input":{"message":""},"expected":"Пустой ввод"},{"input":{"message":"Да"},"expected":"Принято"}],"blocks":[{"type":"input","variable":"message","prompt":"Сообщение пользователя","kind":"text"}]},"c11_03":{"name":"Логическое выражение из двух условий","goal":"Для a,b из 0 и 1 выведи True, если a=1 ИЛИ (b=1 И a=0).","tip":"Тема урока: Логическое выражение из двух условий. Проверь все четыре набора значений для a и b.","inputs":{"a":"0","b":"1"},"tests":[{"input":{"a":"0","b":"0"},"expected":"False"},{"input":{"a":"0","b":"1"},"expected":"True"},{"input":{"a":"1","b":"0"},"expected":"True"},{"input":{"a":"1","b":"1"},"expected":"True"}],"blocks":[{"type":"input","variable":"a","prompt":"Введи a","kind":"number"},{"type":"input","variable":"b","prompt":"Введи b","kind":"number"}]}};
 const ALG_BLOCK_NAMES = {
   input:'Ввод значения', set:'Вычислить / присвоить', print:'Вывести результат',
   if:'Условие: если / иначе', for:'Цикл FOR', while:'Цикл WHILE'
@@ -6914,22 +7395,15 @@ function algGiveIds(blocks) {
   });
 }
 function algSelectTemplateForLesson(l) {
-  const text = (l.title + ' ' + (l.taskAdvanced||'') + ' ' + (l.taskBasic||'')).toLowerCase();
-  if (/while|пока\s|до выполнения условия/.test(text)) return 'while_count';
-  if (/чётност|четност|остаток|услови|ветвлен|if\b|логическ/.test(text)) return 'parity';
-  if (/цикл|for\b|повторени|сумм.*чис|накопител|перебор/.test(text)) return 'for_sum';
-  if (/ввод|вывод|переменн|тип данных|арифмет|сложени|вычислен/.test(text)) return 'sum';
-  return 'greeting';
+  // Never guess the lesson topic using generic keywords. Only curated, tested challenges.
+  return Object.hasOwn(ALG_LESSON_TASKS, l.id) ? 'lesson:' + l.id : 'blank';
 }
 function algIsAvailable(l) {
-  if (!user || !l) return false;
-  if (track === 'ege' && user.classNumber === 10 &&
-      (user.previewElective || electiveGroupTracks[user.studyGroup]) === 'website') return false;
-  // Для Python/алгоритмов доступен полноценный блоковый редактор. В иных темах — только объяснения.
-  const haystack = `${l.title} ${l.code||''} ${l.task||''}`;
-  if (user.classNumber === 10 && track === 'game') return true;
-  if (track === 'ege' && user.classNumber === 10) return true;
-  return /python|print\s*\(|input\s*\(|range\s*\(|\bfor\s+\w+\s+in\b|\bwhile\s|\bif\s|алгоритм|цикл|программирован|перебор|трассиров/i.test(haystack);
+  return !!user && !!l && Object.hasOwn(ALG_LESSON_TASKS, l.id);
+}
+function algPreset(name) {
+  return name.startsWith('lesson:') ? ALG_LESSON_TASKS[name.slice(7)] || ALG_TEMPLATES.blank
+    : ALG_TEMPLATES[name] || ALG_TEMPLATES.blank;
 }
 function algCurrentKey(l) {return (previewMode ? 'demo:' : (user?.id||'unknown') + ':') + l.id;}
 function algGetState(l) {
@@ -6938,7 +7412,7 @@ function algGetState(l) {
   return algorithmEditors.get(key);
 }
 function algSetTemplate(key,templateName) {
-  const preset = ALG_TEMPLATES[templateName] || ALG_TEMPLATES.blank;
+  const preset = algPreset(templateName);
   const blocks = algClone(preset.blocks);
   algGiveIds(blocks);
   algorithmEditors.set(key,{templateName,blocks,inputs:algClone(preset.inputs)});
@@ -6946,25 +7420,27 @@ function algSetTemplate(key,templateName) {
 function algAvailableOptions() {
   return Object.entries(ALG_BLOCK_NAMES).map(([key, label])=>`<option value="${key}">${esc(label)}</option>`).join('');
 }
-function algTemplateOptions(selected) {
-  return Object.entries(ALG_TEMPLATES).map(([key, item]) =>
-    `<option value="${key}" ${key===selected?'selected':''}>${esc(item.name)}</option>`).join('');
+function algTemplateOptions(selected,l) {
+  const lessonKey = 'lesson:' + l.id;
+  return `<option value="${esc(lessonKey)}" ${selected===lessonKey?'selected':''}>Задание по теме урока</option>
+    <option value="blank" ${selected==='blank'?'selected':''}>Свободная практика (без проверки)</option>`;
 }
 function algMarkup(l) {
   const state=algGetState(l);
+  const preset=algPreset(state.templateName);
   return `<section class="algorithm-builder" id="algorithmBuilder" aria-label="Визуальный конструктор алгоритмов">
     <div class="algo-header"><div><span class="pill">БЛОК-СХЕМЫ → PYTHON</span>
-      <h3>Собери алгоритм без написания кода</h3>
-      <p class="small">Нажимай на команды, меняй поля и порядок блоков. Программа выполняется в браузере, Python-код показывается для знакомства с синтаксисом.</p>
-    </div><div><label for="algoTemplate">Тренировочный пример</label>
-      <select id="algoTemplate">${algTemplateOptions(state.templateName)}</select></div></div>
-    <p id="algoTip" class="algo-tip">${esc(ALG_TEMPLATES[state.templateName].tip)}</p>
+      <h3>Собери алгоритм по теме занятия</h3>
+      <p class="small"><b>Твоя задача:</b> ${esc(ALG_LESSON_TASKS[l.id].goal)}<br>Часть блоков уже расставлена; добавь недостающие команды и проверь работу на примерах. Код Python появится автоматически.</p>
+    </div><div><label for="algoTemplate">Режим конструктора</label>
+      <select id="algoTemplate">${algTemplateOptions(state.templateName,l)}</select></div></div>
+    <p id="algoTip" class="algo-tip">${esc(preset.tip)}</p>
     <details class="algo-help"><summary>Как работать с конструктором — инструкция для новичков</summary>
-      <ol><li>Выбери готовый тренировочный пример и нажми «Запустить». Посмотри результат и шаги.</li>
+      <ol><li>Прочитай цель именно этого урока и просмотри уже расставленные блоки. Добавь недостающие, чтобы получился алгоритм.</li>
       <li>Поменяй число в тестовых данных или условие в блоке. Запусти снова и сравни.</li>
       <li>Добавляй новые команды кнопками сверху, меняй порядок стрелками ↑ ↓, а действия внутри условия или цикла — кнопкой «Добавить внутрь».</li>
       <li><b>Выражения:</b> <code>a + b</code> — сложение, <code>n % 2</code> — остаток, <code>n == 5</code> — сравнение, <code>n &gt; 5 and n &lt; 10</code> — два условия. Текст записывай в кавычках, например <code>"Привет"</code>.</li>
-      <li>«Проверить на примерах» сравнит результат с эталонами выбранной тренировки. Для сдачи вставь алгоритм в ответ и отдельно нажми «Сохранить ответ».</li></ol>
+      <li>«Проверить на примерах» проверит этот алгоритм на наборах из темы урока. В режиме свободной практики эталона нет. Для сдачи вставь алгоритм в ответ и нажми «Сохранить ответ».</li></ol>
     </details>
     <div class="algo-palette" aria-label="Добавить команду">${Object.entries(ALG_BLOCK_NAMES).map(([key,label])=>
       `<button class="secondary" type="button" data-algo-action="add" data-algo-target="root" data-algo-type="${key}">+ ${esc(label)}</button>`).join('')}</div>
@@ -7027,10 +7503,10 @@ function algNodeMarkup(node,depth=0) {
 }
 function algRenderEditor() {
   const container=$('algorithmBuilder'); if(!container) return;
-  const l=getCoursesForClass(user.classNumber,user.studyLevel,user.studyGroup,user.previewElective,user.classLetter)[track]?.lessons.find(x=>x.id===lessonId);
+  const l=studentVisibleCourses()[track]?.lessons.find(x=>x.id===lessonId);
   if(!l)return;
   const state=algGetState(l);
-  $('algoTip').textContent=ALG_TEMPLATES[state.templateName].tip;
+  $('algoTip').textContent=algPreset(state.templateName).tip;
   $('algoFlow').innerHTML=`<div class="algo-terminator">● НАЧАЛО</div>${state.blocks.length ?
     state.blocks.map(node=>algNodeMarkup(node)).join('') : '<p class="algo-empty">Алгоритм пуст. Добавь первую команду сверху.</p>'}
     <div class="algo-terminator">■ КОНЕЦ</div>`;
@@ -7170,7 +7646,7 @@ function algRunBlocks(blocks,inputs) {
       currentNode=node;
       if(node.type==='input'){
         nameCheck(node.variable);
-        if(!Object.hasOwn(inputs,node.variable)||String(inputs[node.variable]).trim()==='')throw new Error(`Не задано значение «${node.variable}». Заполни поле тестовых данных.`);
+        if(!Object.hasOwn(inputs,node.variable)||(node.kind!=='text' && String(inputs[node.variable]).trim()===''))throw new Error(`Не задано значение «${node.variable}». Заполни поле тестовых данных.`);
         const raw=String(inputs[node.variable]).trim();
         if(node.kind!=='text'){
           const valid = node.kind==='decimal' ? /^[+-]?\d+(?:\.\d+)?$/.test(raw) : /^[+-]?\d+$/.test(raw);
@@ -7244,7 +7720,7 @@ function algHighlight(id) {
   if(node){node.classList.add('algo-highlight');node.scrollIntoView({block:'nearest',behavior:'smooth'});}
 }
 function algRunCurrent() {
-  const l=getCoursesForClass(user.classNumber,user.studyLevel,user.studyGroup,user.previewElective,user.classLetter)[track]?.lessons.find(x=>x.id===lessonId);
+  const l=studentVisibleCourses()[track]?.lessons.find(x=>x.id===lessonId);
   if(!l)return;
   const state=algGetState(l);algClearHighlights();
   const res=algRunBlocks(state.blocks,state.inputs);if(!res.ok)algHighlight(res.blockId);
@@ -7261,10 +7737,10 @@ function algFailureHint(blocks) {
   return 'Подсказка: сравни команды вывода с ожидаемым ответом и проверь порядок блоков.';
 }
 function algRunTests() {
-  const l=getCoursesForClass(user.classNumber,user.studyLevel,user.studyGroup,user.previewElective,user.classLetter)[track]?.lessons.find(x=>x.id===lessonId);
+  const l=studentVisibleCourses()[track]?.lessons.find(x=>x.id===lessonId);
   if(!l)return;
   const state=algGetState(l);algClearHighlights();
-  const tests=ALG_TEMPLATES[state.templateName].tests;
+  const tests=algPreset(state.templateName).tests;
   if(!tests.length){algShowResult('<h4>Нет эталонных тестов</h4><p>Ты выбрал свободный алгоритм. Запусти его со своими данными и сравни ответ с ожидаемым результатом.</p>');return;}
   let ok=0;
   const rows=tests.map((test,i)=>{
@@ -7280,11 +7756,11 @@ function algRunTests() {
     </div>`;
   });
   algShowResult(`<h4>${ok===tests.length?'Все тесты пройдены!':'Есть что исправить'}</h4><p>${ok} из ${tests.length} проверок прошли успешно.</p>
-    ${rows.join('')}<p class="small">Эти проверки относятся к выбранному тренировочному примеру, а не автоматически к заданию текущего урока.</p>`,ok===tests.length?'success':'error');
+    ${rows.join('')}<p class="small">Тесты проверяют алгоритм по теме текущего урока. Они не заменяют основное практическое задание и проверку учителем.</p>`,ok===tests.length?'success':'error');
 }
 function algSendToAnswer() {
   if(previewMode)return;
-  const l=getCoursesForClass(user.classNumber,user.studyLevel,user.studyGroup,user.previewElective,user.classLetter)[track]?.lessons.find(x=>x.id===lessonId);
+  const l=studentVisibleCourses()[track]?.lessons.find(x=>x.id===lessonId);
   if(!l)return;
   const state=algGetState(l),answer=$('answer');if(!answer)return;
   const existing=answer.value.trim();
@@ -7302,7 +7778,7 @@ function algInitControls(l) {
     if(!confirm('Загрузить другой тренировочный пример? Текущие блоки будут заменены.')){
       e.target.value=algGetState(l).templateName;return;
     }
-    algSetTemplate(key,e.target.value);algRenderEditor();algShowResult('Выбран новый тренировочный пример. Измени блоки и нажми «Запустить».');
+    algSetTemplate(key,e.target.value);algRenderEditor();algShowResult('Режим изменён. Измени блоки и нажми «Запустить».');
   });
   wrap.addEventListener('change',e=>{
     const nodeId=e.target.dataset.algoNode;
