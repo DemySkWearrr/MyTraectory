@@ -414,6 +414,36 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
 .school-quest-movers{display:flex;gap:5px}.school-quest-movers button{padding:5px 10px;min-width:30px}
 .school-quest-ok{color:#7de0b7;font-weight:700}.school-quest-error{color:#ffc58e;font-weight:700}
 @media(max-width:600px){.school-flow{grid-template-columns:1fr}.school-quest{padding:12px}.school-quest-row{gap:7px;padding:8px}.school-quest-row>span{font-size:13px}}
+/* Hands-on lessons for grades 6 and 7 */
+.jl-welcome{padding:15px 17px;border-radius:15px;border:1px solid #526b93;background:linear-gradient(125deg,#25334e,#1a263a);margin:13px 0}
+.jl-welcome h3{margin:4px 0 6px}.jl-welcome p{margin:7px 0;color:var(--text)}
+.junior-lab{border:1px solid #6687b5;background:#1d283e;border-radius:18px;padding:19px;margin:15px 0 20px;min-width:0}
+.jl-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}.jl-header h3{margin:7px 0 2px;font-size:21px;line-height:1.25}.jl-header p{margin:3px 0 0}.jl-icon{font-size:32px}
+.jl-stage{background:#121b2e;border:1px solid #344862;border-radius:15px;padding:16px;margin:12px 0;min-width:0}
+.jl-stage p{color:#d8e2f7}.jl-stage h4{margin:12px 0;color:#f6f7ff;font-size:17px}
+.jl-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.jl-actions button{font-size:14px;padding:9px 11px;max-width:100%;white-space:normal;text-align:left}
+.jl-actions button[aria-pressed="true"]{background:#8aa0ed;color:#101522;border-color:transparent}
+.jl-footer{margin:12px 0}.jl-feedback{border:1px solid #56637d;background:#273249;color:#dee7fc;padding:11px 12px;border-radius:11px;min-height:49px;white-space:pre-wrap}
+.jl-feedback.jl-success{border-color:#469f83;background:#1b403b;color:#b7f6d9}
+.jl-reference{border:1px solid var(--border);border-radius:12px;margin:16px 0;padding:10px 15px;background:var(--panel2)}
+.jl-reference>summary{font-weight:750;cursor:pointer;padding:7px 0}.jl-reference .guided-theory{margin-top:16px}
+.jl-slide-wrapper{max-width:590px;margin:0 auto 16px}.jl-slide{min-height:230px;aspect-ratio:16/9;border-radius:10px;padding:20px;text-align:center;background:#18344c;color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;box-shadow:0 9px 18px #0004;overflow-wrap:anywhere}
+.jl-slide.jl-low-contrast{background:#b5c5cd;color:#c8d3db}.jl-slide-title{font-size:clamp(18px,4vw,27px);margin:0;color:inherit}.jl-slide p{margin:3px 0;color:inherit;max-width:500px;font-size:clamp(13px,2vw,18px);line-height:1.5}.jl-placeholder{border:2px dashed currentColor;border-radius:7px;padding:8px 14px;opacity:.65;font-size:13px}.jl-cat-art{font-size:55px;line-height:1.15}.jl-anti{background:#512a40;color:#ffd4cf;padding:5px;border-radius:6px;font-size:12px}
+.jl-scene{border-radius:12px;border:1px solid #52647e;overflow:hidden;background:#21314b}.jl-scene-title{padding:10px;background:#2c3d59;color:#eef3ff;font-weight:650}.jl-device{padding:17px;min-height:105px;display:flex;align-items:center;gap:15px;color:#eff5ff}.jl-device-icon{font-size:35px}.jl-timeline{display:flex;gap:6px;flex-wrap:wrap;padding:7px 10px;background:#18263c}.jl-timeline span{font-size:11px;padding:2px 9px;border:1px solid #53637d;color:#bcc7e0;border-radius:50px}.jl-timeline .jl-done{color:#aef4d4;border-color:#469f83}.jl-timeline .jl-current{background:#7f93e8;color:#14203a}.jl-completed{text-align:center;padding:15px 5px;color:#aef4d4;font-weight:700}
+.jl-codebook{display:flex;gap:7px;flex-wrap:wrap}.jl-codebook>div{background:#243754;border:1px solid #4d6583;padding:7px 13px;border-radius:8px;display:flex;gap:11px;color:#f2f6ff}.jl-codebook span{font-family:monospace;color:#7ae5c3}.jl-live-output{margin:14px 0;padding:15px;border-radius:11px;background:#22314a;min-height:70px;color:#f2f6ff}.jl-encoded{font-family:monospace;letter-spacing:3px;color:#a5baff;margin-top:5px;font-size:19px}
+.jl-answer{display:flex;gap:9px;align-items:center;max-width:450px}.jl-answer input{min-width:50px}.jl-math-visual{padding:12px;border:1px dashed #5c7496;border-radius:10px;color:#dceaff}.jl-math-bars{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}.jl-math-bars span{background:#7d92ed;border-radius:3px;width:20px;height:13px}
+.jl-pixel-layout{display:flex;gap:25px;justify-content:center;flex-wrap:wrap;align-items:start}.jl-pixel-grid{display:grid;grid-template-columns:repeat(4,37px);gap:3px;width:max-content;margin:10px 0}.jl-pixel-grid>*{height:37px;min-width:0;padding:0;border:1px solid #546b8b;border-radius:3px;background:#f1f5fa}.jl-pixel-grid>*:is(.on){background:#434eaa}.jl-pixel-grid.jl-target>*{cursor:default}.jl-pixel-grid button:focus-visible{outline:3px solid #ffd166}
+.jl-rgb-preview{width:100%;max-width:400px;min-height:118px;border-radius:12px;border:3px solid #dee8f6;margin:10px auto}.jl-rgb-controls{display:flex;gap:8px;flex-wrap:wrap}.jl-rgb-controls label{flex:1 1 140px;display:flex;flex-direction:column;gap:5px}.jl-rgb-controls label button{margin-top:4px}
+.jl-samples{height:145px;display:flex;gap:7px;align-items:flex-end;border-bottom:2px solid #6b82a2;padding:7px 3px}.jl-samples button{border:1px solid #4f6582;background:#2e3d56;flex:1;min-width:0;max-width:62px;height:125px;border-radius:8px 8px 0 0;padding:6px;display:flex;align-items:center;justify-content:flex-end;flex-direction:column;gap:4px;color:#e8eeff}.jl-samples button.selected{background:#274e56;outline:2px solid #65dfb1}.jl-sample-bar{width:90%;max-width:35px;background:#95a7fa;border-radius:5px 5px 0 0}.jl-samples button.selected .jl-sample-bar{background:#76edc2}
+.jl-robot-layout{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}.jl-robot-grid{display:grid;grid-template-columns:repeat(5,43px);gap:3px}.jl-robot-grid span{height:43px;border-radius:7px;background:#e8f1fb;color:#23283a;border:1px solid #a3bad8;display:flex;align-items:center;justify-content:center;font-size:20px}.jl-robot-grid span.wall{background:#9aa3af}.jl-robot-grid span.visited{background:#a5ead2}.jl-command-list{display:flex;flex-direction:column;gap:7px;max-height:220px;overflow:auto;margin:10px 0}.jl-command-list span{border:1px solid #66819f;padding:3px 10px;border-radius:7px;background:#263f5a}.jl-command-list i{color:#aab4c8}
+@media(max-width:700px){.junior-lab{padding:12px;margin-left:-2px;margin-right:-2px}.jl-stage{padding:11px}.jl-header h3{font-size:18px}.jl-slide{min-height:170px}.jl-actions{gap:5px}.jl-actions button{padding:8px;font-size:13px}.jl-pixel-grid{grid-template-columns:repeat(4,32px)}.jl-pixel-grid>*{height:32px}.jl-robot-grid{grid-template-columns:repeat(5,37px)}.jl-robot-grid span{height:37px}.jl-answer{flex-wrap:wrap}.jl-answer input{flex:1}.jl-footer button{flex:1}}
+.jl-device{flex-direction:column;align-items:stretch;gap:12px}.jl-device-example{min-width:0;width:100%}.jl-scene-note{font-size:13px;color:#cddaf3}
+.jl-fake-app{background:#f7f9ff;color:#1a2635;border-radius:11px;padding:10px;max-width:480px;margin:auto}.jl-browser-tabs{display:flex;align-items:center;justify-content:space-between;background:#dfeafa;border-radius:7px 7px 0 0;padding:5px 9px;font-size:12px}.jl-browser-address{font-size:13px;padding:6px 3px;display:flex;gap:6px;align-items:center}.jl-browser-address span{background:white;border:1px solid #b7c8e2;border-radius:50px;padding:2px 8px;flex:1}.jl-fake-body{min-height:70px;background:#e2f4fd;padding:18px;border-radius:5px;text-align:center}.jl-searchbar{background:#e7edf9;border-radius:20px;padding:8px 14px;margin-bottom:8px}.jl-search-result{padding:9px;border:1px solid #d2dbed;border-radius:5px;margin:5px 0;font-size:13px}
+.jl-news-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}.jl-news-cards>div{background:#dfe8f6;border-radius:10px;color:#21324a;min-height:120px;padding:11px;display:flex;flex-direction:column}.jl-news-cards .jl-good-card{background:#bde7d1}.jl-news-cards small{margin-top:5px}.jl-news-cards span{font-size:28px;text-align:right;margin-top:auto}
+.jl-poster{margin:auto;max-width:250px;min-height:140px;padding:14px;background:#fdf0ca;color:#1b283d;text-align:center;border-radius:8px;box-shadow:0 4px 10px #0002}.jl-poster>b{font-size:19px}.jl-poster p{color:#1b283d}.jl-poster small{display:inline-block;border:1px solid #b57838;border-radius:3px;padding:2px 12px}
+.jl-profile,.jl-mail{background:#e5edfc;color:#14233d;max-width:380px;margin:auto;padding:14px;border-radius:10px}.jl-demo-line{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #bdcce5;padding:7px 0;font-size:13px}.jl-safe{text-align:center;padding:10px}.jl-safe>div{font-size:54px}.jl-safe span,.jl-safe small{display:block}.jl-safe small{color:#cbd3e0}
+.jl-mail small{display:block;margin:9px 0;color:#6c3444}.jl-mail span{display:block;background:#fbe5b3;border-radius:5px;padding:7px}.jl-chat>div{margin-bottom:8px;padding:12px;background:#dae8ff;color:#21334b;border-radius:11px;max-width:340px}.jl-chat>div.jl-reply{margin-left:auto;background:#bcebd9}.jl-symbols{display:flex;flex-wrap:wrap;justify-content:center;gap:11px}.jl-symbols span{padding:12px;background:#dfe9fd;color:#243452;border-radius:10px;font-size:27px;text-align:center}.jl-symbols small{display:block;font-size:12px}.jl-flow-figure,.jl-macro-figure{display:flex;flex-direction:column;align-items:center;gap:5px}.jl-flow-figure span,.jl-macro-figure span,.jl-macro-figure div{border:1px solid #7d9fc9;background:#283f60;border-radius:8px;padding:8px 18px;text-align:center}.jl-flow-figure i{margin-left:30px}.jl-bool-figure{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.jl-bool-figure div,.jl-bool-figure b{border:1px solid #7d9fc9;padding:12px;border-radius:8px;background:#314866}.jl-debug-figure{display:grid;gap:9px}.jl-debug-figure span{background:#2c4160;border:1px solid #7891bb;padding:8px 11px;border-radius:8px;font-family:monospace}.jl-debug-figure small{margin-left:12px;font-family:system-ui;color:#ffd1bb}.jl-generic-screen{text-align:center;padding:15px}
+
 </style>
 </head>
 <body>
@@ -6928,6 +6958,270 @@ function initGuideTheory11(lesson) {
  input.addEventListener('keydown',e=>{if(e.key==='Enter')check()});
 }
 
+/* Interactive workbenches for junior classes. No external calls or real publishing. */
+const JUNIOR_LAB_CONFIG = {
+ '6b_school_01': {type:'slide', mode:'new', title:'Собери слайд «Мой любимый кот»', intro:'Нажимай на элементы. На слайде должны быть заголовок, рисунок и короткая подпись. Лишние украшения не нужны.'},
+ '6b_school_02': {type:'slide', mode:'fix', title:'Преврати неудобный слайд в понятный', intro:'Перед тобой слайд с очень длинным текстом. Исправь его и проверь, насколько удобно его читать.'},
+ '6b_school_03': {type:'scenario', title:'Браузер в действии', scene:'🌐 Макет браузера · экран не подключён к настоящему интернету', steps:[
+ ['Ты хочешь открыть школьную библиотеку. Куда вводят адрес сайта?',[['В адресную строку',true,'Адресная строка появилась вверху окна.'],['В поле пароля',false,'Поле пароля предназначено только для входа в аккаунт.'],['В настройки звука',false,'Настройки звука не открывают сайты.']]],
+ ['Открылась другая страница. Как вернуться к предыдущей?',[['Кнопкой «Назад»',true,'Страница вернулась к библиотеке.'],['Закрыть компьютер',false,'Компьютер выключать не нужно.'],['Нажать «Обновить»',false,'Обновление перезагрузит текущую страницу.']]],
+ ['Хочешь открыть ещё один материал, не теряя библиотеку.',[['Открыть новую вкладку',true,'В окне появились две вкладки.'],['Удалить историю',false,'История не нужна для открытия вкладки.'],['Изменить пароль',false,'Пароль к вкладкам отношения не имеет.']]]]},
+ '6b_school_04': {type:'scenario', title:'Найди информацию точным запросом',scene:'🔎 Учебная поисковая выдача · придуманные результаты',steps:[
+ ['Ты ищешь, чем питается императорский пингвин. Что написать в поиске?',[['императорский пингвин питание',true,'Показаны материалы о рационе пингвина.'],['пингвин',false,'Слишком общий запрос: выдача будет обо всём подряд.'],['животные смешные картинки',false,'Картинки не отвечают на вопрос.']]],
+ ['В выдаче есть статья с автором, рекламный магазин и случайный форум. Что открыть для факта?',[['Статью с автором и источниками',true,'Открыт материал, в котором можно проверить факт.'],['Рекламу магазина',false,'Магазин может рекламировать товары, но не является лучшим источником фактов.'],['Первое попавшееся сообщение',false,'Положение в выдаче ещё не означает достоверность.']]],
+ ['Как убедиться, что найденному факту можно доверять?',[['Сравнить с другим надёжным источником',true,'Факт подтверждён вторым независимым источником.'],['Сразу переслать друзьям',false,'Сначала проверь информацию.'],['Выбрать самое яркое название',false,'Красивое оформление не доказывает правдивость.']]]]},
+ '6b_school_05': {type:'scenario', title:'Редактор школьных новостей',scene:'📰 Две карточки: А — «Сенсация!», без автора; Б — исследование с автором, датой и источниками',steps:[
+ ['Какую публикацию легче проверить?',[['Б — есть автор, дата и источники',true,'Карточка Б выделена: её факты можно проверить.'],['А — громкий заголовок',false,'Громкие слова могут привлекать внимание, но не подтверждают информацию.'],['Обе одинаково надёжны',false,'У первой нет данных для проверки.']]],
+ ['Во второй статье очень старые данные. Что делать?',[['Проверить дату и поискать свежие',true,'Ты заметил, что информация может устареть.'],['Не смотреть на дату',false,'Для многих фактов дата важна.'],['Удалить все источники',false,'Источники помогают проверять утверждения.']]],
+ ['После сравнения два источника противоречат друг другу. Твой шаг?',[['Продолжить проверку, не распространять спорный факт',true,'Новость помечена «Нужна проверка».'],['Выбрать вариант, который нравится',false,'Личные предпочтения не делают факт истинным.'],['Скопировать самый короткий текст',false,'Краткость — не доказательство.']]]]},
+ '6b_school_06': {type:'scenario', title:'Редактор честной рекламы',scene:'📣 Учебный рекламный плакат · только вымышленные объявления',steps:[
+ ['Какую фразу оставить на плакате школьной ярмарки?',[['Ярмарка пройдёт в пятницу в 15:00',true,'На плакате появилась проверяемая информация о мероприятии.'],['Только сегодня! Иначе пожалеешь!',false,'Здесь пытаются напугать и заставить поспешить.'],['Все обязаны купить!',false,'Это давление, а не спокойное сообщение о событии.']]],
+ ['В объявлении обещают «100% успех каждому». Как поступить?',[['Убрать неподтверждённое обещание',true,'Объявление стало честнее.'],['Написать обещание ещё крупнее',false,'Большой шрифт не делает обещание достоверным.'],['Скрыть название организатора',false,'Читателю полезно знать, кто сообщает информацию.']]],
+ ['Как помочь зрителю отличить рекламу от обычной заметки?',[['Добавить понятную пометку «Реклама»',true,'На макете появилась пометка «Реклама».'],['Спрятать пометку',false,'Скрывать рекламный характер нечестно.'],['Нарисовать ещё десять восклицательных знаков',false,'Это добавит шума, не ясности.']]]]},
+ '6b_school_07': {type:'scenario', title:'Собираем безопасный профиль',scene:'👤 Макет открытого профиля · никакой отправки в интернет',steps:[
+ ['Что можно написать в публичном профиле?',[['Люблю читать фантастику',true,'В профиль добавлено увлечение без личных контактов.'],['Полный домашний адрес',false,'Домашний адрес — личные данные. Публично их не размещаем.'],['Номер телефона родителей',false,'Чужие контактные данные тоже нельзя публиковать.']]],
+ ['Незнакомый человек просит назвать школу и класс. Что делать?',[['Не сообщать, рассказать взрослому',true,'Личные сведения остались скрыты.'],['Сразу назвать школу и расписание',false,'Такие подробности могут раскрыть твоё местоположение.'],['Отправить фотографию пропуска',false,'На пропуске могут быть личные сведения.']]],
+ ['Кто должен видеть фотографию с друзьями?',[['Только те, на чьё согласие рассчитываешь; настрой приватность',true,'Настройка приватности отмечена, согласие друзей учитывается.'],['Все пользователи без предупреждения',false,'Сначала нужно подумать о приватности и согласии изображённых.'],['Любой, кто попросит',false,'Просьба незнакомца не повод открывать личный контент.']]]]},
+ '6b_school_08': {type:'scenario', title:'Защити учебную крепость',scene:'🔒 Тренажёр безопасности · настоящие пароли никогда не вводи',steps:[
+ ['Какой пример лучше подходит для нового пароля?',[['Длинная уникальная фраза из случайных слов',true,'Вымышленная крепость получила более стойкую защиту.'],['12345678',false,'Популярную последовательность легко угадать.'],['Имя и дата рождения',false,'Личные сведения могут быть известны другим людям.']]],
+ ['Друг просит сказать твой пароль «на минутку».',[['Не сообщать пароль никому',true,'Доступ к замку остался только у владельца.'],['Отправить пароль в чат',false,'Пароль нельзя пересылать даже друзьям.'],['Опубликовать в группе',false,'Групповой чат не место для пароля.']]],
+ ['Где безопаснее хранить пароли?',[['В надёжном менеджере паролей или по инструкции взрослого',true,'Ключи спрятаны.'],['На стикере на мониторе',false,'Любой рядом сможет их увидеть.'],['В открытом сообщении профиля',false,'Публикация раскрывает доступ к аккаунту.']]]]},
+ '6b_school_09': {type:'scenario', title:'Почтовый детектив',scene:'✉️ Вымышленное сообщение: «СРОЧНО! Пароль истечёт через минуту. Нажми ссылку и введи пароль!»',steps:[
+ ['Что в письме выглядит подозрительно?',[['Срочность и просьба ввести пароль по ссылке',true,'Опасные признаки подсвечены красным.'],['Наличие приветствия',false,'Само приветствие не говорит о мошенничестве.'],['Точка в конце предложения',false,'Знаки препинания здесь не главный признак.']]],
+ ['Что сделать со ссылкой в подозрительном сообщении?',[['Не открывать; проверить через официальный сайт самостоятельно',true,'Ты избежал подозрительной ссылки.'],['Сразу открыть и попробовать',false,'Не вводи данные на странице из подозрительного письма.'],['Переслать всем друзьям',false,'Так можно распространить опасную ссылку.']]],
+ ['Что делать, если сообщение пугает и требует ответа прямо сейчас?',[['Обратиться к взрослому или учителю',true,'Ты выбрал безопасное действие.'],['Ответить паролем',false,'Пароль никому не отправляем.'],['Выключить защиту браузера',false,'Защита не мешает решать проблему безопасно.']]]]},
+ '6b_school_10': {type:'scenario', title:'Собери доброжелательный чат',scene:'💬 Учебный чат · собеседник пишет «Мне не понравился твой ответ»',steps:[
+ ['Как ответить, не разжигая конфликт?',[['Давай обсудим спокойно, что не так',true,'В чате появился уважительный ответ.'],['Сам ничего не понимаешь!',false,'Оскорбление только усилит конфликт.'],['Я всем про тебя расскажу!',false,'Угрозы не помогают решить разногласия.']]],
+ ['Тебе отправили непонятную шутку, которая обидела. Что написать?',[['Мне неприятно, пожалуйста, не делай так',true,'Ты обозначил границу спокойно.'],['Написать ещё более обидную шутку',false,'Ответное оскорбление ухудшает ситуацию.'],['Опубликовать переписку всем',false,'Чужую переписку нельзя разносить без необходимости.']]],
+ ['В чат прислали обидные сообщения другому ученику.',[['Не поддерживать травлю, обратиться к взрослому',true,'В чате стало безопаснее.'],['Поставить реакцию «смешно»',false,'Это может поддержать травлю.'],['Скопировать и отправить дальше',false,'Так обидное сообщение распространяется.']]]]},
+ '7a_school_01': {type:'scenario', title:'Придумай язык для робота',scene:'🤖 У робота будет собственный язык: ▲ — вперёд, ◀ — влево, ▶ — вправо, ■ — стоп',steps:[
+ ['Что такое алфавит этого языка?',[['Набор четырёх разрешённых знаков',true,'Рядом с роботом появилась таблица четырёх команд.'],['Все слова русского языка',false,'Здесь мы придумали маленький формальный язык.'],['Только один знак стоп',false,'Одна команда — ещё не весь алфавит.']]],
+ ['Какая запись — точная команда для поворота вправо?',[['▶',true,'Робот повернулся вправо.'],['Как-нибудь туда',false,'Для формального языка команда должна быть однозначной.'],['Скоро поверни',false,'Роботу непонятно, что и когда делать.']]],
+ ['Что поможет другому ученику понять твой язык?',[['Таблица «знак → действие»',true,'Словарь команд готов.'],['Секретный смысл без объяснения',false,'Без словаря команду невозможно расшифровать.'],['Менять значение знака каждый раз',false,'Один знак не должен неожиданно менять смысл.']]]]},
+ '7b_school_08': {type:'scenario', title:'Проверяем точность команд',scene:'🤖 Исполнитель понимает только чёткие команды и не умеет догадываться',steps:[
+ ['Вместо «иди немного» выбери точную команду.',[['ВПРАВО на 2 клетки',true,'Робот передвинулся ровно на две клетки.'],['Иди красиво',false,'Непонятно, в какую сторону и насколько.'],['Сделай что-нибудь',false,'У команды нет точного действия.']]],
+ ['Как проверить, что алгоритм заканчивается?',[['В нём есть понятное конечное действие или условие остановки',true,'Робот остановился после выполнения команд.'],['Команды повторяются без конца',false,'Тогда исполнитель может не остановиться.'],['Просто надеяться, что остановится',false,'Алгоритм должен определять порядок и завершение.']]],
+ ['Что такое массовость алгоритма?',[['Он подходит для разных допустимых входных данных',true,'Схема сработала с двумя разными длинами маршрута.'],['Работает только для одного имени робота',false,'Алгоритм обычно рассчитан на целый класс задач.'],['Его можно показать многим людям',false,'Здесь массовость означает разные входные данные, а не зрителей.']]]]},
+ '7b_school_09': {type:'scenario', title:'Собери смысл блок-схемы',scene:'🔷 Начало → ввод числа → ромб «число чётное?» → две стрелки',steps:[
+ ['Какой блок используют для проверки условия?',[['Ромб',true,'На схеме появился ромб с вопросом.'],['Овал',false,'Овал часто обозначает начало и конец.'],['Прямоугольник для действия',false,'Прямоугольник обычно обозначает вычисление или действие.']]],
+ ['Если число делится на 2 без остатка, куда ведёт стрелка?',[['По ветке «Да»',true,'Ветка «Да» подсвечена.'],['По ветке «Нет»',false,'Если остаток ноль, условие истинно.'],['Сразу к вводу снова',false,'Сначала нужно выбрать ветку решения.']]],
+ ['А если остаток от деления равен 1?',[['Ветка «Нет»',true,'Ветка «Нет» ведёт к выводу «нечётное».'],['Ветка «Да»',false,'Остаток 1 означает нечётное число.'],['Обе ветки одновременно',false,'При одном значении условия выбирается одна ветка.']]]]},
+ '7b_school_12': {type:'scenario', title:'Выбери ветку алгоритма',scene:'⚽ Тренажёр футболиста: мяч может попасть или не попасть в ворота',steps:[
+ ['Мяч попал в ворота. Какой результат у проверки «попал?»',[['Истина → показать «Гол!»',true,'На табло загорелось «Гол!».'],['Ложь → показать «Мимо»',false,'Мяч оказался в воротах.'],['Выполнить обе ветки',false,'Одновременно две противоположные ветки не выполняются.']]],
+ ['Мяч пролетел мимо. В полной форме IF...ELSE что происходит?',[['Выполняется ветка ELSE',true,'На табло показано «Мимо».'],['Выполняется ветка IF',false,'Условие не выполнено.'],['Обе ветки',false,'Одна проверка выбирает одну ветку.']]],
+ ['Чем отличается неполное ветвление?',[['Если условие ложно, отдельного действия может не быть',true,'На схеме ветка «Нет» ведёт сразу дальше.'],['Условие нельзя проверить',false,'Условие проверяется и в полной, и в неполной форме.'],['Всегда есть две команды',false,'Во второй ветке может не быть действий.']]]]},
+ '7b_school_13': {type:'scenario', title:'Проверка двух условий',scene:'🤖 Робот проходит, только если впереди свободно И заряд больше нуля',steps:[
+ ['Свободно: да; заряд: 3. Можно двигаться?',[['Да, оба условия истинны',true,'Робот сделал шаг.'],['Нет, достаточно одного условия',false,'Для «И» нужны оба истинных условия.'],['Нельзя, потому что заряд не равен нулю',false,'Положительный заряд позволяет движение.']]],
+ ['Свободно: да; заряд: 0. Что сделает правильный алгоритм?',[['Остановится',true,'Робот остановился — нет заряда.'],['Поедет дальше',false,'Одно из условий «И» ложно.'],['Начнёт случайный поворот',false,'Алгоритм должен реагировать по заданному условию.']]],
+ ['Как работает «ИЛИ»?',[['Достаточно одного истинного условия',true,'На схеме выделены обе допустимые ветки.'],['Обязательно оба условия',false,'Это правило для логического «И».'],['Ни одного условия',false,'Тогда выражение «ИЛИ» ложно.']]]]},
+ '7b_school_17': {type:'scenario', title:'Создай собственную команду',scene:'🧱 Помощник РОБОТ: команда «ШАГ ПРАВО» = вправо, вниз, влево',steps:[
+ ['Одинаковые три действия повторяются. Что сделать удобнее?',[['Назвать последовательность отдельной командой',true,'Создан блок «ШАГ ПРАВО».'],['Переписать последовательность каждый раз',false,'Так легко допустить ошибку и трудно исправлять.'],['Удалить последовательность',false,'Роботу всё ещё нужно выполнять действия.']]],
+ ['Главная программа хочет выполнить эту последовательность. Что сделать?',[['Вызвать команду по имени',true,'Робот исполнил содержимое помощника.'],['Написать только комментарий',false,'Комментарий не вызывает выполнение.'],['Изменить имя без вызова',false,'Имя нужно использовать в главном алгоритме.']]],
+ ['В подалгоритме нашли ошибку. Где лучше исправить?',[['В одном определении вспомогательной команды',true,'Все её вызовы теперь используют исправленные действия.'],['В каждом вызове случайным образом',false,'Помощник нужен, чтобы определение было единым.'],['Нигде: ошибки исправлять нельзя',false,'Подалгоритмы можно и нужно отлаживать.']]]]},
+ '7b_school_18': {type:'scenario', title:'Команда с параметром',scene:'🪜 Вспомогательный алгоритм ЛЕСТНИЦА(n) делает n ступеней',steps:[
+ ['Как вызвать две ступеньки?',[['ЛЕСТНИЦА(2)',true,'На макете появилось две ступени.'],['ЛЕСТНИЦА()',false,'Не указано, сколько ступеней делать.'],['ЛЕСТНИЦА(слово)',false,'Здесь ожидается количество ступеней.']]],
+ ['Как вызвать четыре ступеньки тем же помощником?',[['ЛЕСТНИЦА(4)',true,'Макет вырос до четырёх ступеней.'],['Нужно переписать весь алгоритм',false,'Параметр позволяет повторно использовать код.'],['ЛЕСТНИЦА(0)',false,'Ноль ступеней — не четыре.']]],
+ ['Почему это удобно?',[['Один алгоритм работает с разными значениями n',true,'Помощник готов к повторному использованию.'],['Потому что имя теперь не нужно',false,'Имя помощника остаётся важным.'],['Потому что нельзя ошибиться',false,'Ошибки по-прежнему возможны; тестируй разные n.']]]]},
+ '7b_school_19': {type:'scenario', title:'Главный алгоритм и помощники',scene:'🤖 В игре есть вспомогательные команды ШАГ и ПОВОРОТ',steps:[
+ ['Что нужно сделать до первого вызова помощника?',[['Определить, какие команды он выполняет',true,'В панели появились определения помощников.'],['Сразу вызвать несуществующее имя',false,'Робот ещё не знает такой команды.'],['Удалить главную программу',false,'Главная программа управляет вызовами.']]],
+ ['Как дважды выполнить ШАГ?',[['Дважды вызвать ШАГ или использовать повторение',true,'В журнале два одинаковых блока действий.'],['Назвать команду ДВА, не определяя её',false,'Имя не определяет действия автоматически.'],['Выполнить ПОВОРОТ вместо ШАГ',false,'Это другое действие.']]],
+ ['Как проверить, где ошибка?',[['Просмотреть команды внутри помощника и журнал вызовов',true,'Журнал помог найти неправильную команду.'],['Скрыть все вызовы',false,'Без журнала сложнее понять ошибку.'],['Заменить все команды случайными',false,'Случайные изменения не помогают отладить алгоритм.']]]]},
+ '7b_school_21': {type:'scenario', title:'Проследи путь робота',scene:'📍 Старт (0,0), затем команды: вправо, вниз, вниз, влево',steps:[
+ ['После команды «вправо» координата робота?', [['(1,0)',true,'Точка переместилась на одну клетку вправо.'],['(0,1)',false,'Это был бы шаг вниз.'],['(0,0)',false,'Робот уже сдвинулся со старта.']]],
+ ['После ещё двух команд «вниз» координата?', [['(1,2)',true,'Трассировка: (1,0) → (1,1) → (1,2).'],['(2,1)',false,'Перепутаны горизонталь и вертикаль.'],['(1,0)',false,'Два шага вниз изменяют вторую координату.']]],
+ ['Последняя команда — влево. Финальная точка?', [['(0,2)',true,'Журнал заполнен: робот в (0,2).'],['(2,2)',false,'Влево уменьшает первую координату.'],['(1,3)',false,'Вторая координата не меняется при шаге влево.']]]]},
+ '7b_school_22': {type:'scenario', title:'Отладчик ошибок робота',scene:'🛠️ Программа должна сделать два шага вправо, но даёт сбой',steps:[
+ ['Первая команда записана «вправоо». Что случилось?',[['Синтаксическая ошибка: команда написана неверно',true,'Исправлено на «вправо».'],['Ошибка логики: не тот результат',false,'Пока команда вообще не распознаётся.'],['Ничего страшного, робот догадается',false,'Исполнитель выполняет только известные команды.']]],
+ ['Робот сделал шаг влево вместо вправо. Тип ошибки?', [['Логическая ошибка',true,'Команда понятна, но направление не соответствует цели.'],['Синтаксическая ошибка',false,'Слово «влево» написано верно, проблема в выборе действия.'],['Отказ из-за стены',false,'Здесь причина в неверном направлении.']]],
+ ['Команда «вправо» ведёт прямо в стену. Что это?', [['Отказ исполнителя; нужно изменить маршрут',true,'Новый маршрут обходит стену.'],['Пароль неверный',false,'Пароль здесь ни при чём.'],['Компьютер просто не хочет',false,'Причина конкретная: препятствие на пути.']]]]},
+};
+Object.assign(JUNIOR_LAB_CONFIG, {
+ '7a_school_02': {type:'encode',mode:'encode',word:'АБВА',title:'Собери двоичное сообщение'},
+ '7a_school_03': {type:'encode',mode:'encode',word:'БАГА',title:'Текст превращается в нули и единицы'},
+ '7a_school_05': {type:'encode',mode:'encode',word:'ГБА',title:'Равномерный код: два бита на знак'},
+ '7a_school_06': {type:'encode',mode:'decode',bits:'001110',title:'Расшифруй секретную строку'},
+ '7b_school_02': {type:'encode',mode:'encode',word:'ВАГ',title:'Кодирование текста'},
+ '7b_school_03': {type:'encode',mode:'decode',bits:'110100',title:'Декодирование по таблице'},
+ '7a_school_04': {type:'number', title:'Переведи и посчитай', problems:[['Сколько бит в 12 байтах?',96,'1 байт = 8 бит. Значит, 12 × 8 = 96.'],['Сколько секунд передаются 80 бит при скорости 20 бит/с?',4,'Время = объём / скорость = 80 / 20 = 4 секунды.']]},
+ '7a_school_10': {type:'number', title:'Контрольная мастерская: три мини-задачи', problems:[['Сколько бит в тексте из 12 символов, если на каждый нужно 8 бит?',96,'12 × 8 = 96 бит.'],['Сколько бит занимает чёрно-белый рисунок 4 × 4 при 1 бите на пиксель?',16,'4 × 4 × 1 = 16 бит без сжатия.'],['Сколько бит занимают 5 звуковых отсчётов по 8 бит?',40,'5 × 8 = 40 бит.']]},
+ '7b_school_01': {type:'number', title:'Измерь объём и скорость', problems:[['Сколько бит в 15 байтах?',120,'15 байт × 8 бит = 120 бит.'],['Сколько секунд передаются 240 бит при 60 бит/с?',4,'240 / 60 = 4 секунды.']]},
+ '7b_school_10': {type:'number', title:'Робот вычисляет периметр',problems:[['Ширина 3, высота 2. Каков периметр прямоугольника?',10,'Периметр = (3 + 2) × 2 = 10.'],['Ширина 7, высота 4. Каков периметр?',22,'(7 + 4) × 2 = 22.']]},
+ '7b_school_16': {type:'number', title:'Счётчик повторений',problems:[['Счётчик i начинается с 0. После 6 повторений i увеличивается каждый раз на 1. Чему он равен?',6,'0 → 1 → 2 → 3 → 4 → 5 → 6.'],['Цикл считает i от 1 до 4 включительно. Сколько раз выполняется тело?',4,'Для i = 1, 2, 3 и 4 — четыре повторения.']]},
+ '7a_school_08': {type:'pixel', title:'Нарисуй значок из пикселей',target:['0000','0110','0110','0000'],bits:1},
+ '7b_school_05': {type:'pixel', title:'Рисуем и считаем пиксели',target:['1111','1001','1001','1111'],bits:4},
+ '7b_school_04': {type:'rgb', title:'Смешай цвет из красного, зелёного и синего'},
+ '7a_school_07': {type:'samples',title:'Оцифруй показания датчика',mode:'data',target:[0,2,4,6]},
+ '7a_school_09': {type:'samples',title:'Сними звуковые отсчёты',mode:'sound',target:[0,1,2,3,4,5,6,7]},
+ '7b_school_06': {type:'samples',title:'Запиши звуковые отсчёты и посчитай объём',mode:'sound',target:[0,1,2,3,4,5,6,7]},
+ '7b_school_07': {type:'robot',title:'Проведи робота к звезде',start:[0,0],goal:[2,2],walls:[[1,0]],require:null},
+ '7b_school_11': {type:'robot',title:'Познакомься с командами исполнителя',start:[0,1],goal:[2,1],walls:[[1,0]],require:null},
+ '7b_school_14': {type:'robot',title:'Повтори команду три раза',start:[0,0],goal:[3,0],walls:[],require:'repeat'},
+ '7b_school_15': {type:'robot',title:'Двигайся, пока впереди свободно',start:[0,0],goal:[3,0],walls:[[4,0]],require:'while'},
+ '7b_school_20': {type:'robot',title:'Обойди препятствие с помощью условия',start:[0,0],goal:[2,1],walls:[[1,0]],require:'if'},
+});
+
+function juniorScenarioVisual(id,progress){
+ const changed=progress>0;
+ const line=(label,value)=>`<div class="jl-demo-line"><b>${label}</b><span>${value}</span></div>`;
+ switch(id){
+  case '6b_school_03': return `<div class="jl-fake-app"><div class="jl-browser-tabs">🌐 ${progress>=3?'Библиотека · Новая вкладка':'Библиотека'} <span>＋</span></div><div class="jl-browser-address">◀ ↻ <span>${changed?'https://school-library.example':'Введите адрес сайта…'}</span> 🔒</div><div class="jl-fake-body">${changed?'📚 Школьная библиотека':'🧭 Открой страницу через адресную строку'}</div></div>`;
+  case '6b_school_04': return `<div class="jl-fake-app"><div class="jl-searchbar">🔎 ${changed?'императорский пингвин питание':'Что будем искать?'}</div><div class="jl-search-result">${changed?'📄 Статья: рацион императорского пингвина':'Начни с точного поискового запроса'}</div>${progress>=2?'<div class="jl-search-result">📚 Источник № 2: энциклопедия животных</div>':''}</div>`;
+  case '6b_school_05': return `<div class="jl-news-cards"><div><b>А · Сенсация!</b><small>Без автора и даты</small><span>❔</span></div><div class="${changed?'jl-good-card':''}"><b>Б · Материал</b><small>Автор · Дата · Источники</small><span>📗</span></div></div>`;
+  case '6b_school_06': return `<div class="jl-poster"><b>🎪 Школьная ярмарка</b><p>${changed?'Пятница, 15:00':'СРОЧНО! НЕ ПРОПУСТИ!'}</p>${progress>=3?'<small>РЕКЛАМА</small>':''}</div>`;
+  case '6b_school_07': return `<div class="jl-profile"><b>👤 Мой профиль</b>${line('Увлечение',changed?'Чтение фантастики':'—')}${line('Домашний адрес','🔒 Скрыт')}${line('Телефон','🔒 Скрыт')}${progress>=3?line('Доступ','Только доверенные люди'):''}</div>`;
+  case '6b_school_08': return `<div class="jl-safe"><div>🏰</div><span>${changed?'🔒 Замок закрыт':'🔓 Замок открыт'}</span><small>Не вводи в тренажёр настоящие пароли</small></div>`;
+  case '6b_school_09': return `<div class="jl-mail"><div>✉️ СРОЧНО: Ваш пароль истечёт!</div><small>«Нажмите по ссылке и введите пароль»</small><span>${changed?'⚠️ Подозрительное письмо помечено':'🔍 Проверь письмо'}</span></div>`;
+  case '6b_school_10': return `<div class="jl-chat"><div>💬 «Мне не понравился твой ответ»</div>${changed?'<div class="jl-reply">«Давай обсудим спокойно, что не так»</div>':'<span>Выбери ответ ниже</span>'}</div>`;
+  case '7a_school_01': return `<div class="jl-symbols"><span>▲<small>вперёд</small></span><span>◀<small>влево</small></span><span>▶<small>вправо</small></span><span>■<small>стоп</small></span></div>`;
+  case '7b_school_09': return `<div class="jl-flow-figure"><span>НАЧАЛО</span><b>↓</b><span>🔷 Число чётное?</span><div>↙ Да <i>Нет ↘</i></div><span>${changed?'Чётное / Нечётное':'Две возможные ветки'}</span></div>`;
+  case '7b_school_12': return `<div class="jl-flow-figure"><span>⚽ Мяч попал в ворота?</span><div>↙ ДА <i>НЕТ ↘</i></div><span>${changed?'📢 Гол!':'Ожидаем выбор'}</span></div>`;
+  case '7b_school_13': return `<div class="jl-bool-figure"><div>Путь свободен: ✅</div><div>Заряд больше нуля: ${progress>=2?'❌':'✅'}</div><b>${progress>=2?'⛔ Стоп':'➡️ Можно ехать'}</b></div>`;
+  case '7b_school_17': return `<div class="jl-macro-figure"><span>ШАГ ПРАВО( )</span><div>→ ↓ ←</div><span>${changed?'Главная программа → ШАГ ПРАВО':'Создай команду из трёх действий'}</span></div>`;
+  case '7b_school_18': return `<div class="jl-macro-figure"><span>ЛЕСТНИЦА(n)</span><div>${changed?'🪜🪜':'🪜'}</div><span>${changed?'Вызов: ЛЕСТНИЦА(2)':'n — число ступеней'}</span></div>`;
+  case '7b_school_19': return `<div class="jl-macro-figure"><span>ГЛАВНЫЙ АЛГОРИТМ</span><b>↓</b><div>ШАГ( ) · ПОВОРОТ( )</div><span>${changed?'Помощники определены':'Подготовь команды-помощники'}</span></div>`;
+  case '7b_school_21': return `<div class="jl-macro-figure"><span>Старт (0,0)</span><div>${progress>=2?'(1,0) → (1,1) → (1,2)':'(0,0) → (1,0)'}</div><span>Координата меняется после каждого шага</span></div>`;
+  case '7b_school_22': return `<div class="jl-debug-figure"><span>${changed?'вправо':'вправоо'}<small>${changed?'✓ исправлено':'✕ неизвестная команда'}</small></span><span>вправо → 🧱 <small>проверь стену</small></span></div>`;
+  default: return `<div class="jl-generic-screen">🧩 ${changed?'Промежуточный результат готов':'Выбери первое правильное действие'}</div>`;
+ }
+}
+
+function juniorLabMarkup(lesson){
+  const cfg=JUNIOR_LAB_CONFIG[lesson.id];if(!cfg)return '';
+  return `<section class="junior-lab" id="juniorLab" data-junior-lab="${esc(lesson.id)}" aria-label="Интерактивная практика по теме">
+   <div class="jl-header"><span class="jl-icon" aria-hidden="true">🎮</span><div><span class="pill">Сделай сам · без оценки</span><h3>${esc(cfg.title)}</h3><p>Нажимай на кнопки и наблюдай, что меняется. Ошибаться можно: тренажёр объяснит, как исправить.</p></div></div>
+   <div class="jl-stage" id="jlStage"></div>
+   <div class="jl-feedback" id="jlFeedback" role="status" aria-live="polite">Выбери первое действие — и посмотри на результат.</div>
+   <div class="row jl-footer"><button class="secondary" id="jlReset" type="button">↺ Начать заново</button><button id="jlSaveResult" type="button" disabled>Добавить результат в ответ</button></div>
+   <p class="small">Работает прямо в браузере. Это учебная модель — она не отправляет данные в интернет и не меняет оценку. Для отправки учителю нажми «Добавить результат в ответ», а затем «Сохранить ответ».</p>
+  </section>`;
+}
+function juniorLabInit(lesson){
+ const cfg=JUNIOR_LAB_CONFIG[lesson.id];if(!cfg)return;
+ const stage=$('jlStage'),fb=$('jlFeedback'),save=$('jlSaveResult');if(!stage||!fb||!save)return;
+ let resultText='';
+ const feedback=(message,ok=false)=>{fb.textContent=message;fb.className='jl-feedback'+(ok?' jl-success':'');};
+ const success=(message,detail)=>{resultText=`Интерактивное упражнение «${lesson.title}»: ${detail}`;save.disabled=!!previewMode;feedback('✅ '+message,true);};
+ const escape=esc;
+ const addButton=(label,attributes='',classes='secondary')=>`<button class="${classes}" type="button" ${attributes}>${escape(label)}</button>`;
+ const toCodePoints=code=>Array.from(code).map(x=>x.toUpperCase());
+ let reset=()=>{};
+ if(cfg.type==='slide'){
+   let picked=new Set();
+   const options=cfg.mode==='fix'?[
+     ['short','✂️ Сократить текст'],['contrast','🎨 Сделать контрастным'],['image','🪐 Добавить рисунок Марса'],['glitter','✨ Добавить 10 анимаций'],['tiny','🔡 Уменьшить буквы']
+   ]:[['title','🔤 Добавить заголовок'],['image','🐈 Добавить рисунок кота'],['caption','✏️ Добавить короткую подпись'],['noise','🎇 Добавить много мигающих украшений'],['paragraph','📄 Написать огромный абзац']];
+   const draw=()=>{
+     const isFix=cfg.mode==='fix';
+     const baseTitle=isFix?'Марс — красная планета':'Мой любимый кот';
+     const title=isFix||picked.has('title')?`<h4 class="jl-slide-title">${baseTitle}</h4>`:'<div class="jl-placeholder">Здесь появится заголовок</div>';
+     const imagePart=(isFix?picked.has('image'):picked.has('image'))?`<div class="jl-cat-art" aria-label="Иллюстрация">${isFix?'🪐':'🐈'}</div>`:'<div class="jl-placeholder">Здесь будет рисунок</div>';
+     const tooLong=(isFix&&!picked.has('short'))||(!isFix&&picked.has('paragraph'));
+     const caption=isFix?(picked.has('short')?'У Марса красноватая поверхность.':'Марс это очень-очень интересная планета, про которую можно рассказать невероятно много сведений, поэтому сейчас мы напишем целую страницу текста, которую на уроке никто не сможет быстро прочитать.'):picked.has('caption')?'Коты любят играть.':'';
+     stage.innerHTML=`<div class="jl-slide-wrapper"><div class="jl-slide ${isFix&&!picked.has('contrast')?'jl-low-contrast':''}">${title}${imagePart}<p>${escape(caption)}</p>${tooLong?'<small class="jl-anti">Слишком много текста для одного слайда</small>':''}${picked.has('noise')||picked.has('glitter')?'<div class="jl-anti">🌟💥💫⚡️🌈🌟💥</div>':''}${picked.has('tiny')?'<small class="jl-anti">Заголовок слишком маленький</small>':''}</div><p class="small">↑ Живой макет: каждый выбранный элемент появляется здесь.</p></div>
+       <div class="jl-actions">${options.map(([id,label])=>addButton(label,`data-slide="${id}" ${picked.has(id)?'aria-pressed="true"':''}`,picked.has(id)?'':'secondary')).join('')}</div>
+       <button type="button" id="jlSlideCheck">Проверить слайд</button>`;
+     stage.querySelectorAll('[data-slide]').forEach(b=>b.onclick=()=>{const id=b.dataset.slide;if(picked.has(id))picked.delete(id);else picked.add(id);draw();feedback('Макет обновлён. Проверь, все ли элементы помогают понять тему.');});
+     $('jlSlideCheck').onclick=()=>{
+       if(isFix){const missing=['short','contrast','image'].filter(x=>!picked.has(x));const extra=['glitter','tiny'].filter(x=>picked.has(x));if(missing.length||extra.length){feedback('Пока нужно '+(missing.length?'добавить полезные исправления: '+missing.join(', ')+'. ':'')+(extra.length?'Убрать лишние украшения или маленький текст.':''));return;}}
+       else {const missing=['title','image','caption'].filter(x=>!picked.has(x));const extra=['noise','paragraph'].filter(x=>picked.has(x));if(missing.length||extra.length){feedback('Проверь макет: нужны заголовок, рисунок и краткая подпись. '+(extra.length?'Убери длинный текст и лишние украшения.':''));return;}}
+       success('Слайд готов: он короткий, наглядный и понятный.','собран понятный слайд, без лишних элементов');
+     };
+   };reset=()=>{picked=new Set();resultText='';save.disabled=true;draw();};
+ } else if(cfg.type==='scenario'){
+   let step=0,history=[];
+   const draw=()=>{
+     const part=cfg.steps[step];
+     stage.innerHTML=`<div class="jl-scene"><div class="jl-scene-title">${escape(cfg.scene)}</div><div class="jl-timeline">${cfg.steps.map((_,i)=>`<span class="${i<step?'jl-done':i===step?'jl-current':''}">Этап ${i+1}</span>`).join('')}</div><div class="jl-device"><div class="jl-device-example">${juniorScenarioVisual(lesson.id,step)}</div><div class="jl-scene-note">${escape(history.at(-1)||'Выбери действие ниже — макет будет меняться.')}</div></div></div>`+
+      (part?`<h4>Что сделаешь? ${escape(part[0])}</h4><div class="jl-actions">${part[1].map((opt,i)=>({opt,i})).sort((a,b)=>((a.i+step+Number(lesson.id.split('_').pop()))%part[1].length)-((b.i+step+Number(lesson.id.split('_').pop()))%part[1].length)).map(({opt,i})=>addButton(opt[0],`data-choice="${i}"`)).join('')}</div>`:'<div class="jl-completed">Все этапы пройдены! Теперь ты знаешь, как действовать.</div>');
+     stage.querySelectorAll('[data-choice]').forEach(b=>b.onclick=()=>{
+       const chosen=part[1][Number(b.dataset.choice)];
+       if(!chosen[1]){feedback('Попробуй иначе. '+chosen[2]);return;}
+       history.push(chosen[2]);step++;draw();
+       if(step===cfg.steps.length)success('Мини-миссия пройдена. Ты выбрал правильные действия.',history.join(' → '));else feedback('Верно! '+chosen[2],true);
+     });
+   };reset=()=>{step=0;history=[];resultText='';save.disabled=true;draw();};
+ } else if(cfg.type==='encode'){
+   const book={А:'00',Б:'01',В:'10',Г:'11'};
+   const answer=cfg.mode==='encode'?cfg.word:Array.from({length:cfg.bits.length/2},(_,i)=>Object.keys(book).find(k=>book[k]===cfg.bits.slice(i*2,i*2+2))).join('');
+   let selected='';
+   const draw=()=>{
+     const target=cfg.mode==='encode'?`Закодируй слово <b>${cfg.word}</b>`:`Расшифруй строку <b>${cfg.bits}</b>`;
+     stage.innerHTML=`<p>${target}. Нажимай буквы в правильном порядке. Каждый знак занимает 2 бита.</p><div class="jl-codebook">${Object.entries(book).map(([k,v])=>`<div><b>${k}</b><span>${v}</span></div>`).join('')}</div>
+       <div class="jl-live-output"><b>Собрано:</b> ${escape(selected)||'пока пусто'}<div class="jl-encoded">${Array.from(selected).map(c=>book[c]||'??').join(' ')||'—'}</div></div>
+       <div class="jl-actions">${Object.keys(book).map(ch=>addButton(ch,`data-letter="${ch}"`)).join('')}</div><div class="jl-actions">${addButton('← Удалить последнюю', 'id="jlErase"')}${addButton('Проверить сообщение','id="jlCodeCheck"','')}</div>`;
+     stage.querySelectorAll('[data-letter]').forEach(b=>b.onclick=()=>{if(selected.length>=12)return;selected+=b.dataset.letter;draw();feedback('Сообщение меняется прямо сейчас.');});
+     $('jlErase').onclick=()=>{selected=selected.slice(0,-1);draw();};
+     $('jlCodeCheck').onclick=()=>{
+       if(selected!==answer){const i=Array.from(answer).findIndex((v,n)=>v!==selected[n]);feedback(`Пока не совпадает. Проверь символ №${i>=0?i+1:selected.length+1}: сравни его двоичный код с таблицей.`);return;}
+       success(`Верно! ${answer} = ${Array.from(answer).map(c=>book[c]).join(' ')}. Всего ${answer.length*2} бит.`,`${answer} → ${Array.from(answer).map(c=>book[c]).join('')}, ${answer.length*2} бит`);
+     };
+   };reset=()=>{selected='';resultText='';save.disabled=true;draw();};
+ } else if(cfg.type==='number'){
+   let current=0,answers=[];
+   const draw=()=>{
+     const p=cfg.problems[current];
+     stage.innerHTML=p?`<div class="jl-math-visual">📦 <b>${current+1} / ${cfg.problems.length}</b><div class="jl-math-bars">${Array.from({length:Math.min(12,p[1])},()=>'<span></span>').join('')}</div></div>
+     <p><b>${escape(p[0])}</b></p><div class="jl-answer"><input id="jlNumberAnswer" inputmode="numeric" autocomplete="off" placeholder="Введи число"><button id="jlNumberCheck" type="button">Проверить</button></div>`:'<div class="jl-completed">Все вычисления выполнены!</div>';
+     if(p){$('jlNumberCheck').onclick=()=>{const raw=$('jlNumberAnswer').value.trim().replace(',','.');if(!raw){feedback('Сначала введи число — результат вычисления.');return;}if(Number(raw)!==p[1]){feedback('Пока не так. Подсказка: '+p[2].split('=')[0]+'. Попробуй сам.');return;}answers.push(p[2]);current++;draw();if(current===cfg.problems.length)success('Верно! Все вычисления прошли проверку.',answers.join(' | '));else feedback('Правильно! '+p[2],true);};}
+   };reset=()=>{current=0;answers=[];resultText='';save.disabled=true;draw();};
+ } else if(cfg.type==='pixel'){
+   let painted=Array(16).fill('0');const target=cfg.target.join('');
+   const draw=()=>{const count=painted.filter(x=>x==='1').length;
+     stage.innerHTML=`<div class="jl-pixel-layout"><div><p><b>Нажимай клетки</b>, чтобы повторить рисунок справа.</p><div class="jl-pixel-grid" role="group" aria-label="Поле для рисования">${painted.map((v,i)=>`<button type="button" data-pixel="${i}" aria-label="Строка ${Math.floor(i/4)+1}, столбец ${i%4+1}" aria-pressed="${v==='1'}" class="${v==='1'?'on':''}"></button>`).join('')}</div></div>
+       <div><p><b>Образец</b></p><div class="jl-pixel-grid jl-target">${Array.from(target).map(v=>`<span class="${v==='1'?'on':''}"></span>`).join('')}</div><p class="small">Закрашено: ${count} клеток.<br>Размер файла без сжатия: <b>16 × ${cfg.bits} = ${16*cfg.bits} бит</b>.</p></div></div>
+       <button type="button" id="jlPixelCheck">Проверить рисунок</button>`;
+     stage.querySelectorAll('[data-pixel]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.pixel);painted[i]=painted[i]==='1'?'0':'1';draw();feedback('Рисунок обновился. Сравни клетки слева и справа.');});
+     $('jlPixelCheck').onclick=()=>{if(painted.join('')!==target){const i=painted.findIndex((v,n)=>v!==target[n]);feedback(`Проверь строку ${Math.floor(i/4)+1}, клетку ${i%4+1}: она отличается от образца.`);return;}success(`Отлично! Пиксельная картинка совпала с образцом. Объём без сжатия: ${16*cfg.bits} бит.`,`пиксельный рисунок 4×4; ${16*cfg.bits} бит`);};
+   };reset=()=>{painted=Array(16).fill('0');resultText='';save.disabled=true;draw();};
+ } else if(cfg.type==='rgb'){
+   const values=[0,0,0];
+   const draw=()=>{stage.innerHTML=`<p>Задание: создай <b>чистый красный</b> цвет. Смешай три канала RGB. Для начала каждый переключается между 0 и 255.</p>
+     <div class="jl-rgb-preview" style="background:rgb(${values.join(',')})" aria-label="Смешанный цвет"></div><div class="jl-rgb-controls">${['Красный R','Зелёный G','Синий B'].map((s,i)=>`<label>${s} <b>${values[i]}</b><button data-rgb="${i}" type="button" class="secondary">${values[i]?'Выключить':'Включить'}</button></label>`).join('')}</div><p class="small">Текущий цвет: RGB(${values.join(', ')})</p><button type="button" id="jlRgbCheck">Проверить цвет</button>`;
+     stage.querySelectorAll('[data-rgb]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.rgb);values[i]=values[i]?0:255;draw();feedback('Цвет на макете изменился. Сравни его с заданием.');});
+     $('jlRgbCheck').onclick=()=>{if(values.join()!=='255,0,0'){feedback('Красный получится, когда канал R = 255, а G и B = 0. Попробуй ещё.');return;}success('Это чистый красный: RGB(255, 0, 0).','RGB(255, 0, 0) — красный');};
+   };reset=()=>{values.splice(0,3,0,0,0);resultText='';save.disabled=true;draw();};
+ } else if(cfg.type==='samples'){
+   const values=[2,3,5,4,2,6,5,3];let points=new Set();const expected=new Set(cfg.target);
+   const draw=()=>{stage.innerHTML=`<p>Выбери <b>${cfg.target.length} точки измерения</b> на графике. ${cfg.mode==='sound'?'Для записи звука измеряй его через равные интервалы.':'Для этой тренировки измеряй сигнал через одну точку, начиная с первой.'}</p><div class="jl-samples">${values.map((v,i)=>`<button type="button" data-sample="${i}" aria-pressed="${points.has(i)}" class="${points.has(i)?'selected':''}" title="Отсчёт ${i+1}"><span class="jl-sample-bar" style="height:${v*15}px"></span><small>${i+1}</small></button>`).join('')}</div>
+     <p class="small">Выбрано: ${[...points].sort((a,b)=>a-b).map(x=>x+1).join(', ')||'ничего'}. При 8 битах на отсчёт выбранные точки займут ${points.size*8} бит.</p><button type="button" id="jlSampleCheck">Проверить измерения</button>`;
+     stage.querySelectorAll('[data-sample]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.sample);if(points.has(i))points.delete(i);else points.add(i);draw();});
+     $('jlSampleCheck').onclick=()=>{const first=Array.from(expected).find(x=>!points.has(x));if(points.size!==expected.size||first!==undefined){feedback(`Для этой задачи нужно ${expected.size} отсчётов с указанным шагом. Проверь, какие точки включены.`);return;}success(`Верно! ${points.size} отсчётов × 8 бит = ${points.size*8} бит.`,`${points.size} отсчётов → ${points.size*8} бит`);};
+   };reset=()=>{points=new Set();resultText='';save.disabled=true;draw();};
+ } else if(cfg.type==='robot'){
+   let commands=[];
+   const actions=[['up','↑','Вверх'],['left','←','Влево'],['down','↓','Вниз'],['right','→','Вправо'],['repeat','×3 →','Повтори 3 раза вправо'],['while','ПОКА →','Пока справа свободно'],['if','ЕСЛИ ⬛ ↓','Если справа стена — вниз']];
+   const moves={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
+   let lastPath=[cfg.start];
+   const draw=()=>{
+     const visited=new Set(lastPath.map(([x,y])=>`${x},${y}`));
+     stage.innerHTML=`<p>Робот должен добраться от 🤖 до ⭐. ${cfg.require==='repeat'?'Используй блок «×3 →».':cfg.require==='while'?'Используй цикл «ПОКА справа свободно».':cfg.require==='if'?'Обязательно используй условие «ЕСЛИ справа стена».':'Добавляй точные команды, проверяй маршрут.'}</p>
+      <div class="jl-robot-layout"><div class="jl-robot-grid">${Array.from({length:25},(_,i)=>{const x=i%5,y=Math.floor(i/5),wall=cfg.walls.some(w=>w[0]===x&&w[1]===y),goal=cfg.goal[0]===x&&cfg.goal[1]===y,start=cfg.start[0]===x&&cfg.start[1]===y;return `<span class="${wall?'wall':visited.has(`${x},${y}`)?'visited':''}" aria-label="Клетка ${x+1}, ${y+1}">${wall?'🧱':goal?'⭐':start?'🤖':''}</span>`;}).join('')}</div>
+      <div><b>Твой алгоритм</b><div class="jl-command-list">${commands.map((c,i)=>`<span>${i+1}. ${actions.find(a=>a[0]===c)?.[1]||c}</span>`).join('')||'<i>Команд пока нет</i>'}</div></div></div>
+      <div class="jl-actions">${actions.filter(a=>!['repeat','while','if'].includes(a[0])||a[0]===cfg.require).map(a=>addButton(a[1],`data-robot="${a[0]}" aria-label="${a[2]}"`)).join('')}</div><div class="jl-actions">${addButton('↶ Удалить команду','id="jlRobotUndo"')}${addButton('▶ Запустить','id="jlRobotRun"','')}</div>`;
+     stage.querySelectorAll('[data-robot]').forEach(b=>b.onclick=()=>{if(commands.length>=18){feedback('Для этого поля хватит 18 блоков. Попробуй более короткий алгоритм.');return;}commands.push(b.dataset.robot);lastPath=[cfg.start];draw();feedback('Блок добавлен. Нажми «Запустить», когда алгоритм готов.');});
+     $('jlRobotUndo').onclick=()=>{commands.pop();lastPath=[cfg.start];draw();};
+     $('jlRobotRun').onclick=()=>{
+       if(cfg.require&&!commands.includes(cfg.require)){feedback('По условию этого урока нужно применить блок «'+cfg.require+'». Добавь его, чтобы закрепить именно сегодняшнюю тему.');return;}
+       let [x,y]=cfg.start,failed='',path=[[x,y]];let count=0;
+       const step=move=>{const [dx,dy]=moves[move];const nx=x+dx,ny=y+dy;count++;if(count>80){failed='Выполнено слишком много шагов. Проверь цикл.';return false;}if(nx<0||ny<0||nx>=5||ny>=5){failed=`Шаг ${count}: робот вышел за пределы поля.`;return false;}if(cfg.walls.some(w=>w[0]===nx&&w[1]===ny)){failed=`Шаг ${count}: впереди стена. Измени маршрут или используй условие.`;return false;}x=nx;y=ny;path.push([x,y]);return true;};
+       for(const c of commands){if(failed)break;
+         if(c==='repeat'){for(let k=0;k<3;k++)if(!step('right'))break;}
+         else if(c==='while'){let n=0;while(x<4&&!cfg.walls.some(w=>w[0]===x+1&&w[1]===y)){if(!step('right'))break;if(++n>=6)break;}}
+         else if(c==='if'){const rightBlocked=x===4||cfg.walls.some(w=>w[0]===x+1&&w[1]===y);if(rightBlocked)step('down');}
+         else step(c);
+       }
+       lastPath=path;draw();
+       if(failed){feedback('Пока не получилось. '+failed);return;}
+       if(x!==cfg.goal[0]||y!==cfg.goal[1]){feedback(`Робот оказался в (${x+1}; ${y+1}), но звезда в (${cfg.goal[0]+1}; ${cfg.goal[1]+1}). Попробуй изменить блоки.`);return;}
+       success('Робот добрался до звезды! Получился рабочий алгоритм.',commands.map(c=>actions.find(a=>a[0]===c)?.[1]||c).join(' '));
+     };
+   };reset=()=>{commands=[];lastPath=[cfg.start];resultText='';save.disabled=true;draw();};
+ }
+ $('jlReset').onclick=()=>{reset();feedback('Начнём заново. Попробуй другой путь к результату.');};
+ save.onclick=()=>{if(previewMode||!resultText)return;const field=$('answer');if(!field)return;field.value=(field.value.trim()?field.value.trim()+'\n\n':'')+resultText;feedback('Результат добавлен в поле ответа. Нажми ниже «Сохранить ответ», чтобы отправить учителю.',true);};
+ reset();
+}
+
 function renderLesson() {
   const currentLessonList = studentVisibleCourses()[track]?.lessons || [];
   const currentLessonIndex = currentLessonList.findIndex(x => x.id === lessonId);
@@ -6943,20 +7237,36 @@ function renderLesson() {
   const p = user.progress[track][l.id] || {};
   const answer = user.answers[l.id] || "";
   const guided11 = SCHOOL_GUIDES_6_9[l.id] || (user.classNumber === 11 ? GUIDES_11[l.id] : (user.classNumber === 10 || (user.classNumber === 8 && user.classLetter === 'b')) ? GUIDES_8_10[l.id] : null) || null;
+  const isJuniorCourse = /^(6b|7a|7b)_school_/.test(l.id);
 
   $("lessonContent").innerHTML = `
     ${previewMode ? '<div class="demo-notice"><b>Демо-режим:</b> просмотр урока без сохранения результатов и ответов.</div>' : ''}
     <span class="pill">${l.sourceSchedule ? 'По расписанию '+esc(l.plannedDate)+' · Занятие '+(currentLessonIndex+1)+' из '+currentLessonList.length : (l.plannedDate ? 'Дата '+esc(l.plannedDate)+' · ' : '')+'Неделя '+l.week+' · Занятие '+l.session} · ${esc(studyLevelName(user.studyLevel))} · ${l.minutes} минут</span>
     <h2 style="margin-top:12px">${esc(l.title)}</h2>
     ${pager}
-    ${guided11 ? guideTheory11(l) : `<h3>Подробная теория и объяснения</h3><div class="lesson-article">${l.theory}</div>`}
+    ${isJuniorCourse ? `
+      <section class="jl-welcome">
+        <span class="pill">Шаг 1 · Коротко о главном</span>
+        <h3>Сегодня учимся на практике</h3>
+        <p>${esc(guided11?.why || l.title)}</p>
+        <p>Сначала нажимай на кнопки в мастерской ниже. Затем, если что-то непонятно, открой объяснение и посмотри разобранный пример.</p>
+      </section>
+      ${juniorLabMarkup(l)}
+      <details class="jl-reference"><summary>📖 Почитать подробнее: теория, разбор, примеры и подсказки</summary>
+        ${guideTheory11(l)}
+        <h3>Образец решения</h3><pre><code>${esc(guided11?.code || l.code)}</code></pre>
+        <div class="worked-notes"><h4>Как читать пример</h4><p>${esc(guided11?.codewhy || 'Посмотри на порядок действий и повтори их своими словами.')}</p></div>
+      </details>
+    ` : `
+${guided11 ? guideTheory11(l) : `<h3>Подробная теория и объяснения</h3><div class="lesson-article">${l.theory}</div>`}
     <h3>${SCHOOL_GUIDES_6_9[l.id] ? 'Образец: схема или короткий пример' : guided11 ? 'Тот же принцип на Python' : 'Пример решения / фрагмент алгоритма'}</h3><pre><code>${esc(guided11?.code || l.code)}</code></pre>
     ${guided11 ? `<div class="worked-notes"><h4>Как прочитать этот код</h4><p>${esc(guided11.codewhy)}</p><p class="small">Не нужно переписывать всё сразу: сначала найди строки, которые повторяют шаги разобранного примера.</p></div>` : `<div class="worked-notes"><h4>Разбор примера по шагам</h4><p class="small">Сначала прочитай код и предскажи результат, затем раскрой объяснение каждой важной строки.</p>${l.codeNotes || ''}</div>
     <div class="experiment"><h3>Попробуй сам · 8 минут</h3><p>${esc(user.studyLevel === 'advanced' ? l.experimentAdvanced : l.experimentBasic)}</p><p class="read-tip">Это тренировка перед основным заданием: ответы здесь не сохраняются и не оцениваются автоматически.</p></div>
-    <div class="selfcheck"><h3>Самопроверка · 5 минут</h3><p class="read-tip">Сначала ответь без подсказки, затем открой ориентир. Он не заменяет собственное объяснение.</p>${(l.selfCheck||[]).map((item,i) => `<details><summary>${i+1}. ${esc(item.q)}</summary><p>${esc(item.a)}</p></details>`).join('')}</div>`}
+    <div class="selfcheck"><h3>Самопроверка · 5 минут</h3><p class="read-tip">Сначала ответь без подсказки, затем открой ориентир. Он не заменяет собственное объяснение.</p>${(l.selfCheck||[]).map((item,i) => `<details><summary>${i+1}. ${esc(item.q)}</summary><p>${esc(item.a)}</p></details>`).join('')}</div>`} 
+    `}
     ${egePracticeMarkup(l)}
-    ${SCHOOL_QUESTS_6_9[l.id] ? schoolQuestMarkup(l) : ''}
-    ${['7b_school_07','7b_school_20','8a_school_03','8a_school_09'].includes(l.id) ? '<h3>Игровая лаборатория: робот на клетках</h3>'+juniorMarkup().replace(/^<div class="notice">.*?<\/div>\s*/s,'') : ''}
+    ${SCHOOL_QUESTS_6_9[l.id] ? (isJuniorCourse ? `<details class="jl-reference"><summary>🧩 Дополнительно: расставь шаги по порядку</summary>${schoolQuestMarkup(l)}</details>` : schoolQuestMarkup(l)) : ''}
+    ${['8a_school_03','8a_school_09'].includes(l.id) ? '<h3>Игровая лаборатория: робот на клетках</h3>'+juniorMarkup().replace(/^<div class="notice">.*?<\/div>\s*/s,'') : ''}
     ${track === "extra_python_tasks" ? tbLabMarkup(l) : ""}
     ${GUIDED_LABS[l.id] ? gdLabMarkup(l) : ""}
     <h3>После объяснения — основная практика</h3><p>${esc(user.studyLevel === 'advanced' && l.taskAdvanced ? l.taskAdvanced : l.taskBasic || l.task)}</p>
@@ -6974,8 +7284,9 @@ function renderLesson() {
   `;
 
   if (guided11) initGuideTheory11(l);
+  if (isJuniorCourse) juniorLabInit(l);
   if (SCHOOL_QUESTS_6_9[l.id]) schoolQuestInit(l);
-  if (['7b_school_07','7b_school_20','8a_school_03','8a_school_09'].includes(l.id)) juniorInit();
+  if (['8a_school_03','8a_school_09'].includes(l.id)) juniorInit();
   egePracticeInit(l);
   if (algIsAvailable(l)) algInitControls(l);
   if (track === "extra_python_tasks") tbInitLab(l);
