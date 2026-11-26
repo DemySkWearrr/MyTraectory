@@ -355,6 +355,39 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
 .learn-vocab table{border-collapse:collapse;margin-top:10px;min-width:270px}
 .learn-vocab td,.learn-vocab th{border:1px solid var(--border);padding:6px 9px}
 @media(max-width:700px){.learn-flow{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.learn-flow span{font-size:11px;padding:9px 6px}.learn-flow span:after{display:none}}
+
+/* Кабинет учителя: каждый класс — самостоятельный сворачиваемый блок. */
+.teacher-accordion-toolbar{margin:22px 0 8px;gap:10px}
+.teacher-accordion-toolbar h3{margin:0}
+.teacher-accordion-toolbar button{padding:8px 12px;font-size:13px}
+.teacher-class-list{display:grid;gap:12px;margin:10px 0 20px}
+.teacher-class-section{background:var(--panel2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.teacher-class-section[open]{border-color:var(--accent)}
+.teacher-class-section>summary{list-style:none;display:flex;align-items:center;gap:12px;padding:16px 18px;cursor:pointer;user-select:none;color:var(--text)}
+.teacher-class-section>summary::-webkit-details-marker{display:none}
+.teacher-class-section>summary::before{content:'▸';color:var(--accent);font-size:20px;line-height:1;transition:transform .15s ease}
+.teacher-class-section[open]>summary::before{transform:rotate(90deg)}
+.teacher-class-section>summary:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.teacher-class-section>summary .class-title{font-weight:800;font-size:17px;flex:1}
+.teacher-class-section>summary .pill{white-space:nowrap}
+.teacher-class-body{padding:0 18px 16px;border-top:1px solid var(--border)}
+.teacher-class-body .student-group-heading h3{font-size:15px;margin:6px 0}
+.teacher-class-body .student-row:last-child{border-bottom:0}
+.teacher-class-empty{padding:20px 4px 6px;color:var(--muted)}
+/* Неоценочная игровая разминка 6–7 классов. */
+.junior-practice{border:1px solid var(--accent);padding:18px;border-radius:14px;background:var(--panel2);margin:12px 0}
+.junior-practice p{color:var(--text)}
+.junior-levels{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.junior-grid{display:grid;grid-template-columns:repeat(4,minmax(0,58px));gap:6px;margin:16px 0}
+.junior-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:10px;background:#11182a;font-size:25px}
+.junior-cell.junior-wall{background:#384051}
+.junior-cell.junior-visited{outline:2px solid var(--green);outline-offset:-2px}
+.junior-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.junior-controls button{min-width:44px}
+.junior-commands{min-height:42px;margin:12px 0;padding:9px 12px;border-radius:10px;background:#101522;overflow-wrap:anywhere}
+.junior-result{padding:11px 12px;border-radius:10px;border:1px solid var(--border);margin-top:10px;min-height:48px}
+.junior-result.good{border-color:var(--green)}
+@media(max-width:700px){.teacher-class-section>summary{padding:14px 12px}.teacher-class-body{padding:0 12px 12px}.teacher-accordion-toolbar button{font-size:12px;padding:7px 9px}.junior-grid{grid-template-columns:repeat(4,minmax(0,1fr));max-width:280px}}
 </style>
 </head>
 <body>
@@ -375,7 +408,6 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
   <input id="username" autocomplete="username" placeholder="Например, student01">
   <label for="password">Пароль</label>
   <input id="password" type="password" autocomplete="current-password" placeholder="Введи пароль">
-  <p class="small">Логин ученика выдаёт учитель (например, student01). Для учителя: teacher.</p>
   <div class="row" style="margin-top:12px">
     <button id="loginButton">Войти</button>
   </div>
@@ -402,7 +434,7 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
     </div>
     <p class="small">Меняй класс, уровень и электив. Это виртуальный ученик: реальный профиль, ответы и оценки не изменяются.</p>
     <div class="demo-selects">
-      <div><label for="demoClass">Класс</label><select id="demoClass"><option value="8a">8А</option><option value="8b">8Б</option><option value="9a">9А</option><option value="9b">9Б</option><option value="10" selected>10 класс</option><option value="11">11 класс</option></select></div>
+      <div><label for="demoClass">Класс</label><select id="demoClass"><option value="6b">6Б</option><option value="7a">7А</option><option value="7b">7Б</option><option value="8a">8А</option><option value="8b">8Б</option><option value="9a">9А</option><option value="9b">9Б</option><option value="10" selected>10 класс</option><option value="11">11 класс</option></select></div>
       <div><label for="demoLevel">Уровень</label><select id="demoLevel"><option value="basic">Базовый</option><option value="advanced" selected>Углублённый</option></select></div>
       <div id="demoGroupField"><label for="demoGroup">Элективная группа</label><select id="demoGroup"><option value="">Без группы</option>
       <option value="1">Группа 1</option><option value="2">Группа 2</option><option value="3">Группа 3</option>
@@ -488,6 +520,9 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
           <label for="teacherClassFilter">Класс</label>
           <select id="teacherClassFilter">
             <option value="all">Все классы</option>
+            <option value="6b">6Б</option>
+            <option value="7a">7А</option>
+            <option value="7b">7Б</option>
             <option value="8a">8А</option>
             <option value="8b">8Б</option>
             <option value="9a">9А</option>
@@ -525,11 +560,18 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
         <div id="electiveGroupManager"></div>
         <p id="teacherElectiveMessage" class="small" role="status"></p>
       </details>
-      <h3 id="teacherListTitle">Ученики</h3>
-      <div id="teacherStudents"></div>
+      <div class="row between teacher-accordion-toolbar">
+        <h3 id="teacherListTitle">Ученики по классам</h3>
+        <div class="row">
+          <button type="button" class="secondary" id="teacherExpandAll">Развернуть все</button>
+          <button type="button" class="secondary" id="teacherCollapseAll">Свернуть все</button>
+        </div>
+      </div>
+      <p class="small">Нажми на класс, чтобы открыть список его учеников. Внутри сохраняются группы, результаты и управление аккаунтами.</p>
+      <div id="teacherStudents" class="teacher-class-list"></div>
       <details class="course-overview">
         <summary>Учебные планы для 8Б, 10-го и 11-го классов</summary>
-        <p class="small">8Б: 21 занятие программирования по предоставленному расписанию. У 8А, 9А, 9Б программы пока не загружены. Для 10–11 классов: базовый — 5 занятий, углублённый — 20; элективы 10 класса — 30 дополнительных занятий.</p>
+        <p class="small">8Б: 21 занятие программирования по предоставленному расписанию. У 6Б, 7А, 7Б, 8А, 9А, 9Б программы пока не загружены. Для 10–11 классов: базовый — 5 занятий, углублённый — 20; элективы 10 класса — 30 дополнительных занятий.</p>
         <div id="teacherCourseOverview"></div>
       </details>
       <div class="notice">
@@ -545,11 +587,11 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
             <div><label for="createStudentFirstName">Имя</label><input id="createStudentFirstName" name="firstName" maxlength="80" required placeholder="Иван"></div>
             <div><label for="createStudentLogin">Логин</label><input id="createStudentLogin" name="username" required minlength="3" maxlength="32" autocapitalize="none" spellcheck="false" placeholder="ivanov10" pattern="[a-z][a-z0-9._-]{2,31}"></div>
             <div><label for="createStudentPassword">Временный пароль</label><input id="createStudentPassword" name="password" type="password" autocomplete="new-password" required minlength="8" maxlength="128" placeholder="Не менее 8 символов"></div>
-            <div><label for="createStudentClass">Класс</label><select id="createStudentClass" name="classNumber" required><option value="8a">8А</option><option value="8b">8Б</option><option value="9a">9А</option><option value="9b">9Б</option><option value="10" selected>10 класс</option><option value="11">11 класс</option></select></div>
+            <div><label for="createStudentClass">Класс</label><select id="createStudentClass" name="classNumber" required><option value="6b">6Б</option><option value="7a">7А</option><option value="7b">7Б</option><option value="8a">8А</option><option value="8b">8Б</option><option value="9a">9А</option><option value="9b">9Б</option><option value="10" selected>10 класс</option><option value="11">11 класс</option></select></div>
             <div><label for="createStudentGroup">Группа (необязательно)</label><select id="createStudentGroup" name="studyGroup"></select></div>
             <div><label for="createStudentLevel">Уровень обучения</label><select id="createStudentLevel" name="studyLevel" required><option value="basic">Базовый</option><option value="advanced">Углублённый</option></select></div>
           </div>
-          <p class="small">Логин: латинские буквы, цифры, точка, дефис и подчёркивание; начинается с буквы, 3–32 символа. Для 8А, 8Б, 9А, 9Б группа не требуется; в 10 классе доступны элективные группы 1–7, в 11-м — группы 1–2.</p>
+          <p class="small">Логин: латинские буквы, цифры, точка, дефис и подчёркивание; начинается с буквы, 3–32 символа. Для 6Б, 7А, 7Б, 8А, 8Б, 9А, 9Б группа не требуется; в 10 классе доступны элективные группы 1–7, в 11-м — группы 1–2.</p>
           <div class="row"><button type="submit" id="createStudentButton">Создать ученика</button><button class="secondary" type="reset">Очистить поля</button></div>
           <p class="reset-message" role="status" aria-live="polite" id="createStudentMessage"></p>
         </form>
@@ -5386,16 +5428,17 @@ const ELECTIVE_COURSES = {
   }
 };
 const CLASS_SELECT_OPTIONS = [
-  ['8a','8А'], ['8b','8Б'], ['9a','9А'], ['9b','9Б'], ['10','10 класс'], ['11','11 класс']
+  ['6b','6Б'], ['7a','7А'], ['7b','7Б'], ['8a','8А'], ['8b','8Б'], ['9a','9А'], ['9b','9Б'], ['10','10 класс'], ['11','11 класс']
 ];
 function classKey(classNumber, classLetter = null) {
-  if ((classNumber === 8 || classNumber === 9) && ['a','b'].includes(classLetter)) return String(classNumber) + classLetter;
+  if ((classNumber === 6 && classLetter === 'b') ||
+      ([7,8,9].includes(classNumber) && ['a','b'].includes(classLetter))) return String(classNumber) + classLetter;
   if (classNumber === 10 || classNumber === 11) return String(classNumber);
   return '';
 }
 function parseClassKey(value) {
-  const match = /^(8|9)(a|b)$/.exec(String(value || ''));
-  if (match) return {classNumber:Number(match[1]), classLetter:match[2]};
+  const match = /^(6b|7[ab]|8[ab]|9[ab])$/.exec(String(value || ''));
+  if (match) return {classNumber:Number(match[1][0]), classLetter:match[1][1]};
   if (value === '10' || value === '11') return {classNumber:Number(value), classLetter:null};
   return {classNumber:null, classLetter:null};
 }
@@ -5528,6 +5571,11 @@ async function sendAnswerToSheet(data) {
       showStudentCourseMode('mine');
     }
   });
+  for (const [buttonId, expanded] of [['teacherExpandAll',true],['teacherCollapseAll',false]]) {
+    $(buttonId).addEventListener('click', () => {
+      document.querySelectorAll('#teacherStudents details.teacher-class-section').forEach(section => { section.open = expanded; });
+    });
+  }
   $("teacherRosterTab").addEventListener("click", () => selectTeacherTab("roster"));
   $("teacherAddTab").addEventListener("click", () => selectTeacherTab("add"));
   $("createStudentClass").addEventListener("change", updateCreationGroupOptions);
@@ -5877,7 +5925,7 @@ async function enterApp(profile, username) {
       $("doneCount").textContent = "0 / 0";
       $("points").textContent = "0 баллов";
       $("lessonList").innerHTML = "";
-      $("lessonContent").innerHTML = `<div class="notice">${user.classNumber ? 'Учебная программа для ' + teacherClassName(user.classNumber, user.classLetter) + ' пока не загружена. Обратись к учителю.' : 'Класс или уровень обучения не назначен. Обратись к учителю.'}</div>`;
+      if(!showJuniorWaitingRoom()) $("lessonContent").innerHTML = `<div class="notice">${user.classNumber ? 'Учебная программа для ' + teacherClassName(user.classNumber, user.classLetter) + ' пока не загружена. Обратись к учителю.' : 'Класс или уровень обучения не назначен. Обратись к учителю.'}</div>`;
     }
   }
 }
@@ -6036,7 +6084,7 @@ function renderDemoSelection() {
     $('percent').textContent = '0%'; $('bar').style.width = '0%';
     $('doneCount').textContent = '0 / 0'; $('points').textContent = '0 баллов';
     $('lessonList').innerHTML = '';
-    $('lessonContent').innerHTML = '<div class="notice">Для этого класса основная программа пока не загружена. Дополнительный курс можно выбрать в витрине.</div>';
+    if(!showJuniorWaitingRoom()) $('lessonContent').innerHTML = '<div class="notice">Для этого класса основная программа пока не загружена. Дополнительный курс можно выбрать в витрине.</div>';
   }
 }
 
@@ -6084,7 +6132,7 @@ function renderStudentTracks() {
     $("classPlanInfo").textContent += ' · ' + electiveStatus;
   }
   $("intro").textContent = !Object.keys(courses).length
-    ? "Основной учебный план ещё не назначен. Но можно выбрать проект в «Витрине курсов»."
+    ? (user.classNumber === 6 || user.classNumber === 7 ? 'Скоро появятся уроки по расписанию. А пока попробуй игровую разминку с роботом!' : 'Основной учебный план ещё не назначен. Но можно выбрать проект в «Витрине курсов».')
     : user.classNumber === 10
       ? user.studyLevel === 'advanced'
         ? 'Углублённый триместр: 20 практических занятий по алгоритмам и циклам.'
@@ -6971,7 +7019,7 @@ async function resetStudentPassword(studentId, studentName) {
 
 // The teacher interface is identical for grades 10 and 11.
 // Grade/group are stored in public.profiles, with teacher-only edits through an RPC.
-const teacherClassOptions = ['8a','8b','9a','9b','10','11',''];
+const teacherClassOptions = ['6b','7a','7b','8a','8b','9a','9b','10','11',''];
 // 10th-grade elective groups have 7 numbers, 11th-grade groups retain their existing 2.
 
 function teacherClassName(value,letter=null) {
@@ -7113,42 +7161,51 @@ function renderTeacherView() {
   $("distributeGroups").disabled = !canDistribute;
   $("distributeGroups").title = canDistribute
     ? "Распределить учеников выбранного класса, у которых пока нет группы"
-    : "Для элективов 10 класса группа выбирается учеником и назначается вручную; автоматическое распределение доступно только 11 классу";
+    : "Автоматическое распределение доступно только для 11 класса";
 
-  const totalAnswers = selected.reduce((sum, student) =>
-    sum + getStudentAnswers(student).length, 0);
-  const totalCompleted = selected.reduce((sum, student) =>
-    sum + Object.keys(getCoursesForClass(student.classNumber, student.studyLevel, student.studyGroup, null, student.classLetter)).reduce((count, key) => count + getStudentCompleted(student, key), 0), 0);
-
+  const totalAnswers = selected.reduce((sum, student) => sum + getStudentAnswers(student).length, 0);
+  const totalCompleted = selected.reduce((sum, student) => sum +
+    Object.keys(getCoursesForClass(student.classNumber, student.studyLevel, student.studyGroup, null, student.classLetter))
+      .reduce((count, key) => count + getStudentCompleted(student, key), 0), 0);
   $("teacherStats").innerHTML = `
     <div class="card third"><h2>${selected.length}</h2><p>Учеников в выборке</p></div>
     <div class="card third"><h2>${totalAnswers}</h2><p>Сохранённых ответов</p></div>
     <div class="card third"><h2>${totalCompleted}</h2><p>Завершённых модулей</p></div>`;
 
   const selectedMeta = parseClassKey(selectedClass);
-  const classTitle = selectedClass === "all" ? "всех классов" :
-    selectedClass === "unassigned" ? "без класса" : teacherClassName(selectedMeta.classNumber, selectedMeta.classLetter);
+  const classTitle = selectedClass === 'all' ? 'по классам' :
+    selectedClass === 'unassigned' ? 'без класса' : teacherClassName(selectedMeta.classNumber, selectedMeta.classLetter);
   $("teacherListTitle").textContent = `Ученики ${classTitle} (${selected.length})`;
-  if (!selected.length) {
-    $("teacherStudents").innerHTML = `<div class="empty">Нет учеников в выбранной категории.
-      При необходимости назначь класс ученикам через фильтр «Без класса».</div>`;
-    return;
-  }
 
-  // A grade / group heading is shown even if only one grade or group is selected.
-  const visibleClasses = teacherClassOptions.filter(key => key &&
-    selected.some(student => classKey(student.classNumber,student.classLetter) === key));
-  $("teacherStudents").innerHTML = visibleClasses.map(key => {
+  // Сохраняем раскрытые блоки, когда меняется фильтр или редактируются назначения.
+  const opened = new Set(Array.from(document.querySelectorAll('#teacherStudents details.teacher-class-section[open]'))
+    .map(section => section.dataset.classKey));
+  const keys = selectedClass === 'all' ? teacherClassOptions.filter(Boolean) :
+    selectedClass === 'unassigned' ? [] : [selectedClass];
+
+  const classesMarkup = keys.map(key => {
     const {classNumber,classLetter} = parseClassKey(key);
+    const members = selected.filter(student => classKey(student.classNumber, student.classLetter) === key);
     const groupSections = [...groupNumbers(classNumber),null].map(groupNumber => {
-      const grouped = selected.filter(student =>
-        classKey(student.classNumber,student.classLetter) === key && student.studyGroup === groupNumber);
-      if (!grouped.length) return "";
+      const grouped = members.filter(student => student.studyGroup === groupNumber);
+      if (!grouped.length) return '';
       return `<div class="student-group-heading"><h3>${esc(teacherGroupName(groupNumber,classNumber))} · ${grouped.length}</h3></div>` +
-        grouped.map(renderStudentCard).join("");
-    }).join("");
-    return `<h3 class="student-class-heading">${teacherClassName(classNumber,classLetter)}</h3>${groupSections}`;
-  }).join("") + selected.filter(student=>student.classNumber===null).map(renderStudentCard).join("");
+        grouped.map(renderStudentCard).join('');
+    }).join('');
+    const isOpen = opened.has(key) || (selectedClass === key && !opened.size);
+    return `<details class="teacher-class-section" data-class-key="${esc(key)}" ${isOpen ? 'open' : ''}>
+      <summary><span class="class-title">${esc(teacherClassName(classNumber,classLetter))}</span><span class="pill">${members.length} учеников</span></summary>
+      <div class="teacher-class-body">${groupSections || '<div class="teacher-class-empty">Пока нет учеников в этом классе или выбранном фильтре.</div>'}</div>
+    </details>`;
+  }).join('');
+
+  const noClass = selected.filter(student => !classKey(student.classNumber, student.classLetter));
+  const withoutClassMarkup = (selectedClass === 'all' || selectedClass === 'unassigned')
+    ? `<details class="teacher-class-section" data-class-key="unassigned" ${opened.has('unassigned') || (selectedClass === 'unassigned' && !opened.size) ? 'open' : ''}>
+        <summary><span class="class-title">Без класса</span><span class="pill">${noClass.length} учеников</span></summary>
+        <div class="teacher-class-body">${noClass.length ? noClass.map(renderStudentCard).join('') : '<div class="teacher-class-empty">Ученики без класса отсутствуют.</div>'}</div>
+       </details>` : '';
+  $("teacherStudents").innerHTML = classesMarkup + withoutClassMarkup;
 }
 
 async function saveStudentPlacement(studentId) {
@@ -7372,7 +7429,7 @@ function exportCSV() {
 }
 
 function renderTeacherCourseOverview() {
-  $("teacherCourseOverview").innerHTML = `<section><h3 class="student-class-heading">8Б · Программирование на Python · 21 занятие</h3><p class="small">Курс составлен по предоставленному расписанию; занятие 2.13 (12.01) стоит перед 2.12 (15.01), как в источнике.</p><ol>${EIGHT_B_COURSE.lessons.map(lesson => `<li>${esc(lesson.plannedDate)} · ${esc(lesson.title)}</li>`).join('')}</ol></section><section><h3>8А, 9А, 9Б</h3><p class="small">Курсы пока не загружены. Учеников можно назначать в эти классы заранее.</p></section>` + [10, 11].map(classNumber => {
+  $("teacherCourseOverview").innerHTML = `<section><h3 class="student-class-heading">8Б · Программирование на Python · 21 занятие</h3><p class="small">Курс составлен по предоставленному расписанию; занятие 2.13 (12.01) стоит перед 2.12 (15.01), как в источнике.</p><ol>${EIGHT_B_COURSE.lessons.map(lesson => `<li>${esc(lesson.plannedDate)} · ${esc(lesson.title)}</li>`).join('')}</ol></section><section><h3>6Б, 7А, 7Б, 8А, 9А, 9Б</h3><p class="small">Программы пока не загружены. Для 6–7 классов предусмотрена игровая разминка «Робот и команды» без оценок. Учебные темы будут добавлены позже.</p></section>` + [10, 11].map(classNumber => {
     return ['basic','advanced'].map(level => {
       const course = COURSE_PLANS[classNumber][level];
       return `<section><h3 class="student-class-heading">${classNumber} класс · ${studyLevelName(level)}</h3>
@@ -7959,6 +8016,107 @@ async function loadShowcaseState() {
     if (row.answer !== null && row.answer !== undefined) user.answers[row.lesson_id] = row.answer;
   }
 }
+/* Неоценочная игровая разминка для младших классов. Она не создаёт оценок и ответов в Supabase. */
+const JUNIOR_ROBOT_LEVELS = [
+  {title:'1. Идём к звезде',start:[0,0],goal:[2,1],walls:[],tip:'Попробуй две команды вправо, затем одну вниз.'},
+  {title:'2. Обходим стену',start:[0,3],goal:[3,0],walls:[[1,3],[1,2],[2,2]],tip:'Сначала поднимись к верхней строке, потом двигайся вправо.'},
+  {title:'3. Ищем обход',start:[0,0],goal:[3,3],walls:[[1,0],[1,1],[1,2],[2,2]],tip:'Попробуй сначала двигаться вниз, а потом вправо.'}
+];
+let juniorLevelIndex=0;
+let juniorCommands=[];
+const JUNIOR_MOVES={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
+const JUNIOR_ICONS={up:'↑',down:'↓',left:'←',right:'→'};
+function juniorMarkup(){
+  return `<div class="notice">Уроки по программе твоего класса появятся позже, когда учитель загрузит темы. Игра ниже — самостоятельная разминка, она не оценивается.</div>
+    <section class="junior-practice" aria-label="Игровая разминка Робот и команды">
+      <span class="pill">🎮 Игра без оценок</span>
+      <h2>Робот и команды</h2>
+      <p>Робот 🤖 должен найти звезду ⭐. Добавляй стрелки в правильном порядке, а потом нажми «Проверить маршрут». Это и есть маленький <b>алгоритм</b>: понятная последовательность команд.</p>
+      <div class="junior-levels" id="juniorLevels"></div>
+      <p id="juniorLevelTip" class="small"></p>
+      <div id="juniorGrid" class="junior-grid" role="img" aria-label="Игровое поле"></div>
+      <p><b>Твои команды:</b></p>
+      <div id="juniorCommands" class="junior-commands" aria-live="polite">Пока нет команд</div>
+      <div class="junior-controls" id="juniorControls">
+        <button type="button" class="secondary" data-junior-move="up" aria-label="Вверх">↑</button>
+        <button type="button" class="secondary" data-junior-move="left" aria-label="Влево">←</button>
+        <button type="button" class="secondary" data-junior-move="down" aria-label="Вниз">↓</button>
+        <button type="button" class="secondary" data-junior-move="right" aria-label="Вправо">→</button>
+        <button type="button" class="secondary" data-junior-action="undo">Отменить шаг</button>
+        <button type="button" data-junior-action="run">Проверить маршрут</button>
+        <button type="button" class="secondary" data-junior-action="clear">Начать заново</button>
+      </div>
+      <div id="juniorResult" class="junior-result" role="status" aria-live="polite">Собери команды и проверь, дошёл ли робот до звезды.</div>
+    </section>`;
+}
+function juniorDrawGrid(visited=[]){
+  const box=$('juniorGrid');if(!box)return;
+  const level=JUNIOR_ROBOT_LEVELS[juniorLevelIndex];
+  const visitedSet=new Set(visited.map(([x,y])=>`${x},${y}`));
+  let cells='';
+  for(let y=0;y<4;y++)for(let x=0;x<4;x++){
+    const isWall=level.walls.some(([wx,wy])=>wx===x&&wy===y);
+    const isStart=x===level.start[0]&&y===level.start[1];
+    const isGoal=x===level.goal[0]&&y===level.goal[1];
+    const name=isWall?'Стена':isStart?'Старт, робот':isGoal?'Звезда':`Клетка ${x+1}, ${y+1}`;
+    cells+=`<div class="junior-cell ${isWall?'junior-wall':''} ${visitedSet.has(`${x},${y}`)?'junior-visited':''}" aria-label="${name}" title="${name}">${isWall?'🧱':isStart?'🤖':isGoal?'⭐':''}</div>`;
+  }
+  box.innerHTML=cells;
+}
+function juniorRefresh(){
+  if(!$('juniorGrid'))return;
+  $('juniorLevels').innerHTML=JUNIOR_ROBOT_LEVELS.map((l,i)=>`<button type="button" class="${i===juniorLevelIndex?'':'secondary'}" data-junior-level="${i}">${l.title}</button>`).join('');
+  $('juniorLevelTip').textContent='Подсказка: '+JUNIOR_ROBOT_LEVELS[juniorLevelIndex].tip;
+  $('juniorCommands').textContent=juniorCommands.length ? juniorCommands.map(command=>JUNIOR_ICONS[command]).join('  ') : 'Пока нет команд';
+  juniorDrawGrid();
+}
+function juniorInit(){
+  const root=$('lessonContent');
+  if(!root?.querySelector('.junior-practice'))return;
+  juniorCommands=[];juniorLevelIndex=0;juniorRefresh();
+  root.querySelector('#juniorLevels').addEventListener('click',event=>{
+    const button=event.target.closest('button[data-junior-level]');if(!button)return;
+    juniorLevelIndex=Number(button.dataset.juniorLevel);juniorCommands=[];juniorRefresh();
+    $('juniorResult').textContent='Новый уровень. Составь маршрут!';
+  });
+  root.querySelector('#juniorControls').addEventListener('click',event=>{
+    const button=event.target.closest('button');if(!button)return;
+    if(button.dataset.juniorMove){
+      if(juniorCommands.length>=40){$('juniorResult').textContent='Максимум 40 команд. Попробуй короткий путь.';return;}
+      juniorCommands.push(button.dataset.juniorMove);
+      $('juniorResult').textContent='Команда добавлена. Проверишь маршрут, когда будешь готов.';
+      juniorRefresh();return;
+    }
+    const action=button.dataset.juniorAction;
+    if(action==='clear'){juniorCommands=[];juniorRefresh();$('juniorResult').textContent='Команды очищены. Пробуй заново.';return;}
+    if(action==='undo'){juniorCommands.pop();juniorRefresh();$('juniorResult').textContent='Последнюю команду убрали.';return;}
+    if(action==='run'){
+      const level=JUNIOR_ROBOT_LEVELS[juniorLevelIndex];
+      let [x,y]=level.start;const path=[[x,y]];let failure='';
+      for(let step=0;step<juniorCommands.length;step++){
+        const [dx,dy]=JUNIOR_MOVES[juniorCommands[step]];
+        const nx=x+dx,ny=y+dy;
+        if(nx<0||nx>3||ny<0||ny>3){failure=`На шаге ${step+1} робот вышел за границу поля.`;break;}
+        if(level.walls.some(([wx,wy])=>wx===nx&&wy===ny)){failure=`На шаге ${step+1} робот врезался в стену.`;break;}
+        x=nx;y=ny;path.push([x,y]);
+      }
+      juniorDrawGrid(path);
+      const success=!failure&&x===level.goal[0]&&y===level.goal[1];
+      $('juniorResult').classList.toggle('good',success);
+      $('juniorResult').textContent=success
+        ? 'Отлично! Робот добрался до звезды. Ты составил работающий алгоритм!'
+        : failure || 'Маршрут выполняется, но до звезды робот пока не дошёл. Добавь или переставь команды.';
+    }
+  });
+}
+function showJuniorWaitingRoom(){
+  if(!user || ![6,7].includes(user.classNumber))return false;
+  $('lessonList').innerHTML='<p class="small">Учебные темы ещё не загружены. Пока доступна игровая разминка.</p>';
+  $('lessonContent').innerHTML=juniorMarkup();
+  juniorInit();
+  return true;
+}
+
 function showStudentCourseMode(mode) {
   if (!user || user.role !== 'student') return;
   studentCourseMode = mode === 'showcase' ? 'showcase' : 'mine';
@@ -7974,7 +8132,7 @@ function showStudentCourseMode(mode) {
   else {renderStudentTracks();const courses=studentVisibleCourses();
     if(!courses[track] && Object.keys(courses).length){track=Object.keys(courses)[0];lessonId=courses[track].lessons[0].id;}
     if(courses[track]){setTrackButtons();renderTrack();renderLesson();}
-    else{$('lessonList').innerHTML='';$('lessonContent').innerHTML='<div class="empty">Основной план ещё не назначен. Выбери дополнительный курс на витрине.</div>';}
+    else if(!showJuniorWaitingRoom()){$('lessonList').innerHTML='';$('lessonContent').innerHTML='<div class="empty">Основной план ещё не назначен. Выбери дополнительный курс на витрине.</div>';}
   }
 }
 function renderShowcaseCards(){
