@@ -90,6 +90,12 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
 .teacher-filters {display:grid;grid-template-columns:repeat(3,minmax(0,210px)) auto;gap:14px;align-items:end;margin:14px 0 12px}
 .teacher-filters label {margin-top:0}
 .teacher-filter-action {padding-bottom:1px}
+.teacher-student-search {display:flex;align-items:end;gap:10px;max-width:680px;margin:18px 0 10px}
+.teacher-student-search .teacher-search-field {flex:1;min-width:0}
+.teacher-student-search .teacher-search-field label {margin:0 0 5px}
+.teacher-student-search button {white-space:nowrap}
+@media(max-width:700px){.teacher-student-search{max-width:none}.teacher-student-search button{padding:10px}}
+
 .student-group-heading {border-bottom:1px solid var(--border);padding:10px 0 5px;margin-top:17px}
 .student-class-heading {color:var(--accent);margin:20px 0 4px}
 .placement-box {background:var(--panel2);padding:12px;border-radius:10px;border:1px solid var(--border);margin:12px 0}
@@ -515,6 +521,14 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
         <button class="secondary" type="button" role="tab" aria-selected="false" id="teacherAddTab" aria-controls="teacherAddView">＋ Добавить ученика</button>
       </div>
       <section id="teacherRosterView" role="tabpanel" aria-labelledby="teacherRosterTab">
+      <div class="teacher-student-search" role="search" aria-label="Поиск ученика">
+        <div class="teacher-search-field">
+          <label for="teacherStudentSearch">Найти ученика по фамилии или имени</label>
+          <input id="teacherStudentSearch" type="search" autocomplete="off" placeholder="Например, Иванова или Мария" aria-describedby="teacherSearchHint">
+        </div>
+        <button id="teacherSearchClear" class="secondary" type="button" disabled>Очистить</button>
+      </div>
+      <p class="small" id="teacherSearchHint">Поиск учитывает выбранные фильтры класса, группы и уровня.</p>
       <div class="teacher-filters" aria-label="Фильтры кабинета учителя">
         <div>
           <label for="teacherClassFilter">Класс</label>
@@ -568,6 +582,7 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
         </div>
       </div>
       <p class="small">Нажми на класс, чтобы открыть список его учеников. Внутри сохраняются группы, результаты и управление аккаунтами.</p>
+      <p id="teacherSearchStatus" class="small" role="status" aria-live="polite"></p>
       <div id="teacherStudents" class="teacher-class-list"></div>
       <details class="course-overview">
         <summary>Учебные планы для 8Б, 10-го и 11-го классов</summary>
@@ -5571,6 +5586,12 @@ async function sendAnswerToSheet(data) {
       showStudentCourseMode('mine');
     }
   });
+  $('teacherStudentSearch').addEventListener('input', handleTeacherStudentSearch);
+  $('teacherSearchClear').addEventListener('click', () => {
+    $('teacherStudentSearch').value = '';
+    handleTeacherStudentSearch();
+    $('teacherStudentSearch').focus();
+  });
   for (const [buttonId, expanded] of [['teacherExpandAll',true],['teacherCollapseAll',false]]) {
     $(buttonId).addEventListener('click', () => {
       document.querySelectorAll('#teacherStudents details.teacher-class-section').forEach(section => { section.open = expanded; });
@@ -7040,10 +7061,35 @@ function updateTeacherGroupFilter() {
   input.value = oldValue === 'all' || oldValue === 'unassigned' || allowed.includes(Number(oldValue)) ? oldValue : 'all';
 }
 
+function normalizeStudentSearch(value) {
+  return String(value ?? '').toLocaleLowerCase('ru-RU').replace(/ё/g, 'е').replace(/\s+/g, ' ').trim();
+}
+
+// Keep the accordion's previous open/closed state while a search is active.
+let teacherSearchOpenSnapshot = null;
+
+function handleTeacherStudentSearch() {
+  const searchValue = normalizeStudentSearch($('teacherStudentSearch').value);
+  if (searchValue && teacherSearchOpenSnapshot === null) {
+    teacherSearchOpenSnapshot = new Set(
+      [...document.querySelectorAll('#teacherStudents details.teacher-class-section[open]')]
+        .map(section => section.dataset.classKey)
+    );
+  }
+  $('teacherSearchClear').disabled = !searchValue;
+  renderTeacherView();
+  if (!searchValue && teacherSearchOpenSnapshot !== null) {
+    document.querySelectorAll('#teacherStudents details.teacher-class-section')
+      .forEach(section => { section.open = teacherSearchOpenSnapshot.has(section.dataset.classKey); });
+    teacherSearchOpenSnapshot = null;
+  }
+}
+
 function getFilteredStudents() {
   const selectedClass = $("teacherClassFilter").value;
   const selectedGroup = $("teacherGroupFilter").value;
   const selectedLevel = $("teacherLevelFilter").value;
+  const queryWords = normalizeStudentSearch($('teacherStudentSearch').value).split(' ').filter(Boolean);
   return cloudClassData.filter(student => {
     const classMatches = selectedClass === "all" ||
       (selectedClass === "unassigned" ? student.classNumber === null :
@@ -7053,7 +7099,9 @@ function getFilteredStudents() {
         student.studyGroup === Number(selectedGroup));
     const levelMatches = selectedLevel === 'all' ||
       (selectedLevel === 'unassigned' ? student.studyLevel === null : student.studyLevel === selectedLevel);
-    return classMatches && groupMatches && levelMatches;
+    const normalizedName = normalizeStudentSearch(student.name);
+    const nameMatches = queryWords.every(word => normalizedName.includes(word));
+    return classMatches && groupMatches && levelMatches && nameMatches;
   });
 }
 
@@ -7156,6 +7204,12 @@ function renderStudentCard(student) {
 function renderTeacherView() {
   updateTeacherGroupFilter();
   const selected = getFilteredStudents();
+  const searchQuery = normalizeStudentSearch($('teacherStudentSearch').value);
+  const searching = searchQuery.length > 0;
+  $('teacherSearchClear').disabled = !searching;
+  $('teacherSearchStatus').textContent = searching
+    ? `По запросу «${$('teacherStudentSearch').value.trim()}» найдено: ${selected.length}.`
+    : '';
   const selectedClass = $("teacherClassFilter").value;
   const canDistribute = selectedClass === '11';
   $("distributeGroups").disabled = !canDistribute;
@@ -7180,8 +7234,9 @@ function renderTeacherView() {
   // Сохраняем раскрытые блоки, когда меняется фильтр или редактируются назначения.
   const opened = new Set(Array.from(document.querySelectorAll('#teacherStudents details.teacher-class-section[open]'))
     .map(section => section.dataset.classKey));
-  const keys = selectedClass === 'all' ? teacherClassOptions.filter(Boolean) :
-    selectedClass === 'unassigned' ? [] : [selectedClass];
+  const keys = (selectedClass === 'all' ? teacherClassOptions.filter(Boolean) :
+    selectedClass === 'unassigned' ? [] : [selectedClass])
+    .filter(key => !searching || selected.some(student => classKey(student.classNumber, student.classLetter) === key));
 
   const classesMarkup = keys.map(key => {
     const {classNumber,classLetter} = parseClassKey(key);
@@ -7192,7 +7247,7 @@ function renderTeacherView() {
       return `<div class="student-group-heading"><h3>${esc(teacherGroupName(groupNumber,classNumber))} · ${grouped.length}</h3></div>` +
         grouped.map(renderStudentCard).join('');
     }).join('');
-    const isOpen = opened.has(key) || (selectedClass === key && !opened.size);
+    const isOpen = searching || opened.has(key) || (selectedClass === key && !opened.size);
     return `<details class="teacher-class-section" data-class-key="${esc(key)}" ${isOpen ? 'open' : ''}>
       <summary><span class="class-title">${esc(teacherClassName(classNumber,classLetter))}</span><span class="pill">${members.length} учеников</span></summary>
       <div class="teacher-class-body">${groupSections || '<div class="teacher-class-empty">Пока нет учеников в этом классе или выбранном фильтре.</div>'}</div>
@@ -7200,12 +7255,14 @@ function renderTeacherView() {
   }).join('');
 
   const noClass = selected.filter(student => !classKey(student.classNumber, student.classLetter));
-  const withoutClassMarkup = (selectedClass === 'all' || selectedClass === 'unassigned')
-    ? `<details class="teacher-class-section" data-class-key="unassigned" ${opened.has('unassigned') || (selectedClass === 'unassigned' && !opened.size) ? 'open' : ''}>
+  const withoutClassMarkup = (selectedClass === 'all' || selectedClass === 'unassigned') && (!searching || noClass.length > 0)
+    ? `<details class="teacher-class-section" data-class-key="unassigned" ${searching || opened.has('unassigned') || (selectedClass === 'unassigned' && !opened.size) ? 'open' : ''}>
         <summary><span class="class-title">Без класса</span><span class="pill">${noClass.length} учеников</span></summary>
         <div class="teacher-class-body">${noClass.length ? noClass.map(renderStudentCard).join('') : '<div class="teacher-class-empty">Ученики без класса отсутствуют.</div>'}</div>
        </details>` : '';
-  $("teacherStudents").innerHTML = classesMarkup + withoutClassMarkup;
+  $("teacherStudents").innerHTML = (searching && selected.length === 0)
+    ? '<div class="teacher-class-empty">Ничего не найдено. Проверь написание фамилии или имени и выбранные фильтры.</div>'
+    : classesMarkup + withoutClassMarkup;
 }
 
 async function saveStudentPlacement(studentId) {
