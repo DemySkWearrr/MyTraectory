@@ -452,11 +452,62 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
 [data-ux-focus]:focus { outline:2px solid #79bdfa; outline-offset:4px; }
 .student-creation-grid > .hidden, .lesson-resume.hidden { display:none; }
 @media (max-width:700px) { .lesson-resume button { min-height:44px; width:100%; } .teacher-nav button { min-height:44px; } }
+
+/* School edition: chalkboard framing, notebook rules and high-contrast work areas. */
+:root {
+  color-scheme:dark;
+  --school-board:#112f2b;
+  --school-mint:#bde8d3;
+  --school-ink:#f9ebce;
+  --school-rule:rgba(194,235,220,.065);
+}
+body{background:radial-gradient(ellipse at 13% 0,#183430 0,transparent 37rem),var(--bg)}
+body>header{background:#132e2a;border-bottom:1px solid #3c6256;box-shadow:0 4px 16px #090f1852}
+.brand{display:flex;align-items:center;gap:10px;font-size:20px;line-height:1.2}
+.brand-title{color:var(--school-ink)!important}
+.brand-title b{color:var(--school-mint)}
+.brand-book{width:34px;height:34px;flex:none;padding:6px;color:#172d27;background:var(--school-mint);border-radius:8px}
+body>header #headerName{color:var(--school-mint);overflow-wrap:anywhere}
+#login,#forcePassword,#studentWelcomeCard{
+  --muted:#bdd3c9;
+  background-color:var(--school-board);
+  background-image:linear-gradient(90deg,rgba(241,183,163,.18) 1px,transparent 1px),repeating-linear-gradient(0deg,transparent 0 27px,var(--school-rule) 27px 28px);
+  background-position:15px 0,0 0;
+  background-repeat:repeat-y,repeat;
+  background-size:100% 28px,auto;
+  border-color:#466c60;
+  padding-inline:clamp(27px,4vw,38px);
+}
+#login,#forcePassword{padding-block:24px}
+#login h1,#forcePassword h2,#studentWelcomeCard h1{color:var(--school-ink);margin-block:12px 8px;letter-spacing:-.025em;overflow-wrap:anywhere}
+#login .pill,#forcePassword .pill,#roleLabel{background:#21443b;border-color:#50766a;color:#d2f1e2;font-size:13px}
+#loginButton,#changePasswordButton,#lessonResumeButton{min-height:44px;background:var(--school-mint);color:#142921}
+#loginButton:hover:not(:disabled),#changePasswordButton:hover:not(:disabled),#lessonResumeButton:hover:not(:disabled){background:#dcf6e8}
+#studentResultsCard{border-top:3px solid #82b29f}
+#studentResultsCard h1{color:var(--school-ink)}
+#studentWelcomeCard .lesson-resume{background:#1b3a33;border-color:#4d786a}
+#studentWelcomeCard .progress{background:#27473f}
+#studentLessonsCard .lesson-week-heading{border-color:#3b4b5a;color:#bddfd1}
+#teacherPanel{border-top:3px solid #82b29f}
+body :is(button,input,select,textarea,a,summary):focus-visible{outline:2px solid #a9dcc9;outline-offset:3px}
+@media(max-width:700px){
+  body>header{flex-direction:row;align-items:center;flex-wrap:wrap;padding:12px 16px}
+  .brand{font-size:18px}
+  #login,#forcePassword{margin:12px auto 0}
+  #login input,#forcePassword input{font-size:16px}
+  #loginButton,#changePasswordButton{width:100%}
+}
+@media(prefers-reduced-motion:reduce){body{scroll-behavior:auto}}
 </style>
 </head>
 <body>
 <header>
-  <div class="brand">Моя <span>траектория</span></div>
+  <div class="brand">
+    <svg class="brand-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      <path d="M12 6c-2.5-2-5.5-2-9-1.1v13c3.5-.9 6.5-.9 9 1.1 2.5-2 5.5-2 9-1.1v-13c-3.5-.9-6.5-.9-9 1.1Zm0 0v13M6 9h3m-3 4h3m6-4h3m-3 4h3"/>
+    </svg>
+    <span class="brand-title">Моя <b>траектория</b></span>
+  </div>
   <div class="row">
     <span id="headerName" class="small">Учебная платформа</span>
     <button id="exit" class="secondary hidden">Выйти</button>
