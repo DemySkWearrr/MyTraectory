@@ -531,6 +531,11 @@ body>header,body>main,body>footer{position:relative;z-index:1}
 .learning-count{background:#21443b;color:#d2f1e2;border-color:#50766a;font-size:13px;white-space:nowrap}
 #learningRoster:empty{display:none}
 #learningRoster{max-height:240px;overflow:auto}
+.school-sketches .chalk-binary{transform:translate(45px,540px);opacity:.85}
+@media(max-width:700px){
+  .school-sketches .chalk-binary{transform:translate(45px,75px)}
+  .school-sketches .chalk-laptop{display:none}
+}
 </style>
 </head>
 <body>
@@ -565,7 +570,7 @@ body>header,body>main,body>footer{position:relative;z-index:1}
     <g class="chalk-warm" transform="translate(56 38) rotate(7)">
       <text x="0" y="24" font-size="25">2⁸ = 256</text><path class="chalk-faint" d="M5 35q60 6 119-3"/>
     </g>
-    <g class="chalk-mint" transform="translate(110 98) rotate(-8)">
+    <g class="chalk-mint chalk-laptop" transform="translate(110 98) rotate(-8)">
       <rect x="8" y="0" width="136" height="83" rx="6"/><rect x="16" y="8" width="120" height="67" rx="2"/>
       <path d="M8 83h136l12 16q0 5-9 5H5q-9 0-9-5zM60 95h31"/>
       <path d="m53 29-14 13 14 13m45-26 14 13-14 13m-14-29-16 34"/>
@@ -575,7 +580,7 @@ body>header,body>main,body>footer{position:relative;z-index:1}
       <path d="M27 16V4m15 12V4m16 12V4m16 12V4M27 98V86m15 12V86m16 12V86m16 12V86M4 27h12M4 42h12M4 58h12M4 74h12m70-47h12m-12 15h12m-12 16h12m-12 16h12"/>
       <text x="37" y="55" font-size="14">CPU</text>
     </g>
-    <text x="160" y="300" font-size="17" transform="rotate(-7 160 300)" class="chalk-faint">1011 0101</text>
+
     <g class="chalk-warm" transform="translate(132 364) rotate(-10)">
       <rect x="36" width="68" height="23" rx="11"/>
       <path d="M70 23v17m0 0 32 21-32 21-32-21zM38 61H12v34m90-34h26v34m-14-12 14 12 13-12M0 83l12 12 13-12"/>
@@ -583,6 +588,14 @@ body>header,body>main,body>footer{position:relative;z-index:1}
     </g>
     <text x="54" y="526" font-size="21" class="chalk-mint" transform="rotate(8 54 526)">y = f(x)</text>
     <path class="chalk-faint" d="M252 231h15m-7-7v14M55 161h12m-6-6v12m45 212h12m-6-6v12m139 147h15m-7-7v14"/>
+    <text class="chalk-binary" xml:space="default" font-size="10.5">
+      <tspan x="0" dy="0">11010001 10001111 00100000 11010001</tspan>
+      <tspan x="0" dy="12">10000010 11010000 10110101 11010000</tspan>
+      <tspan x="0" dy="12">10110001 11010001 10001111 00100000</tspan>
+      <tspan x="0" dy="12">11010000 10111100 11010000 10111110</tspan>
+      <tspan x="0" dy="12">11010000 10110011 11010000 10111101</tspan>
+      <tspan x="0" dy="12">11010001 10000011</tspan>
+    </text>
   </svg>
 </div>
 <header>
