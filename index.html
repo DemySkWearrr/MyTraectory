@@ -528,6 +528,9 @@ body>header,body>main,body>footer{position:relative;z-index:1}
 }
 @media(forced-colors:active),print{.school-sketches{display:none}}
 
+.learning-count{background:#21443b;color:#d2f1e2;border-color:#50766a;font-size:13px;white-space:nowrap}
+#learningRoster:empty{display:none}
+#learningRoster{max-height:240px;overflow:auto}
 </style>
 </head>
 <body>
@@ -590,6 +593,7 @@ body>header,body>main,body>footer{position:relative;z-index:1}
     <span class="brand-title">Моя <b>траектория</b></span>
   </div>
   <div class="row">
+    <span id="learningCount" class="pill learning-count hidden" title="Работали с уроками за последние 5 минут"></span>
     <span id="headerName" class="small">Учебная платформа</span>
     <button id="exit" class="secondary hidden">Выйти</button>
   </div>
@@ -707,6 +711,12 @@ body>header,body>main,body>footer{position:relative;z-index:1}
           <button id="export">Экспорт CSV</button>
         </div>
       </div>
+      <details id="learningTeacherPanel" class="course-overview hidden">
+        <summary>Кто сейчас учится</summary>
+        <p class="small">Ученики, открывавшие урок или работавшие с ним за последние 5 минут.</p>
+        <p id="learningRosterStatus" class="small" role="status"></p>
+        <ul id="learningRoster"></ul>
+      </details>
       <div class="teacher-nav" role="tablist" aria-label="Разделы кабинета учителя">
         <button class="secondary" type="button" role="tab" aria-selected="true" id="teacherRosterTab" aria-controls="teacherRosterView">Ученики и группы</button>
         <button class="secondary" type="button" role="tab" aria-selected="false" id="teacherAddTab" aria-controls="teacherAddView">＋ Добавить ученика</button>
@@ -5807,6 +5817,18 @@ async function sendAnswerToSheet(data) {
   }
 }
   function init() {
+  const activityAction = event => {
+    if (event.isTrusted && !$("studentLessonCard").classList.contains("hidden")) void noteLearningActivity();
+  };
+  for (const type of ["pointerdown", "keydown", "wheel", "touchmove"]) {
+    $("studentLessonCard").addEventListener(type, activityAction, {passive:true});
+  }
+  $("learningTeacherPanel").addEventListener("toggle", () => {
+    if ($("learningTeacherPanel").open) void refreshLearningActivity();
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) void refreshLearningActivity();
+  });
   $("loginButton").addEventListener("click", login);
   $('studentMyCoursesButton').addEventListener('click',()=>showStudentCourseMode('mine'));
   $('studentShowcaseButton').addEventListener('click',()=>showStudentCourseMode('showcase'));
@@ -6194,6 +6216,96 @@ async function changePassword() {
   }
 }
 
+let learningTimer;
+let learningLastSentAt = 0;
+let learningRefreshPending = false;
+let learningWritePending = false;
+let learningGeneration = 0;
+let learningUnavailable = false;
+
+function stopLearningActivity() {
+  clearInterval(learningTimer);
+  learningGeneration++;
+  learningLastSentAt = 0;
+  learningRefreshPending = learningWritePending = learningUnavailable = false;
+  $("learningCount").classList.add("hidden");
+  $("learningTeacherPanel").classList.add("hidden");
+  $("learningRoster").replaceChildren();
+}
+
+function startLearningActivity() {
+  stopLearningActivity();
+  void refreshLearningActivity();
+  learningTimer = setInterval(refreshLearningActivity, 45000);
+}
+
+async function refreshLearningActivity() {
+  if (!user || previewMode || document.hidden || learningRefreshPending || learningUnavailable) return;
+  const generation = learningGeneration;
+  const viewer = user;
+  const badge = $("learningCount");
+  const teacherPanel = $("learningTeacherPanel");
+  learningRefreshPending = true;
+  try {
+    const counts = await supabaseClient.rpc("learning_activity_counts");
+    if (generation !== learningGeneration || viewer !== user || previewMode) return;
+    if (counts.error?.code === "PGRST202") learningUnavailable = true;
+    if (counts.error) {
+      badge.classList.add("hidden");
+      teacherPanel.classList.add("hidden");
+      return;
+    }
+    const row = counts.data?.[0];
+    if (!Number.isInteger(row?.active_count) || !Number.isInteger(row?.total_count)) return;
+    badge.textContent = `Сейчас учатся: ${row.active_count} из ${row.total_count}`;
+    badge.classList.remove("hidden");
+
+    if (viewer.role !== "teacher") return;
+    teacherPanel.classList.remove("hidden");
+    if (!teacherPanel.open) return;
+    const active = await supabaseClient.rpc("active_learning_students");
+    if (generation !== learningGeneration || viewer !== user || previewMode) return;
+    const list = $("learningRoster");
+    list.replaceChildren();
+    $("learningRosterStatus").textContent = active.error
+      ? "Список пока недоступен."
+      : active.data?.length ? "" : "За последние 5 минут никто не работал с уроками.";
+    if (!active.error) {
+      for (const student of active.data || []) {
+        const item = document.createElement("li");
+        item.textContent = `${student.student_name || "Ученик"} · ${student.class_label || "Без класса"}`;
+        list.append(item);
+      }
+    }
+  } catch (_) {
+    if (generation === learningGeneration && viewer === user) {
+      badge.classList.add("hidden");
+      teacherPanel.classList.add("hidden");
+    }
+  } finally {
+    if (generation === learningGeneration) learningRefreshPending = false;
+  }
+}
+
+async function noteLearningActivity() {
+  if (user?.role !== "student" || previewMode || document.hidden || !$("lessonHeadline") ||
+      learningUnavailable || learningWritePending || Date.now() - learningLastSentAt < 30000) return;
+  const generation = learningGeneration;
+  const viewer = user;
+  learningLastSentAt = Date.now();
+  learningWritePending = true;
+  try {
+    const {error} = await supabaseClient.rpc("mark_learning_activity");
+    if (generation !== learningGeneration || viewer !== user) return;
+    if (error?.code === "PGRST202") learningUnavailable = true;
+    if (!error) void refreshLearningActivity();
+  } catch (_) {
+    // If the network drops, try again on the next interaction after the cooldown.
+  } finally {
+    if (generation === learningGeneration) learningWritePending = false;
+  }
+}
+
 async function enterApp(profile, username) {
   user = {
     id: profile.id,
@@ -6216,6 +6328,7 @@ async function enterApp(profile, username) {
   $("app").classList.remove("hidden");
   $("exit").classList.remove("hidden");
   $("headerName").textContent = user.name;
+  startLearningActivity();
   if (user.role === 'teacher' || user.classNumber === 10) await loadElectiveGroups();
 
   $("roleLabel").textContent =
@@ -6325,6 +6438,7 @@ async function saveProgressToCloud(courseId, lesson, answer, completed) {
 
 async function logout() {
   if (previewMode) { closeStudentDemo(); return; }
+  stopLearningActivity();
   try {
     await supabaseClient.auth.signOut();
   } catch (error) {
@@ -6522,6 +6636,7 @@ function openLessonFromNavigation(id) {
   lessonId = id;
   renderTrack();
   renderLesson();
+  void noteLearningActivity();
   if (window.matchMedia('(max-width:700px)').matches) setLessonNavExpanded(false);
   const headline = $("lessonHeadline");
   if (headline) {
