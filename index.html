@@ -444,6 +444,14 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
 .jl-profile,.jl-mail{background:#e5edfc;color:#14233d;max-width:380px;margin:auto;padding:14px;border-radius:10px}.jl-demo-line{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #bdcce5;padding:7px 0;font-size:13px}.jl-safe{text-align:center;padding:10px}.jl-safe>div{font-size:54px}.jl-safe span,.jl-safe small{display:block}.jl-safe small{color:#cbd3e0}
 .jl-mail small{display:block;margin:9px 0;color:#6c3444}.jl-mail span{display:block;background:#fbe5b3;border-radius:5px;padding:7px}.jl-chat>div{margin-bottom:8px;padding:12px;background:#dae8ff;color:#21334b;border-radius:11px;max-width:340px}.jl-chat>div.jl-reply{margin-left:auto;background:#bcebd9}.jl-symbols{display:flex;flex-wrap:wrap;justify-content:center;gap:11px}.jl-symbols span{padding:12px;background:#dfe9fd;color:#243452;border-radius:10px;font-size:27px;text-align:center}.jl-symbols small{display:block;font-size:12px}.jl-flow-figure,.jl-macro-figure{display:flex;flex-direction:column;align-items:center;gap:5px}.jl-flow-figure span,.jl-macro-figure span,.jl-macro-figure div{border:1px solid #7d9fc9;background:#283f60;border-radius:8px;padding:8px 18px;text-align:center}.jl-flow-figure i{margin-left:30px}.jl-bool-figure{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.jl-bool-figure div,.jl-bool-figure b{border:1px solid #7d9fc9;padding:12px;border-radius:8px;background:#314866}.jl-debug-figure{display:grid;gap:9px}.jl-debug-figure span{background:#2c4160;border:1px solid #7891bb;padding:8px 11px;border-radius:8px;font-family:monospace}.jl-debug-figure small{margin-left:12px;font-family:system-ui;color:#ffd1bb}.jl-generic-screen{text-align:center;padding:15px}
 
+/* Quick routes for the school day. */
+.lesson-resume { display:flex; align-items:center; flex-wrap:wrap; gap:10px 16px; margin:14px 0; padding:12px; background:#1b2b43; border:1px solid #495f7d; border-radius:12px; }
+.lesson-resume .small { margin:0; flex:1 1 170px; }
+.credential-actions { margin-top:6px; display:flex; gap:6px; flex-wrap:wrap; }
+.credential-actions button { font-size:13px; min-height:38px; }
+[data-ux-focus]:focus { outline:2px solid #79bdfa; outline-offset:4px; }
+.student-creation-grid > .hidden, .lesson-resume.hidden { display:none; }
+@media (max-width:700px) { .lesson-resume button { min-height:44px; width:100%; } .teacher-nav button { min-height:44px; } }
 </style>
 </head>
 <body>
@@ -526,6 +534,7 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
       <p id="intro">Выбирай тему, изучай материал и выполняй задания.</p>
       <div class="tabs" id="trackTabs"></div>
       <p id="classPlanInfo" class="small"></p>
+      <div class="lesson-resume hidden" id="lessonResume"><button type="button" id="lessonResumeButton">Продолжить урок</button><p class="small" id="lessonResumeTitle"></p></div>
       <div class="row between">
         <span class="small">Прогресс выбранной траектории</span>
         <b id="percent">0%</b>
@@ -618,7 +627,7 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
       </div>
       <p class="small" id="teacherActionMessage" role="status"></p>
       <div class="grid" id="teacherStats"></div>
-      <details class="course-overview" id="electiveSettingsPanel" open>
+      <details class="course-overview" id="electiveSettingsPanel">
         <summary>10 класс · 7 групп элективного курса</summary>
         <p class="small">Группа выбирает одно направление — сайтостроение, Telegram-боты или Python. Укажи его для каждой группы. Назначение ученика в группу делается отдельно ниже; уровень «базовый/углублённый» от этого не меняется.</p>
         <div id="electiveGroupManager"></div>
@@ -635,8 +644,8 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
       <p id="teacherSearchStatus" class="small" role="status" aria-live="polite"></p>
       <div id="teacherStudents" class="teacher-class-list"></div>
       <details class="course-overview">
-        <summary>Учебные планы для 8Б, 10-го и 11-го классов</summary>
-        <p class="small">8Б: 21 занятие программирования по предоставленному расписанию. У 6Б, 7А, 7Б, 8А, 9А, 9Б программы пока не загружены. Для 10–11 классов: базовый — 5 занятий, углублённый — 20; элективы 10 класса — 30 дополнительных занятий.</p>
+        <summary>Учебные планы по классам</summary>
+        <p class="small">Школьные программы по расписанию и дополнительные направления.</p>
         <div id="teacherCourseOverview"></div>
       </details>
       <div class="notice">
@@ -650,10 +659,10 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
           <div class="student-creation-grid">
             <div><label for="createStudentSurname">Фамилия</label><input id="createStudentSurname" name="surname" maxlength="80" required placeholder="Иванов"></div>
             <div><label for="createStudentFirstName">Имя</label><input id="createStudentFirstName" name="firstName" maxlength="80" required placeholder="Иван"></div>
-            <div><label for="createStudentLogin">Логин</label><input id="createStudentLogin" name="username" required minlength="3" maxlength="32" autocapitalize="none" spellcheck="false" placeholder="ivanov10" pattern="[a-z][a-z0-9._-]{2,31}"></div>
-            <div><label for="createStudentPassword">Временный пароль</label><input id="createStudentPassword" name="password" type="password" autocomplete="new-password" required minlength="8" maxlength="128" placeholder="Не менее 8 символов"></div>
+            <div><label for="createStudentLogin">Логин</label><input id="createStudentLogin" name="username" required minlength="3" maxlength="32" autocapitalize="none" spellcheck="false" placeholder="ivanov10" pattern="[a-z][a-z0-9._\-]{2,31}"></div>
+            <div><label for="createStudentPassword">Временный пароль</label><input id="createStudentPassword" name="password" type="password" autocomplete="new-password" required minlength="8" maxlength="128" placeholder="Не менее 8 символов"><div class="credential-actions"><button class="secondary" type="button" id="generateStudentPassword">Создать пароль</button><button class="secondary" type="button" id="revealStudentPassword" aria-pressed="false">Показать</button></div></div>
             <div><label for="createStudentClass">Класс</label><select id="createStudentClass" name="classNumber" required><option value="6b">6Б</option><option value="7a">7А</option><option value="7b">7Б</option><option value="8a">8А</option><option value="8b">8Б</option><option value="9a">9А</option><option value="9b">9Б</option><option value="10" selected>10 класс</option><option value="11">11 класс</option></select></div>
-            <div><label for="createStudentGroup">Группа (необязательно)</label><select id="createStudentGroup" name="studyGroup"></select></div>
+            <div id="createStudentGroupField"><label for="createStudentGroup">Группа (необязательно)</label><select id="createStudentGroup" name="studyGroup"></select></div>
             <div><label for="createStudentLevel">Уровень обучения</label><select id="createStudentLevel" name="studyLevel" required><option value="basic">Базовый</option><option value="advanced">Углублённый</option></select></div>
           </div>
           <p class="small">Логин: латинские буквы, цифры, точка, дефис и подчёркивание; начинается с буквы, 3–32 символа. Для 6Б, 7А, 7Б, 8А, 8Б, 9А, 9Б группа не требуется; в 10 классе доступны элективные группы 1–7, в 11-м — группы 1–2.</p>
@@ -666,7 +675,7 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
 </section>
 </main>
 
-<footer>Моя траектория · 10–11 классы · собственная учебная траектория</footer>
+<footer>Моя траектория · Информатика · 6–11 классы</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -5709,11 +5718,34 @@ async function sendAnswerToSheet(data) {
     });
   }
   $("teacherRosterTab").addEventListener("click", () => selectTeacherTab("roster"));
-  $("teacherAddTab").addEventListener("click", () => selectTeacherTab("add"));
+  $("teacherAddTab").addEventListener("click", () => {
+    selectTeacherTab("add");
+    const classFilter = $("teacherClassFilter").value;
+    const classField = $("createStudentClass");
+    if (!["Surname","FirstName","Login","Password"].some(id => $("createStudent"+id).value) &&
+        [...classField.options].some(option => option.value === classFilter)) {
+      classField.value = classFilter;
+      updateCreationGroupOptions();
+    }
+    $("createStudentSurname").focus();
+  });
+  $("generateStudentPassword").addEventListener("click", () => {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+    const bytes = crypto.getRandomValues(new Uint8Array(14));
+    $("createStudentPassword").value = Array.from(bytes, byte => chars[byte % chars.length]).join("") + "7!";
+    showCreationPassword(true);
+  });
+  $("revealStudentPassword").addEventListener("click", () =>
+    showCreationPassword($("createStudentPassword").type === "password"));
+  $("lessonResumeButton").addEventListener("click", () => {
+    const next = nextUnfinishedLesson();
+    const target = next || studentVisibleCourses()[track]?.lessons[0];
+    if (target) openLessonFromNavigation(target.id);
+  });
   $("createStudentClass").addEventListener("change", updateCreationGroupOptions);
   $("createStudentForm").addEventListener("submit", createStudentAccount);
   $("createStudentForm").addEventListener("reset", () => {
-    setTimeout(() => {updateCreationGroupOptions(); $("createStudentMessage").textContent = "";}, 0);
+    setTimeout(() => {updateCreationGroupOptions(); showCreationPassword(false); $("createStudentMessage").textContent = "";}, 0);
   });
   updateCreationGroupOptions();
   $("demoTeacherButton").addEventListener("click", openStudentDemo);
@@ -5778,10 +5810,18 @@ function selectTeacherTab(tab) {
   $("teacherAddTab").setAttribute("aria-selected", String(adding));
 }
 
+function showCreationPassword(visible) {
+  $("createStudentPassword").type = visible ? "text" : "password";
+  $("revealStudentPassword").textContent = visible ? "Скрыть" : "Показать";
+  $("revealStudentPassword").setAttribute("aria-pressed", String(visible));
+}
 function updateCreationGroupOptions() {
   const {classNumber} = parseClassKey($("createStudentClass").value);
   const group = $("createStudentGroup");
   const previous = group.value;
+  const hasGroups = groupNumbers(classNumber).length > 0;
+  $("createStudentGroupField").classList.toggle("hidden", !hasGroups);
+  group.disabled = !hasGroups;
   group.innerHTML = '<option value="">Без группы</option>' + groupNumbers(classNumber).map(n =>
     `<option value="${n}">${esc(teacherGroupName(n, classNumber))}</option>`
   ).join("");
@@ -5792,6 +5832,7 @@ async function createStudentAccount(event) {
   event.preventDefault();
   const message = $("createStudentMessage");
   const button = $("createStudentButton");
+  if (button.disabled) return;
   message.className = "reset-message";
   message.textContent = "";
   if (!user || user.role !== "teacher" || previewMode || !supabaseClient) {
@@ -5841,6 +5882,7 @@ async function createStudentAccount(event) {
     }
     if (!data?.success) throw new Error(data?.error || "Сервер не подтвердил создание ученика.");
     $("createStudentPassword").value = "";
+    showCreationPassword(false);
     message.textContent = `${surname} ${firstName} (${username}) создан. Ученик сможет войти по временному паролю и сменить его при первом входе.`;
     message.classList.add("success");
     await renderTeacher();
@@ -5854,11 +5896,67 @@ async function createStudentAccount(event) {
   }
 }
 
+function fetchAuthProfile(userId) {
+  return supabaseClient.from("profiles")
+    .select("id, full_name, role, must_change_password, class_number, class_letter, study_group, study_level")
+    .eq("id", userId).single();
+}
+
+function showRequiredPasswordChange() {
+  $("login").classList.add("hidden");
+  $("forcePassword").classList.remove("hidden");
+  $("passwordMessage").textContent = "";
+  $("newPassword").value = "";
+  $("confirmPassword").value = "";
+  $("newPassword").focus();
+}
+
+async function openAccount(profile, username) {
+  activeProfile = profile;
+  if (profile.must_change_password) {
+    showRequiredPasswordChange();
+  } else {
+    await enterApp(profile, username);
+  }
+}
+
+async function restoreSession() {
+  if (!supabaseClient) return;
+  const button = $("loginButton");
+  const message = $("loginError");
+  button.disabled = true;
+  button.textContent = "Проверяем вход…";
+  try {
+    const {data, error} = await supabaseClient.auth.getSession();
+    if (error?.name === "AuthSessionMissingError") return;
+    if (error) throw error;
+    const sessionUser = data?.session?.user;
+    if (!sessionUser?.id) return;
+
+    const {data: profile, error: profileError} = await fetchAuthProfile(sessionUser.id);
+    if (profileError || !profile) {
+      message.textContent = profileError?.code === "PGRST116" || !profileError
+        ? "Не удалось найти профиль. Если ошибка повторится, обратись к учителю."
+        : "Не удалось загрузить профиль. Проверь интернет и обнови страницу.";
+      return;
+    }
+    const username = (sessionUser.email || "").split("@")[0] || sessionUser.user_metadata?.username || "";
+    await openAccount(profile, username);
+  } catch (error) {
+    console.error("Не удалось восстановить сеанс:", error);
+    message.textContent = "Не удалось проверить сохранённый вход. Проверь интернет и обнови страницу.";
+  } finally {
+    button.disabled = false;
+    button.textContent = "Войти";
+  }
+}
+
 async function login() {
   const username = $("username").value.trim().toLowerCase();
   const password = $("password").value;
   const errorBox = $("loginError");
   const button = $("loginButton");
+  if (button.disabled) return;
   errorBox.textContent = "";
 
   if (!/^[a-z][a-z0-9._-]{2,31}$/.test(username)) {
@@ -5887,30 +5985,15 @@ async function login() {
       return;
     }
 
-    const { data: profile, error: profileError } = await supabaseClient
-      .from("profiles")
-      .select("id, full_name, role, must_change_password, class_number, class_letter, study_group, study_level")
-      .eq("id", data.user.id)
-      .single();
-
+    const { data: profile, error: profileError } = await fetchAuthProfile(data.user.id);
     if (profileError || !profile) {
-      await supabaseClient.auth.signOut();
-      errorBox.textContent = "Профиль не найден. Обратись к учителю.";
+      errorBox.textContent = profileError?.code === "PGRST116" || !profileError
+        ? "Профиль не найден. Обратись к учителю."
+        : "Не удалось загрузить профиль. Проверь интернет и обнови страницу.";
       return;
     }
 
-    activeProfile = profile;
-    if (profile.must_change_password) {
-      $("login").classList.add("hidden");
-      $("forcePassword").classList.remove("hidden");
-      $("passwordMessage").textContent = "";
-      $("newPassword").value = "";
-      $("confirmPassword").value = "";
-      $("newPassword").focus();
-      return;
-    }
-
-    await enterApp(profile, username);
+    await openAccount(profile, username);
   } catch (error) {
     console.error(error);
     errorBox.textContent = "Не удалось подключиться. Проверь интернет и настройки Supabase.";
@@ -6203,7 +6286,9 @@ function renderDemoSelection() {
       ? '8Б: 21 занятие программирования по календарному плану. Демо ничего не сохраняет.'
       : classNumber === 10 || classNumber === 11
         ? 'Доступен основной учебный план выбранного уровня.'
-        : 'Для этого класса учебные материалы ещё не загружены.';
+        : SCHOOL_COURSES_6_9[classKey(classNumber,classLetter)]
+          ? 'Доступны уроки по расписанию. Демо ничего не сохраняет.'
+          : 'Для этого класса учебные материалы ещё не загружены.';
   renderStudentTracks();
   const courses = getCoursesForClass(classNumber,studyLevel,studyGroup,previewElective,classLetter);
   if (courses.game?.lessons?.length) {
@@ -6275,7 +6360,7 @@ function renderStudentTracks() {
           ? (user.studyLevel === 'advanced'
             ? 'Углублённый триместр: 20 занятий по информатике с подготовкой к ЕГЭ.'
             : 'Базовый триместр: 5 обзорных занятий по информатике и простым задачам.')
-          : 'Курс для этого класса пока не опубликован.';
+          : 'Открой урок по расписанию или продолжи с первого незавершённого задания.';
   $("trackTabs").innerHTML = Object.entries(courses).map(([key, course]) =>
     `<button class="secondary" data-track="${esc(key)}" type="button">${esc(key === 'ege' ? 'Электив: ' + course.title : key.startsWith('extra_') ? '✦ ' + course.title : course.title)} · ${course.lessons.length} занятий</button>`).join("");
   $("trackTabs").querySelectorAll('[data-track]').forEach(button => {
@@ -6298,13 +6383,37 @@ function setTrackButtons() {
   });
 }
 
+function nextUnfinishedLesson() {
+  return studentVisibleCourses()[track]?.lessons.find(l => !user.progress[track]?.[l.id]?.done);
+}
+function renderLessonResume() {
+  const course = studentVisibleCourses()[track];
+  $("lessonResume").classList.toggle("hidden", !course?.lessons.length);
+  if (!course?.lessons.length) return;
+  const next = nextUnfinishedLesson();
+  const started = course.lessons.some(l => user.progress[track]?.[l.id]?.done || user.answers[l.id]?.trim());
+  $("lessonResumeButton").textContent = !next ? "Повторить уроки" : started ? "Продолжить урок" : "Начать урок";
+  $("lessonResumeTitle").textContent = next ? next.title : "Все уроки курса завершены";
+}
+function openLessonFromNavigation(id) {
+  lessonId = id;
+  renderTrack();
+  renderLesson();
+  if (window.matchMedia('(max-width:700px)').matches) setLessonNavExpanded(false);
+  const headline = $("lessonHeadline");
+  if (headline) {
+    headline.focus({preventScroll:true});
+    $('studentLessonCard').scrollIntoView({block:'start'});
+  }
+}
 function renderTrack() {
   const course = studentVisibleCourses()[track];
-  if (!course) return;
+  if (!course) {renderLessonResume(); return;}
   const lessons = course.lessons;
   const progress = user.progress[track] || {};
   const done = lessons.filter(l => progress[l.id]?.done).length;
   const pct = Math.round(done / Math.max(lessons.length, 1) * 100);
+  renderLessonResume();
   $("percent").textContent = pct + "%";
   $("bar").style.width = pct + "%";
   $("doneCount").textContent = `${done} / ${lessons.length}`;
@@ -6321,13 +6430,7 @@ function renderTrack() {
   }).join("");
   $("lessonList").querySelectorAll("[data-lesson]").forEach(button => {
     button.addEventListener("click", () => {
-      lessonId = button.dataset.lesson;
-      renderTrack();
-      renderLesson();
-      if (window.matchMedia('(max-width:700px)').matches) {
-        setLessonNavExpanded(false);
-        requestAnimationFrame(() => $('studentLessonCard').scrollIntoView({behavior:'smooth',block:'start'}));
-      }
+      openLessonFromNavigation(button.dataset.lesson);
     });
   });
   updateLessonNavigation();
@@ -7091,15 +7194,16 @@ function juniorLabMarkup(lesson){
    <div class="jl-header"><span class="jl-icon" aria-hidden="true">🎮</span><div><span class="pill">Сделай сам · без оценки</span><h3>${esc(cfg.title)}</h3><p>Нажимай на кнопки и наблюдай, что меняется. Ошибаться можно: тренажёр объяснит, как исправить.</p></div></div>
    <div class="jl-stage" id="jlStage"></div>
    <div class="jl-feedback" id="jlFeedback" role="status" aria-live="polite">Выбери первое действие — и посмотри на результат.</div>
-   <div class="row jl-footer"><button class="secondary" id="jlReset" type="button">↺ Начать заново</button><button id="jlSaveResult" type="button" disabled>Добавить результат в ответ</button></div>
-   <p class="small">Работает прямо в браузере. Это учебная модель — она не отправляет данные в интернет и не меняет оценку. Для отправки учителю нажми «Добавить результат в ответ», а затем «Сохранить ответ».</p>
+   <div class="row jl-footer"><button class="secondary" id="jlReset" type="button">↺ Начать заново</button><button id="jlSaveResult" type="button" disabled>${previewMode ? "Отправка в демо отключена" : "Сдать упражнение"}</button></div>
+   <p class="small">${previewMode ? "В демо можно проверить решение, но оно не отправляется." : "После успешной попытки нажми «Сдать упражнение». Это отправит результат учителю, но не отметит весь урок выполненным."}</p>
   </section>`;
 }
 function juniorLabInit(lesson){
  const cfg=JUNIOR_LAB_CONFIG[lesson.id];if(!cfg)return;
- const stage=$('jlStage'),fb=$('jlFeedback'),save=$('jlSaveResult');if(!stage||!fb||!save)return;
+ const stage=$('jlStage'),fb=$('jlFeedback'),save=$('jlSaveResult');
+ const labTrack=track;if(!stage||!fb||!save)return;
  let resultText='';
- const feedback=(message,ok=false)=>{fb.textContent=message;fb.className='jl-feedback'+(ok?' jl-success':'');};
+ const feedback=(message,ok=false,retain=false)=>{if(!ok&&!retain){resultText='';save.disabled=true;}fb.textContent=message;fb.className='jl-feedback'+(ok?' jl-success':'');};
  const success=(message,detail)=>{resultText=`Интерактивное упражнение «${lesson.title}»: ${detail}`;save.disabled=!!previewMode;feedback('✅ '+message,true);};
  const escape=esc;
  const addButton=(label,attributes='',classes='secondary')=>`<button class="${classes}" type="button" ${attributes}>${escape(label)}</button>`;
@@ -7218,10 +7322,41 @@ function juniorLabInit(lesson){
    };reset=()=>{commands=[];lastPath=[cfg.start];resultText='';save.disabled=true;draw();};
  }
  $('jlReset').onclick=()=>{reset();feedback('Начнём заново. Попробуй другой путь к результату.');};
- save.onclick=()=>{if(previewMode||!resultText)return;const field=$('answer');if(!field)return;field.value=(field.value.trim()?field.value.trim()+'\n\n':'')+resultText;feedback('Результат добавлен в поле ответа. Нажми ниже «Сохранить ответ», чтобы отправить учителю.',true);};
+ save.onclick=async()=>{
+   if(previewMode||!resultText||save.disabled)return;
+   const solution=resultText, field=$('answer'), resetButton=$('jlReset');
+   if(!field)return;
+   const prior=field.value.trim();
+   const answer=prior.split('\n\n').includes(solution)?prior:[prior,solution].filter(Boolean).join('\n\n');
+   const companionControls=[$('saveAnswer'),$('toggleDone')].filter(Boolean);
+   if(companionControls.some(button=>button.disabled))return;
+   save.disabled=true;
+   resetButton.disabled=true;
+   stage.inert=true;
+   companionControls.forEach(button=>{button.disabled=true;});
+   feedback('Отправляем результат учителю…',false,true);
+   try {
+     await submitLessonAnswer(labTrack,lesson,answer,false);
+     if(field.value.trim()===prior) field.value=answer;
+     feedback('✅ Упражнение сдано. Можно продолжать урок.',true);
+   } catch(error) {
+     console.error(error);
+     feedback('Ответ не отправился. Проверь интернет и нажми «Сдать упражнение» ещё раз.',false,true);
+     save.disabled=false;
+   } finally { resetButton.disabled=false; stage.inert=false; companionControls.forEach(button=>{button.disabled=false;}); }
+ };
  reset();
 }
 
+async function submitLessonAnswer(courseId, lesson, answer, waitForSheet=true) {
+  const currentUser = user;
+  const completed = !!currentUser.progress[courseId]?.[lesson.id]?.done;
+  const payload = lessonPayload(lesson, answer, completed);
+  await saveProgressToCloud(courseId,lesson,answer,completed);
+  currentUser.answers[lesson.id]=answer;
+  const sheet = sendAnswerToSheet(payload);
+  return waitForSheet ? await sheet : true;
+}
 function renderLesson() {
   const currentLessonList = studentVisibleCourses()[track]?.lessons || [];
   const currentLessonIndex = currentLessonList.findIndex(x => x.id === lessonId);
@@ -7242,7 +7377,7 @@ function renderLesson() {
   $("lessonContent").innerHTML = `
     ${previewMode ? '<div class="demo-notice"><b>Демо-режим:</b> просмотр урока без сохранения результатов и ответов.</div>' : ''}
     <span class="pill">${l.sourceSchedule ? 'По расписанию '+esc(l.plannedDate)+' · Занятие '+(currentLessonIndex+1)+' из '+currentLessonList.length : (l.plannedDate ? 'Дата '+esc(l.plannedDate)+' · ' : '')+'Неделя '+l.week+' · Занятие '+l.session} · ${esc(studyLevelName(user.studyLevel))} · ${l.minutes} минут</span>
-    <h2 style="margin-top:12px">${esc(l.title)}</h2>
+    <h2 style="margin-top:12px" id="lessonHeadline" tabindex="-1" data-ux-focus>${esc(l.title)}</h2>
     ${pager}
     ${isJuniorCourse ? `
       <section class="jl-welcome">
@@ -7312,19 +7447,7 @@ ${guided11 ? guideTheory11(l) : `<h3>Подробная теория и объя
     message.textContent = "Сохраняем ответ в облако…";
 
     try {
-      await saveProgressToCloud(
-        track,
-        l,
-        currentAnswer,
-        !!user.progress[track][l.id]?.done
-      );
-
-      user.answers[l.id] = currentAnswer;
-
-      const sent = await sendAnswerToSheet(
-        lessonPayload(l, currentAnswer, !!user.progress[track][l.id]?.done)
-      );
-
+      const sent = await submitLessonAnswer(track, l, currentAnswer);
       message.textContent = sent
         ? "Ответ сохранён в облаке. Запрос в Google Таблицу отправлен (подтверждения записи нет)."
         : "Ответ сохранён в облаке, но отправка в Google Таблицу не удалась.";
@@ -8585,7 +8708,7 @@ function showStudentCourseMode(mode) {
   else {renderStudentTracks();const courses=studentVisibleCourses();
     if(!courses[track] && Object.keys(courses).length){track=Object.keys(courses)[0];lessonId=courses[track].lessons[0].id;}
     if(courses[track]){setTrackButtons();renderTrack();renderLesson();}
-    else if(!showJuniorWaitingRoom()){$('lessonList').innerHTML='';$('lessonContent').innerHTML='<div class="empty">Основной план ещё не назначен. Выбери дополнительный курс на витрине.</div>';}
+    else {renderLessonResume(); if(!showJuniorWaitingRoom()){$('lessonList').innerHTML='';$('lessonContent').innerHTML='<div class="empty">Основной план ещё не назначен. Выбери дополнительный курс на витрине.</div>';}}
   }
 }
 function renderShowcaseCards(){
@@ -8726,6 +8849,7 @@ function gdInitLab(l){const lab=GUIDED_LABS[l.id],el=$('gdLab');if(!lab||!el)ret
 
 init();
 initLessonNavigation();
+void restoreSession();
 </script>
 </body>
 </html>
